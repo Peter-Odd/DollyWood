@@ -18,6 +18,7 @@ public class Fractal {
 	private static float[][] intitateCorners(float[][] map){
 		int width = map.length;
 		int height = map[0].length;
+
 		
 		return map;
 	}
