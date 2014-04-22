@@ -16,6 +16,7 @@ public class Graphics2D extends JPanel{
 		frame.add(this);
 		this.repaint();
 		frame.setVisible(true);
+		
 	}
 	
 	public void paintComponent(Graphics g){
