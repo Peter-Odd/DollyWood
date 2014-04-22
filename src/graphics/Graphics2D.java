@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import simulation.Race;
 import utilities.Globals;
 
 public class Graphics2D extends JPanel{
@@ -27,6 +28,15 @@ public class Graphics2D extends JPanel{
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
 				g.setColor(new Color((int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y])));
+				for(Race r: Globals.races){
+					if(r.getSpeciesAt(x, y) != null){
+						String species = r.getSpecies();
+						if(species.equals("Sheep"))
+							g.setColor(Color.WHITE);
+						else if(species.equals("Wolf"))
+							g.setColor(Color.GRAY);
+					}
+				}
 				g.fillRect(x*size, y*size, size, size);
 			}
 		}
