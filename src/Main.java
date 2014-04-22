@@ -51,9 +51,9 @@ public class Main
 
 			long time = System.currentTimeMillis();
 			Model toRender = loadModel("res/tile.obj");
-			for(int x = 0; x < 100; x++)
+			for(int x = 0; x < 20; x++)
 			{
-				for(int y = 0; y < 100; y++)
+				for(int y = 0; y < 20; y++)
 				{
 					float lineOffset = (y%2)*63.0f;
 					render2DModel(toRender, 20.0f, (x*125.0f)+lineOffset, y*40.0f);
