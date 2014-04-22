@@ -24,7 +24,6 @@ public class Graphics2D extends JPanel{
 		super.paintComponent(g);
 		this.setBackground(Color.PINK);
 		int size = 10;
-		Globals.heightmap[6][2] = 255.0f;
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
 				g.setColor(new Color((int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y])));
@@ -46,6 +45,6 @@ public class Graphics2D extends JPanel{
 		catch(Exception e){
 			System.exit(0);
 		}
-		//this.repaint();
+		this.repaint();
 	}
 }
