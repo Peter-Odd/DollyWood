@@ -2,3 +2,7 @@
 public class test {
 
 }
+
+/*
+Kommentar
+*/
