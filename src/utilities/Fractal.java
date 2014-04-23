@@ -3,21 +3,21 @@ package utilities;
 import java.util.Random;
 
 public class Fractal {
-	
+	static Random r = new Random();
 	
 	public static float getRandom(float max, float min){
-		Random r = new Random();
-		return r.nextFloat()/10 * max + min;
+		return r.nextFloat() * (max-min) + min;
 	}
 	
-	public static float[][] generateFractal(float[][] map, float min, float max){
+	public static float[][] generateFractal(float[][] map, float max, float min){
 		
 		map = intitateCorners(map, max, min);
+		map = diamondSquare(map, map.length-1, map.length-1, 0.0f);
 		
 		return map;
 	}
 	
-	public static float[][] intitateCorners(float[][] map, float min, float max){
+	public static float[][] intitateCorners(float[][] map, float max, float min){
 		int largestX = map.length - 1;
 		int largestY = map[0].length - 1;
 		
@@ -29,61 +29,91 @@ public class Fractal {
 		return map;
 	}
 	
-	public static float[][] diamondStep(float[][] map, int xMax, int xMin, int yMax, int yMin){
+	public static float[][] diamondSquare(float[][] map, int xHalfSide, int yHalfSide, float randomRange){
+
+		map = diamondStep(map, xHalfSide, yHalfSide, randomRange);
+		map = squareStep(map, xHalfSide, yHalfSide, randomRange);
 		
-		float upperLeft = map[xMin][yMax];
-		float upperRight = map[xMax][yMax];
-		float lowerLeft = map[xMin][yMin];
-		float lowerRight = map[xMax][yMin];	
-		float center = (upperLeft + upperRight + lowerLeft + lowerRight) / 4;
-		
-		// Assign center point of the square
-		map[(xMax-xMin)/2][(yMax-yMin)/2] = center;
-		
-		return map;
-	}
-	
-	public static float[][] squareStep(float[][] map, int xMax, int xMin, int yMax, int yMin){
-		
-		float upperLeft = map[xMin][yMax];
-		float upperRight = map[xMax][yMax];
-		float lowerLeft = map[xMin][yMin];
-		float lowerRight = map[xMax][yMin];
-		float center = (upperLeft + upperRight + lowerLeft + lowerRight) / 4;
-		int xHalfSide = (xMax - xMin)/2;
-		int yHalfSide = (yMax - yMin)/2;
-		
-		if(xMax == map.length-1 && yMax == map[0].length-1){
-			if(xMin == 0 && yMin == 0){
-				map[xMin][yHalfSide] = upperLeft + lowerLeft + center;
-				map[xHalfSide][yMin] = upperLeft + upperRight + center;
-			} else{
-				map[xMin][yHalfSide] = upperLeft + lowerLeft + center + map[xMin - xHalfSide][yHalfSide];
-				map[xHalfSide][yMin] = upperLeft + upperRight + center + map[xHalfSide][yMin - yHalfSide];
-			}
-			map[xHalfSide][yMax] = lowerLeft + lowerRight + center;
-			map[xMax][yHalfSide] = upperRight + lowerRight + center;
-		} else if(xMax == map.length-1 && yMin == 0){
-			map[xMin][yHalfSide] = upperLeft + lowerLeft + center + map[xMin - xHalfSide][yHalfSide];
-			map[xMax][yHalfSide] = upperRight + lowerRight + center;
-			map[xHalfSide][yMin] = lowerRight + lowerLeft + center + map[xHalfSide][yMin - yHalfSide];
-			map[xHalfSide][yMax] = upperRight + lowerRight + center;
-		} else if(xMin == 0 && yMax == map[0].length){
-			//map[][]
-		}
+		if(xHalfSide >= 2){
+			diamondSquare(map, xHalfSide/2, yHalfSide/2, randomRange/2);
+		} else
+			return map;
 		
 		return map;
 	}
 	
-	public static void print(float[][] map){
-		for(int i=0;i<map.length;i++){
-			for(int n=0;n<map.length-1;n++){
-				System.out.print(map[i][n] + "|");
+	public static float[][] diamondStep(float[][] map, int xHalfSide, int yHalfSide, float randomRange){
+		
+		float center = 0;
+		
+		for(int x=xHalfSide; x<map.length-1;x+=xHalfSide){
+			for(int y=yHalfSide;y<map[0].length-1;y+=yHalfSide){
+				if(map[x][y] == 0){
+					center = ((map[x + xHalfSide][y + yHalfSide] +
+							 map[x + xHalfSide][y - yHalfSide] + 
+							 map[x - xHalfSide][y + yHalfSide] + 
+							 map[x - xHalfSide][y - yHalfSide])/4.0f);// +
+							 //5.0f;//getRandom(randomRange*2, 0) - randomRange;
+					
+					if(center > 255.0f)
+						center = 250.0f;
+					
+					if(center < 0.0f)
+						center = 0.0f;
+					
+					map[x][y] = center;
+				}
 			}
-			System.out.println(map[i][map.length-1]);
 		}
+			
+		return map;
 	}
 	
-	
+	public static float[][] squareStep(float[][] map, int xHalfSide, int yHalfSide, float randomRange){
+		
+		float value = 0;
+		float elements = 0.0f;
+		
+		for(int x=0;x<map.length;x+=xHalfSide){
+			for(int y=0;y<map[0].length;y+=yHalfSide){
+				
+				if(map[x][y] == 0.0){
+					elements = 0;
+					value = 0;
+					if((x - xHalfSide) >= 0){
+						value += map[x - xHalfSide][y];
+						elements++;
+					}
+					if((x + xHalfSide) < map.length){
+						value += map[x + xHalfSide][y];
+						elements++;
+					}
+					if((y - yHalfSide) >= 0){
+						value += map[x][y - yHalfSide];
+						elements++;
+					}
+					if((y + yHalfSide) < map[0].length){
+						value += map[x][y + yHalfSide];
+						elements++;
+					}
+					
+					if(elements != 0.0f)					
+					value = (value/elements);// + 5.0f;//getRandom(randomRange, 0) - randomRange;
+					
+					if(value > 255.0f)
+						value = 255.0f;
+					
+					if(value < 0.0f)
+						value = 0.0f;
+						
+					map[x][y] = value;
+				}
+			}
+		}
+		
+	return map;
+		
+	}		
+
 }
 

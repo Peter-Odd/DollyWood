@@ -12,7 +12,7 @@ import utilities.Globals;
 public class Graphics2D extends JPanel{
 	public Graphics2D(){
 		JFrame frame = new JFrame("DollyWood");
-		frame.setSize(600, 400);
+		frame.setSize(1200, 1200);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(this);
 		this.repaint();
@@ -23,7 +23,7 @@ public class Graphics2D extends JPanel{
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		this.setBackground(Color.PINK);
-		int size = 75;
+		int size = 28;
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
 				g.setColor(new Color((int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y])));

@@ -19,14 +19,16 @@ public class Main {
 		
 		// Used to test Fractal.java
 		 
-		Globals.height = 5;
-		Globals.width = 5;
+		Globals.height = 33;
+		Globals.width = 33;
 		Globals.heightmap = new float[Globals.width][Globals.height];
+	
+		//Globals.heightmap = Fractal.intitateCorners(Globals.heightmap, 50.0f, 255.0f);
+		//Globals.heightmap = Fractal.diamondStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
+		//Globals.heightmap = Fractal.squareStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
+	
 		
-		Globals.heightmap = Fractal.intitateCorners(Globals.heightmap, 0.0f, 255.0f);
-		Globals.heightmap = Fractal.diamondStep(Globals.heightmap, 4, 0, 4, 0);
-		Globals.heightmap = Fractal.squareStep(Globals.heightmap, 4, 0, 4, 0);
-		Fractal.print(Globals.heightmap);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 255.0f, 0.0f);
 		new Graphics2D();
 	}
 
