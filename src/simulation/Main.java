@@ -14,7 +14,9 @@ public class Main {
 		//Globals.heightmap = new float[Globals.width][Globals.height];
 		//Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 0.0f, 255.0f);
 		
-		
+		//Globals.screenHeight = 400;
+		//Globals.screenWidth = 400;
+		//new Graphics3D();
 		
 		
 		// Used to test Fractal.java

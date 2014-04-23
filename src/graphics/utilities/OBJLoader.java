@@ -82,13 +82,13 @@ public class OBJLoader {
 		FloatBuffer vertex = BufferUtils.createFloatBuffer(model.getFaces().size() * 9); //3 verticies * 3 points(x,y,z)
 		FloatBuffer normal = BufferUtils.createFloatBuffer(model.getFaces().size() * 9);
 		for(Face f:model.getFaces()){
-			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.x))));
-			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.y))));
-			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.z))));
+			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.x-1))));
+			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.y-1))));
+			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.z-1))));
 			
-			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.x))));
-			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.y))));
-			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.z))));
+			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.x-1))));
+			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.y-1))));
+			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.z-1))));
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);
 		glBufferData(GL_ARRAY_BUFFER, vertex, GL_STATIC_DRAW);

@@ -58,7 +58,8 @@ public class Camera {
 		glPushAttrib(GL_TRANSFORM_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
+		GLU.gluPerspective(70.0f, 1.0f, 0.0f, 100.0f);
+//		GLU.gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
 		glPopAttrib();
 	}
 }
