@@ -1,3 +1,7 @@
+/**
+ * @exclude
+ */
+
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_TRANSFORM_BIT;

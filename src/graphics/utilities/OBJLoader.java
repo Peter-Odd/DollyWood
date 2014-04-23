@@ -1,14 +1,32 @@
-package graphics;
+package graphics.utilities;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ * Loads non-binary .OBJ-file
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
 public class OBJLoader {
+	
+	/**
+	 * Generates a model from <code> modelFile </code> 
+	 * @see Model
+	 * @param modelFile file that points to .OBJ-file.
+	 * @return model represented by the <code> modelFile </code>.
+	 * @throws FileNotFoundException
+	 */
 	public static Model loadModel(File modelFile) throws FileNotFoundException{
 		BufferedReader in = new BufferedReader(new FileReader(modelFile));
 		String line = null;
@@ -47,5 +65,35 @@ public class OBJLoader {
 			e.printStackTrace();
 		}
 		return model;
+	}
+
+	private static float[] asFloatArray(Vector3f v){
+		return new float[]{v.x, v.y, v.z};
+	}
+	/**
+	 * 
+	 * @param model
+	 * @return
+	 */
+	public static int[] createVBO(Model model) {
+		int vertexBufferHandle = glGenBuffers();
+		int normalBufferHandle = glGenBuffers();
+
+		FloatBuffer vertex = BufferUtils.createFloatBuffer(model.getFaces().size() * 9); //3 verticies * 3 points(x,y,z)
+		FloatBuffer normal = BufferUtils.createFloatBuffer(model.getFaces().size() * 9);
+		for(Face f:model.getFaces()){
+			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.x))));
+			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.y))));
+			vertex.put(asFloatArray(model.getVerticies().get((int)(f.verticies.z))));
+			
+			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.x))));
+			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.y))));
+			normal.put(asFloatArray(model.getNormals().get((int)(f.normals.z))));
+		}
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);
+		glBufferData(GL_ARRAY_BUFFER, vertex, GL_STATIC_DRAW);
+		glVertexPointer(3, GL_FLOAT, 0, 0L);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		return new int[]{vertexBufferHandle, normalBufferHandle};
 	}
 }

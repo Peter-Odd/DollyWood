@@ -1,3 +1,8 @@
+/**
+ * @exclude
+ */
+
+
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.glVertexPointer;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;

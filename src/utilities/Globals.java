@@ -8,6 +8,7 @@ public class Globals {
 	 * width and height = 2^n + 1
 	 */
 	public static int width, height;
+	public static int screenWidth, screenHeight;
 	public static float[][] heightmap; 
 	public static ArrayList<Race> races = new ArrayList<>();
 }
