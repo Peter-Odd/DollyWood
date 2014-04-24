@@ -9,8 +9,8 @@ import org.lwjgl.util.vector.Vector3f;
  * @version 1.0
  */
 public class Face {
-	Vector3f verticies; //Index for 3 verticies
-	Vector3f normals; //Index for 3 normals
+	private Vector3f verticies; //Index for 3 verticies
+	private Vector3f normals; //Index for 3 normals
 	
 	/**
 	 * 
@@ -18,7 +18,23 @@ public class Face {
 	 * @param normals Index in {@link Model#getNormals()} for three normals.
 	 */
 	public Face(Vector3f verticies, Vector3f normals){
+		this.setVerticies(verticies);
+		this.setNormals(normals);
+	}
+
+	public Vector3f getVerticies() {
+		return verticies;
+	}
+
+	public void setVerticies(Vector3f verticies) {
 		this.verticies = verticies;
+	}
+
+	public Vector3f getNormals() {
+		return normals;
+	}
+
+	public void setNormals(Vector3f normals) {
 		this.normals = normals;
 	}
 }

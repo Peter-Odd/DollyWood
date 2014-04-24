@@ -1,9 +1,18 @@
 package graphics.utilities;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.util.glu.GLU;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import static org.lwjgl.util.glu.GLU.*;
+
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+
 import utilities.Globals;
 
 /**
@@ -18,6 +27,9 @@ public class Camera {
 	private float fov;
 	private float aspectRatio;
 	private Vector2f clippingPlane;
+	private float pitch;
+	private float yaw;
+	private float roll;
 	
 
 	private Camera(Vector3f position, Vector3f rotation, float fov, float aspectRatio, Vector2f clippingPlane){
@@ -25,6 +37,11 @@ public class Camera {
 		this.rotation = rotation;
 		this.fov = fov;
 		this.aspectRatio = aspectRatio;
+		this.clippingPlane = clippingPlane;
+		this.pitch = rotation.x;
+		this.yaw = rotation.y;
+		this.roll = rotation.z;
+		
 	}
 	
 	/**
@@ -39,12 +56,51 @@ public class Camera {
 		this(rotation, rotation, fov, Globals.screenWidth / Globals.screenHeight, new Vector2f(zNear,zFar));
 	}
 	
+	public void processInput(float speedModifier){
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			relativeMovement(speedModifier, 0.0f, 0.0f);
+        }
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			relativeMovement(-speedModifier, 0.0f, 0.0f);
+        }
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			relativeMovement(speedModifier, 90.0f, 0.0f);
+        }
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			relativeMovement(-speedModifier, 90.0f, 0.0f);
+        }
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            position.z += speedModifier;
+        }
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+            position.z -= speedModifier;
+        }
+
+		roll += Mouse.getDX();
+		pitch -= Mouse.getDY();
+
+        if (Mouse.isButtonDown(0)) {
+            Mouse.setGrabbed(true);
+        } 
+        else if (Mouse.isButtonDown(1)) {
+            Mouse.setGrabbed(false);
+        }
+	}    
+	
+	private void relativeMovement(float speed, float angleXOffset, float angleYOffset){
+        position.y -= speed * (float) cos(toRadians(roll-angleXOffset));
+        position.x -= speed * (float) sin(toRadians(roll-angleXOffset));
+        //position.z += speed * (float) sin(toRadians(roll - angleYOffset));
+	}
+	
 	/**
 	 * Changes simulated camera position.
 	 */
 	public void applyTranslations(){
         glPushAttrib(GL_TRANSFORM_BIT);
-        glMatrixMode(GL_PROJECTION);
+        glRotatef(pitch, 1, 0, 0);
+        glRotatef(yaw, 0, 1, 0);
+        glRotatef(roll, 0, 0, 1);
         glTranslatef(position.x, position.y, position.z);
         glPopAttrib();
 	}
@@ -55,11 +111,11 @@ public class Camera {
 	 * <br> <b>Top right object is in perspective view.</b>
 	 */
 	public void applyPerspective(){
-		glPushAttrib(GL_TRANSFORM_BIT);
+		//glPushAttrib(GL_TRANSFORM_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(70.0f, 1.0f, 0.0f, 100.0f);
-//		GLU.gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
-		glPopAttrib();
+		//gluPerspective(170.0f, 1.0f, 0.1f, 1.0f);
+		gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
+		//glPopAttrib();
 	}
 }
