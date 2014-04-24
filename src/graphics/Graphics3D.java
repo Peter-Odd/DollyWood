@@ -39,12 +39,14 @@ public class Graphics3D {
 			long time = System.currentTimeMillis();
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	        glPushAttrib(GL_TRANSFORM_BIT);
+	        glPushMatrix();
 	        glLoadIdentity();
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
-
+	        lightPosition(new Vector3f(0.0f, 0.0f, 0.0f));//camera.getPosition());
 	        //glClearColor(0.5f, 0.9f, 0.9f, 1.0f);
 	        float size = 3.5f;
+	        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
 	        		glColor3f(0.0f, 1.0f, 0.0f);
@@ -57,22 +59,27 @@ public class Graphics3D {
 	        		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 	        	}
 	        }
+    		renderModel("tree", new Vector3f(10*size,10*size+((10%2)*(size/2)),Globals.heightmap[10][10]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 	        
 	        float sphereScale = 60.0f;
     		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 	        glPopAttrib();
 	        
 	        lastTime = System.currentTimeMillis() - time;
-	        
+	        glPopMatrix();
 			Display.update();
 		}
 	}
 
-	/*private void lightPosition(Vector3f position) {
+	private void lightPosition(Vector3f position) {
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		//glTranslatef(-position.x+20, -position.y+20, -position.z+50);
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
-        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
-	}*/
+        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0, 0, 0, 1.0f}).flip());
+		glPopMatrix();
+	}
 
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
 		if(models.containsKey(modelName)){
@@ -140,6 +147,7 @@ public class Graphics3D {
         glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.2f, 0.2f, 0.2f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
+        //glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{100.0f, 100.0f, 100.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.00001f, 0.00001f, 0.00001f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
