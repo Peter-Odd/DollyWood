@@ -7,6 +7,9 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 
+import graphics.utilities.AnimationEvent;
+import graphics.utilities.AnimationState;
+import graphics.utilities.AnimationEventController;
 import graphics.utilities.Camera;
 import graphics.utilities.Face;
 import graphics.utilities.Model;
@@ -35,16 +38,41 @@ public class Graphics3D {
 	private Camera camera;
 	private int modelDisplayList;
 	private HashMap<String, Integer> models = new HashMap<String, Integer>();
+	private float size = 3.5f;
 	
+	private AnimationEventController animationEventController = new AnimationEventController(100);
 	/**
 	 * This is all that is needed.<br />
-	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.
+	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.<br />
+	 * Press F to toggle fullscreen <br />
+	 * Press escape to exit the application.<br />
+	 * Note: Only use escape to exit!
 	 */
 	public Graphics3D(){
 		setupDisplay();
 		setupCamera();
 		setupStates();
 		setupLighting();
+		
+		AnimationEvent startupAnimation = new AnimationEvent();
+		startupAnimation.model = "DollyWood";
+		AnimationState startState = new AnimationState();
+		startState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-0.0f);
+		startState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
+		startState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
+		startState.speed = 0.0001f;
+		AnimationState endState = new AnimationState();
+		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
+		endState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
+		endState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
+		endState.speed = 0.0001f;
+		
+		startupAnimation.states.add(endState);
+		startupAnimation.states.add(startState);
+		startupAnimation.currentState = startState.clone();
+		animationEventController.events.add(startupAnimation);
+		//Thread animationControllerThread = new Thread(animationEventController);
+		//animationControllerThread.start();
 		
         glMatrixMode(GL_MODELVIEW);
         long lastTime = 0;
@@ -61,42 +89,61 @@ public class Graphics3D {
 					e.printStackTrace();
 				}
 	        }
+			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+				Display.destroy();
+				break;
+			}
 			long time = System.currentTimeMillis();
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	        glPushAttrib(GL_TRANSFORM_BIT);
 	        glPushMatrix();
 	        glLoadIdentity();
+	        
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
-	        float size = 3.5f;
-	        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f));
+	        //animationEventController.step();
+	        render();
 	        
-	        float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
-	        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
-	        
-	        for(int x = 0; x < Globals.width; x++){
-	        	for(int y = 0; y < Globals.height; y++){
-	        		glColor3f(0.0f, 1.0f, 0.0f);
-	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-	        		for(Race r:Globals.races){
-	        			Animal animal = r.getSpeciesAt(x, y);
-	        			if(animal != null)
-	        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-	        		}
-	        		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-	        	}
-	        }
-    		renderModel("tree", new Vector3f(10*size,10*size+((10%2)*(size/2)),Globals.heightmap[10][10]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-	        
-	        float sphereScale = 60.0f;
-    		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 	        glPopAttrib();
 	        
 	        lastTime = System.currentTimeMillis() - time;
 	        glPopMatrix();
 			Display.update();
 		}
+	}
+
+	private void render() {
+        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the camera at center point
+        
+        float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
+        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
+
+		for(AnimationEvent animEvent : animationEventController.events){
+			AnimationState currentState = animEvent.currentState;
+			if(currentState != null){
+				//renderModel(animEvent.model, currentState.position, currentState.rotation, currentState.scale);
+			}
+		}
+        for(int x = 0; x < Globals.width; x++){
+        	for(int y = 0; y < Globals.height; y++){
+        		glColor3f(0.0f, 1.0f, 0.0f);
+        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        		for(Race r:Globals.races){
+        			Animal animal = r.getSpeciesAt(x, y);
+        			if(animal != null)
+        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        		}
+        		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        	}
+        }
+		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+
+		renderModel("DollyWood", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        
+		float sphereScale = 60.0f;
+		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
+
 	}
 
 	private void updateLight(int light, Vector3f position, Vector3f color) {
@@ -168,8 +215,6 @@ public class Graphics3D {
 	}
 	
 	private void setupLighting() {
-        glEnable(GL_DEPTH_TEST);
-        glShadeModel(GL_SMOOTH);
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
         glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.2f, 0.2f, 0.2f, 1.0f}).flip());
@@ -189,8 +234,6 @@ public class Graphics3D {
 
 	private void setupStates() {
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LIGHT0);
-		glEnable(GL_LIGHTING);
 		glShadeModel(GL_SMOOTH); //should be set to smooth by default but just in case.
 	}
 
@@ -207,6 +250,7 @@ public class Graphics3D {
 					Display.setDisplayMode(modes[i]);
 			}
 			//Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
+			Display.setTitle("DOLLYWOOD");
 			Display.create();
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
