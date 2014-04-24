@@ -5,10 +5,6 @@ import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -27,7 +23,6 @@ import utilities.Globals;
  */
 public class Camera {
 	private Vector3f position;
-	private Vector3f rotation;
 	private float fov;
 	private float aspectRatio;
 	private Vector2f clippingPlane;
@@ -38,7 +33,6 @@ public class Camera {
 
 	private Camera(Vector3f position, Vector3f rotation, float fov, float aspectRatio, Vector2f clippingPlane){
 		this.position = position;
-		this.rotation = rotation;
 		this.fov = fov;
 		this.aspectRatio = aspectRatio;
 		this.clippingPlane = clippingPlane;
@@ -57,7 +51,7 @@ public class Camera {
 	 * <br><br><img src="http://www.incgamers.com/wp-content/uploads/2013/05/6a0120a85dcdae970b0120a86d9495970b.png" style="width:30%">
 	 */
 	public Camera(Vector3f position, Vector3f rotation, float fov, float zNear, float zFar){
-		this(rotation, rotation, fov, Globals.screenWidth / Globals.screenHeight, new Vector2f(zNear,zFar));
+		this(rotation, rotation, fov, ((float)Globals.screenWidth / (float)Globals.screenHeight), new Vector2f(zNear,zFar));
 	}
 	
 	public void processInput(float speedModifier){
@@ -125,5 +119,9 @@ public class Camera {
 
 	public Vector3f getPosition() {
 		return position;
+	}
+
+	public void setPosition(Vector3f position) {
+		this.position = position;
 	}
 }

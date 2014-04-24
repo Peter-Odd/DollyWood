@@ -14,6 +14,7 @@ import graphics.utilities.ModelPart;
 import graphics.utilities.OBJLoader;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
@@ -36,6 +37,18 @@ public class Graphics3D {
         glMatrixMode(GL_MODELVIEW);
         long lastTime = 0;
 		while(!Display.isCloseRequested()){
+			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+				try {
+					Display.setFullscreen(!Display.isFullscreen());
+					Thread.sleep(100);
+				} catch (LWJGLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
 			long time = System.currentTimeMillis();
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	        glPushAttrib(GL_TRANSFORM_BIT);
@@ -43,10 +56,13 @@ public class Graphics3D {
 	        glLoadIdentity();
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
-	        lightPosition(new Vector3f(0.0f, 0.0f, 0.0f));//camera.getPosition());
-	        //glClearColor(0.5f, 0.9f, 0.9f, 1.0f);
+
 	        float size = 3.5f;
-	        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
+	        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f));
+	        
+	        float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
+	        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
+	        
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
 	        		glColor3f(0.0f, 1.0f, 0.0f);
@@ -71,13 +87,14 @@ public class Graphics3D {
 		}
 	}
 
-	private void lightPosition(Vector3f position) {
+	private void updateLight(int light, Vector3f position, Vector3f color) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		//glTranslatef(-position.x+20, -position.y+20, -position.z+50);
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
-        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0, 0, 0, 1.0f}).flip());
+        glLight(light, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
+        glLight(light, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{color.x, color.y, color.z, 1.0f}).flip());
 		glPopMatrix();
 	}
 
@@ -125,7 +142,6 @@ public class Graphics3D {
 		                glNormal3f(n3.x, n3.y, n3.z);
 		                Vector3f v3 = m.getVerticies().get((int)(face.getVerticies().z - 1));
 		                glVertex3f(v3.x, v3.y, v3.z);
-		                //System.out.println("(" + v1.x + "," + v1.y + "," + v1.z + ")" + "(" + v2.x + "," + v2.y + "," + v2.z + ")" + "(" + v3.x + "," + v3.y + "," + v3.z + ")");
 		            }
 		            glEnd();
 				}
@@ -149,7 +165,7 @@ public class Graphics3D {
         glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
         //glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{100.0f, 100.0f, 100.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.00001f, 0.00001f, 0.00001f, 1.0f}).flip());
+        //glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_FRONT);
@@ -173,7 +189,12 @@ public class Graphics3D {
 
 	private void setupDisplay() {
 		try {
-			Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
+			DisplayMode[] modes = Display.getAvailableDisplayModes();
+			for(int i = 0; i < modes.length; i++){
+				if(modes[i].getWidth() == Globals.screenWidth && modes[i].getHeight() == Globals.screenHeight && modes[i].isFullscreenCapable())
+					Display.setDisplayMode(modes[i]);
+			}
+			//Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
 			Display.create();
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block

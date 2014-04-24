@@ -14,8 +14,8 @@ public class Main {
 		//Globals.heightmap = new float[Globals.width][Globals.height];
 		//Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 0.0f, 255.0f);
 		
-		Globals.screenHeight = 800;
-		Globals.screenWidth = 800;
+		Globals.screenHeight = 720;
+		Globals.screenWidth = 1280;
 		
 		
 		// Used to test Fractal.java
@@ -40,6 +40,10 @@ public class Main {
 		sheep.setSpeciesAt(2, 4, new Sheep());
 		sheep.setSpeciesAt(2, 5, new Sheep());
 		sheep.setSpeciesAt(4, 5, new Sheep());
+		
+		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
+		Thread dayNightThread = new Thread(Globals.dayNightCycle);
+		dayNightThread.start();
 		new Graphics3D();
 		//new Graphics2D();
 	}

@@ -1,6 +1,8 @@
 package utilities;
 
 import java.util.ArrayList;
+
+import simulation.DayNightCycle;
 import simulation.Race;
 
 public class Globals {
@@ -11,4 +13,6 @@ public class Globals {
 	public static int screenWidth, screenHeight;
 	public static float[][] heightmap; 
 	public static ArrayList<Race> races = new ArrayList<>();
+	
+	public static DayNightCycle dayNightCycle;
 }
