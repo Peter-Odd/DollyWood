@@ -48,16 +48,18 @@ public class Graphics3D {
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
 	        		glColor3f(0.0f, 1.0f, 0.0f);
-	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), null);
+	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 	        		for(Race r:Globals.races){
 	        			Animal animal = r.getSpeciesAt(x, y);
 	        			if(animal != null)
-	        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), null);
+	        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 	        		}
-	        		//renderModel("sheep", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
+	        		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 	        	}
 	        }
 	        
+	        float sphereScale = 60.0f;
+    		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 	        glPopAttrib();
 	        
 	        lastTime = System.currentTimeMillis() - time;
@@ -75,9 +77,11 @@ public class Graphics3D {
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
 		if(models.containsKey(modelName)){
 			glTranslatef(position.x, position.y, position.z);
+			glScalef(size.x, size.y, size.z);
 			glRotatef(rotation.x, 0.0f, 0.0f, 1.0f);
 			glCallList(models.get(modelName));
 			glRotatef(-rotation.x, 0.0f, 0.0f, 1.0f);
+			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
 			glTranslatef(-position.x, -position.y, -position.z);
 		}
 		else
@@ -134,8 +138,11 @@ public class Graphics3D {
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
         glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.2f, 0.2f, 0.2f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{10.0f, 10.0f, 10.0f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.7f, 0.65f, 0.6f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.00001f, 0.00001f, 0.00001f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_FRONT);
         glEnable(GL_LIGHTING);

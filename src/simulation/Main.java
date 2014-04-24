@@ -19,7 +19,7 @@ public class Main {
 		
 		
 		// Used to test Fractal.java
-		 
+
 		Globals.height = 33;
 		Globals.width = 33;
 		Globals.heightmap = new float[Globals.width][Globals.height];
