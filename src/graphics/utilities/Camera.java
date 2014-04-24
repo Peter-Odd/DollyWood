@@ -18,7 +18,7 @@ import utilities.Globals;
 /**
  * Imaginary camera to navigate 3D world.
  * @author OSM Group 5 - DollyWood project
- * @version 1.0
+ * @version 1.1
  *
  */
 public class Camera {
@@ -54,6 +54,19 @@ public class Camera {
 		this(rotation, rotation, fov, ((float)Globals.screenWidth / (float)Globals.screenHeight), new Vector2f(zNear,zFar));
 	}
 	
+	/**
+	 * Takes input from keyboard and mouse and changes the cameras position and rotation acordingly.<br />
+	 * W = forward<br />
+	 * S = backward<br />
+	 * A = left<br />
+	 * D = right<br />
+	 * All the above movements are in x/y coordinates and depend on where the camera i looking<br />
+	 * Left_Shift = down<br />
+	 * Space = up<br />
+	 * note that up/down only changes z position, and is unaffected by camera rotation<br />
+	 * lastly the rotation of the camera is set by mouse DX/DY movement
+	 * @param speedModifier sets how much the cameras position should change
+	 */
 	public void processInput(float speedModifier){
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			relativeMovement(speedModifier, 0.0f, 0.0f);
@@ -92,7 +105,7 @@ public class Camera {
 	}
 	
 	/**
-	 * Changes simulated camera position.
+	 * Changes simulated camera position and rotation.
 	 */
 	public void applyTranslations(){
         glPushAttrib(GL_TRANSFORM_BIT);
@@ -117,10 +130,17 @@ public class Camera {
 		//glPopAttrib();
 	}
 
+	/**
+	 * @return The current position vector of the camera
+	 */
 	public Vector3f getPosition() {
 		return position;
 	}
 
+	/**
+	 * Sets the position of the camera. Note that the camera won't move unless you call applyTranslations() afterwards
+	 * @param position The new position of the camera
+	 */
 	public void setPosition(Vector3f position) {
 		this.position = position;
 	}

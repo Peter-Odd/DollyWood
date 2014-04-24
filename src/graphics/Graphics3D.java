@@ -24,10 +24,22 @@ import simulation.Animal;
 import simulation.Race;
 import utilities.Globals;
 
+/**
+ * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
+ * Creates a window in which the world will be displayed in breathtaking 3D<br />
+ * Uses LWJGL to create all graphics.
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
 public class Graphics3D {
 	private Camera camera;
 	private int modelDisplayList;
 	private HashMap<String, Integer> models = new HashMap<String, Integer>();
+	
+	/**
+	 * This is all that is needed.<br />
+	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.
+	 */
 	public Graphics3D(){
 		setupDisplay();
 		setupCamera();

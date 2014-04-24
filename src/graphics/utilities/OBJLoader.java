@@ -5,18 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Loads non-binary .OBJ-file
  * @author OSM Group 5 - DollyWood project
- * @version 1.0
+ * @version 1.1
  */
 public class OBJLoader {
 	
@@ -71,35 +66,5 @@ public class OBJLoader {
 			e.printStackTrace();
 		}
 		return model;
-	}
-
-	private static float[] asFloatArray(Vector3f v){
-		return new float[]{v.x, v.y, v.z};
-	}
-	/**
-	 * 
-	 * @param model
-	 * @return
-	 */
-	public static int[] createVBO(Model model) {
-		int vertexBufferHandle = glGenBuffers();
-		int normalBufferHandle = glGenBuffers();
-
-		FloatBuffer vertex = BufferUtils.createFloatBuffer(model.getFaces().size() * 9); //3 verticies * 3 points(x,y,z)
-		FloatBuffer normal = BufferUtils.createFloatBuffer(model.getFaces().size() * 9);
-		for(Face f:model.getFaces()){
-			vertex.put(asFloatArray(model.getVerticies().get((int)(f.getVerticies().x-1))));
-			vertex.put(asFloatArray(model.getVerticies().get((int)(f.getVerticies().y-1))));
-			vertex.put(asFloatArray(model.getVerticies().get((int)(f.getVerticies().z-1))));
-			
-			normal.put(asFloatArray(model.getNormals().get((int)(f.getNormals().x-1))));
-			normal.put(asFloatArray(model.getNormals().get((int)(f.getNormals().y-1))));
-			normal.put(asFloatArray(model.getNormals().get((int)(f.getNormals().z-1))));
-		}
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);
-		glBufferData(GL_ARRAY_BUFFER, vertex, GL_STATIC_DRAW);
-		glVertexPointer(3, GL_FLOAT, 0, 0L);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		return new int[]{vertexBufferHandle, normalBufferHandle};
 	}
 }

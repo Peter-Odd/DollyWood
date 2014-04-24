@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
  * 3D objects are made up by faces. Only triangular faces are represented. 
  * @see Model
  * @author OSM Group 5 - DollyWood project
- * @version 1.0
+ * @version 1.1
  */
 public class Face {
 	private Vector3f verticies; //Index for 3 verticies
@@ -22,18 +22,34 @@ public class Face {
 		this.setNormals(normals);
 	}
 
+	/**
+	 * Getter for verticies
+	 * @return List of verticies
+	 */
 	public Vector3f getVerticies() {
 		return verticies;
 	}
 
+	/**
+	 * Setter for verticies
+	 * @param verticies New list of verticies
+	 */
 	public void setVerticies(Vector3f verticies) {
 		this.verticies = verticies;
 	}
 
+	/**
+	 * Getter for normals
+	 * @return List of normals
+	 */
 	public Vector3f getNormals() {
 		return normals;
 	}
 
+	/**
+	 * Setter for normals
+	 * @param verticies New list of normals
+	 */
 	public void setNormals(Vector3f normals) {
 		this.normals = normals;
 	}
