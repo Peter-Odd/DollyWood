@@ -46,6 +46,7 @@ public class Graphics3D {
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
 	        		glColor3f(0.0f, 1.0f, 0.0f);
+	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
 	        		renderModel("sheep", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
 	        	}
 	        }
