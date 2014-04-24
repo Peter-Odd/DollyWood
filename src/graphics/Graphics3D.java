@@ -19,6 +19,8 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
+import simulation.Animal;
+import simulation.Race;
 import utilities.Globals;
 
 public class Graphics3D {
@@ -46,8 +48,13 @@ public class Graphics3D {
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
 	        		glColor3f(0.0f, 1.0f, 0.0f);
-	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
-	        		renderModel("sheep", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
+	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), null);
+	        		for(Race r:Globals.races){
+	        			Animal animal = r.getSpeciesAt(x, y);
+	        			if(animal != null)
+	        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), null);
+	        		}
+	        		//renderModel("sheep", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
 	        	}
 	        }
 	        
@@ -59,16 +66,18 @@ public class Graphics3D {
 		}
 	}
 
-	private void lightPosition(Vector3f position) {
+	/*private void lightPosition(Vector3f position) {
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
         glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
-	}
+	}*/
 
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
 		if(models.containsKey(modelName)){
 			glTranslatef(position.x, position.y, position.z);
+			glRotatef(rotation.x, 0.0f, 0.0f, 1.0f);
 			glCallList(models.get(modelName));
+			glRotatef(-rotation.x, 0.0f, 0.0f, 1.0f);
 			glTranslatef(-position.x, -position.y, -position.z);
 		}
 		else

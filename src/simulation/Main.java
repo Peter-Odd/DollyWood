@@ -30,6 +30,16 @@ public class Main {
 	
 		
 		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 255.0f, 0.0f);
+		
+		Race sheep = new Race("Sheep");
+		Globals.races.add(sheep);
+		sheep.setSpeciesAt(3, 4, new Sheep());
+		sheep.setSpeciesAt(4, 4, new Sheep());
+		sheep.setSpeciesAt(3, 3, new Sheep());
+		sheep.setSpeciesAt(3, 5, new Sheep());
+		sheep.setSpeciesAt(2, 4, new Sheep());
+		sheep.setSpeciesAt(2, 5, new Sheep());
+		sheep.setSpeciesAt(4, 5, new Sheep());
 		new Graphics3D();
 		//new Graphics2D();
 	}
