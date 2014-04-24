@@ -40,10 +40,10 @@ public class Graphics3D {
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
-	        float size = 4.0f;
+	        float size = 3.5f;
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
-	        		renderModel("tile", new Vector3f(x*size,y*size,Globals.heightmap[x][y]/1.0f-200.0f), null, null);
+	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
 	        	}
 	        }
 	        
@@ -76,7 +76,7 @@ public class Graphics3D {
 			try {
 				Model m;
 				m = OBJLoader.loadModel(new File(modelName));
-	            glColor3f(0.4f, 0.27f, 0.17f);
+	            glColor3f(0.5f, 0.5f, 0.5f);
 	            glBegin(GL_TRIANGLES);
 	            for (Face face : m.getFaces()) {
 	                Vector3f n1 = m.getNormals().get((int)(face.getNormals().x - 1));
