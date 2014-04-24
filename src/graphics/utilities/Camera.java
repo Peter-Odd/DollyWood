@@ -5,6 +5,10 @@ import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -117,5 +121,9 @@ public class Camera {
 		//gluPerspective(170.0f, 1.0f, 0.1f, 1.0f);
 		gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
 		//glPopAttrib();
+	}
+
+	public Vector3f getPosition() {
+		return position;
 	}
 }

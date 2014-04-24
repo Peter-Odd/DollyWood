@@ -38,14 +38,14 @@ public class OBJLoader {
 					float x = Float.parseFloat(components[1]);
 					float y = Float.parseFloat(components[2]);
 					float z = Float.parseFloat(components[3]);
-					model.getVerticies().add(new Vector3f(x,y,z));
+					model.addVertex(new Vector3f(x,y,z));
 				}
 				else if(line.startsWith("vn ")){
 					String[] components = line.split(" ");
 					float x = Float.parseFloat(components[1]);
 					float y = Float.parseFloat(components[2]);
 					float z = Float.parseFloat(components[3]);
-					model.getNormals().add(new Vector3f(x,y,z));
+					model.addNormal(new Vector3f(x,y,z));
 				}
 				else if(line.startsWith("f ")) {
 					String[] components = line.split(" ");
@@ -56,7 +56,13 @@ public class OBJLoader {
 					Vector3f verticies = new Vector3f(Float.parseFloat(faceString[0][0]), Float.parseFloat(faceString[1][0]), Float.parseFloat(faceString[2][0]));
 					Vector3f normals = new Vector3f(Float.parseFloat(faceString[0][2]), Float.parseFloat(faceString[1][2]), Float.parseFloat(faceString[2][2]));
 					Face face = new Face(verticies, normals);
-					model.getFaces().add(face);
+					model.addFace(face);
+				}
+				else if(line.startsWith("o ")) {
+					//o 4_250_250_250
+					String[] colorComponents = line.split(" ")[1].split("_");
+					Vector3f color = new Vector3f(Float.parseFloat(colorComponents[1])/255.0f, Float.parseFloat(colorComponents[2])/255.0f, Float.parseFloat(colorComponents[3])/255.0f);
+					model.newModelPart(color);
 				}
 			}
 			in.close();

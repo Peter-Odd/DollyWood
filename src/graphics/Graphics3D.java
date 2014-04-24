@@ -10,6 +10,7 @@ import java.util.HashMap;
 import graphics.utilities.Camera;
 import graphics.utilities.Face;
 import graphics.utilities.Model;
+import graphics.utilities.ModelPart;
 import graphics.utilities.OBJLoader;
 
 import org.lwjgl.LWJGLException;
@@ -40,10 +41,12 @@ public class Graphics3D {
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
+	        //glClearColor(0.5f, 0.9f, 0.9f, 1.0f);
 	        float size = 3.5f;
 	        for(int x = 0; x < Globals.width; x++){
 	        	for(int y = 0; y < Globals.height; y++){
-	        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
+	        		glColor3f(0.0f, 1.0f, 0.0f);
+	        		renderModel("sheep", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), null, null);
 	        	}
 	        }
 	        
@@ -53,6 +56,12 @@ public class Graphics3D {
 	        
 			Display.update();
 		}
+	}
+
+	private void lightPosition(Vector3f position) {
+        ByteBuffer temp = ByteBuffer.allocateDirect(16);
+        temp.order(ByteOrder.nativeOrder());
+        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
 	}
 
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
@@ -76,27 +85,29 @@ public class Graphics3D {
 			try {
 				Model m;
 				m = OBJLoader.loadModel(new File(modelName));
-	            glColor3f(0.5f, 0.5f, 0.5f);
-	            glBegin(GL_TRIANGLES);
-	            for (Face face : m.getFaces()) {
-	                Vector3f n1 = m.getNormals().get((int)(face.getNormals().x - 1));
-	                glNormal3f(n1.x, n1.y, n1.z);
-	                Vector3f v1 = m.getVerticies().get((int)(face.getVerticies().x - 1));
-	                glVertex3f(v1.x, v1.y, v1.z);
-	                
-	                Vector3f n2 = m.getNormals().get((int)(face.getNormals().y - 1));
-	                glNormal3f(n2.x, n2.y, n2.z);
-	                Vector3f v2 = m.getVerticies().get((int)(face.getVerticies().y - 1));
-	                glVertex3f(v2.x, v2.y, v2.z);
-	                
-	                Vector3f n3 = m.getNormals().get((int)(face.getNormals().z - 1));
-	                glNormal3f(n3.x, n3.y, n3.z);
-	                Vector3f v3 = m.getVerticies().get((int)(face.getVerticies().z - 1));
-	                glVertex3f(v3.x, v3.y, v3.z);
-	                //System.out.println("(" + v1.x + "," + v1.y + "," + v1.z + ")" + "(" + v2.x + "," + v2.y + "," + v2.z + ")" + "(" + v3.x + "," + v3.y + "," + v3.z + ")");
-	            }
-	            glEnd();
-				//renderModel(m);
+				for(ModelPart modelPart : m.getModelParts()){
+					Vector3f color = modelPart.getColor();
+					glColor3f(color.x, color.y, color.z);
+					glBegin(GL_TRIANGLES);
+		            for (Face face : modelPart.getFaces()) {
+		                Vector3f n1 = m.getNormals().get((int)(face.getNormals().x - 1));
+		                glNormal3f(n1.x, n1.y, n1.z);
+		                Vector3f v1 = m.getVerticies().get((int)(face.getVerticies().x - 1));
+		                glVertex3f(v1.x, v1.y, v1.z);
+		                
+		                Vector3f n2 = m.getNormals().get((int)(face.getNormals().y - 1));
+		                glNormal3f(n2.x, n2.y, n2.z);
+		                Vector3f v2 = m.getVerticies().get((int)(face.getVerticies().y - 1));
+		                glVertex3f(v2.x, v2.y, v2.z);
+		                
+		                Vector3f n3 = m.getNormals().get((int)(face.getNormals().z - 1));
+		                glNormal3f(n3.x, n3.y, n3.z);
+		                Vector3f v3 = m.getVerticies().get((int)(face.getVerticies().z - 1));
+		                glVertex3f(v3.x, v3.y, v3.z);
+		                //System.out.println("(" + v1.x + "," + v1.y + "," + v1.z + ")" + "(" + v2.x + "," + v2.y + "," + v2.z + ")" + "(" + v3.x + "," + v3.y + "," + v3.z + ")");
+		            }
+		            glEnd();
+				}
 			} 
 			catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -106,18 +117,19 @@ public class Graphics3D {
         glEndList();
 		return modelDisplayList;
 	}
-
+	
 	private void setupLighting() {
         glEnable(GL_DEPTH_TEST);
         glShadeModel(GL_SMOOTH);
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
-        glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.5f, 0.5f, 0.5f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+        glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.2f, 0.2f, 0.2f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{10.0f, 10.0f, 10.0f, 1.0f}).flip());
+        glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.7f, 0.65f, 0.6f, 1.0f}).flip());
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_FRONT);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
         glEnable(GL_COLOR_MATERIAL);
         glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	}
