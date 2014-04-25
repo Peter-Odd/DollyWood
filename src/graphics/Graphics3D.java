@@ -60,19 +60,25 @@ public class Graphics3D {
 		startState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
 		startState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 		startState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		startState.speed = 0.001f;
+		startState.speed = 0.005f;
+		AnimationState standbyState = new AnimationState();
+		standbyState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
+		standbyState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
+		standbyState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
+		standbyState.speed = 0.001f;
 		AnimationState middleState = new AnimationState();
-		middleState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-130.0f);
+		middleState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+70.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
 		middleState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 		middleState.scale = new Vector3f(0.7f, 0.7f, 0.7f);
 		middleState.speed = 0.001f;
 		AnimationState endState = new AnimationState();
-		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-110.0f);
+		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+90.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
 		endState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 		endState.scale = new Vector3f(0.0f, 0.0f, 0.0f);
 		endState.speed = 0.001f;
-		
+
 		startupAnimation.states.add(startState);
+		startupAnimation.states.add(standbyState);
 		startupAnimation.states.add(middleState);
 		startupAnimation.states.add(endState);
 		startupAnimation.currentState = startState.clone();
