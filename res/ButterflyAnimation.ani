@@ -1,0 +1,22 @@
+#DownPosition
+o ButterflyWing
+p 0.0 0.0 0.0
+r 0.0 70.0 0.0
+sc 1.0 1.0 1.0
+s 0.05
+
+#UpPosition
+o ButterflyWing
+p 0.0 0.0 0.0
+r 0.0 -70.0 0.0
+sc 1.0 1.0 1.0
+s 0.05
+
+#DownPosition
+o ButterflyWing
+p 0.0 0.0 0.0
+r 0.0 70.0 0.0
+sc 1.0 1.0 1.0
+s 0.05
+
+lt LOOP

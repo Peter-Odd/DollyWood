@@ -1,0 +1,27 @@
+#startup
+o DollyWood
+p 0.0 0.0 0.0
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.005
+
+#standby
+o DollyWood
+p 0.0 0.0 0.0
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.001
+
+#slowly move back and scale
+o DollyWood
+p 0.0 50.0 0.0
+r 0.0 0.0 0.0
+sc 0.7 0.7 0.7
+s 0.001
+
+#scale to nothing
+o DollyWood
+p 0.0 70.0 0.0
+r 0.0 0.0 0.0
+sc 0.01 0.01 0.01
+s 0.001

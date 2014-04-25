@@ -1,6 +1,7 @@
 package graphics.utilities;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -40,13 +41,16 @@ public class AnimationEventController implements Runnable{
 	
 	/**
 	 * Calculates the current state of the animation based on 2 states and a progress float, for each of the events.
-	 * if one event completes, it stops prematurely.
 	 */
 	public synchronized void step(){
-		for(AnimationEvent e : events){
+		Iterator<AnimationEvent> it = events.iterator();
+		while(it.hasNext()){
+			AnimationEvent e = it.next();
 			if((int)e.currentProgress+1 == e.states.size()){
-				events.remove(e);
-				break;
+				if(e.loopType == 0)
+					it.remove();
+				else
+					e.reset();
 			}
 			else{
 				e.currentState.position = getNewProgressVector(e.states.get((int)e.currentProgress).position, e.states.get((int)e.currentProgress+1).position, e.currentProgress-(int)e.currentProgress);

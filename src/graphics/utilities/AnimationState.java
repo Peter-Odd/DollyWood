@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
  * @version 1.0
  */
 public class AnimationState{
+	public String model;
 	public Vector3f position;
 	public Vector3f rotation;
 	public Vector3f scale;
@@ -19,6 +20,7 @@ public class AnimationState{
 	 */
 	public AnimationState clone(){
 		AnimationState clone = new AnimationState();
+		clone.model = String.valueOf(model);
 		clone.position = new Vector3f(position.x, position.y, position.z);
 		clone.rotation = new Vector3f(rotation.x, rotation.y, rotation.z);
 		clone.scale = new Vector3f(scale.x, scale.y, scale.z);

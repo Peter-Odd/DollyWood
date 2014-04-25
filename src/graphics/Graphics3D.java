@@ -54,35 +54,17 @@ public class Graphics3D {
 		setupStates();
 		setupLighting();
 		
-		AnimationEvent startupAnimation = new AnimationEvent();
-		startupAnimation.model = "DollyWood";
-		AnimationState startState = new AnimationState();
-		startState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
-		startState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		startState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		startState.speed = 0.005f;
-		AnimationState standbyState = new AnimationState();
-		standbyState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
-		standbyState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		standbyState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		standbyState.speed = 0.001f;
-		AnimationState middleState = new AnimationState();
-		middleState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+70.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
-		middleState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		middleState.scale = new Vector3f(0.7f, 0.7f, 0.7f);
-		middleState.speed = 0.001f;
-		AnimationState endState = new AnimationState();
-		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+90.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
-		endState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		endState.scale = new Vector3f(0.0f, 0.0f, 0.0f);
-		endState.speed = 0.001f;
+		try {
+			animationEventController.events.add(AnimationEvent.loadEvent("res/startupAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f)));
+			
 
-		startupAnimation.states.add(startState);
-		startupAnimation.states.add(standbyState);
-		startupAnimation.states.add(middleState);
-		startupAnimation.states.add(endState);
-		startupAnimation.currentState = startState.clone();
-		animationEventController.events.add(startupAnimation);
+			animationEventController.events.add(AnimationEvent.loadEvent("res/ButterflyAnimation.ani", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f)));
+			animationEventController.events.add(AnimationEvent.loadEvent("res/ButterflyAnimation.ani", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(-2.0f, 0.0f, 0.0f)));
+			
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		//Thread animationControllerThread = new Thread(animationEventController);
 		//animationControllerThread.start();
 
@@ -151,7 +133,11 @@ public class Graphics3D {
         	}
         }
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+		//renderModel("ButterflyWing", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 45.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+		renderModel("ButterflyBody", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+		//renderModel("ButterflyWing", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 45.0f, 0.0f), new Vector3f(-1.0f, 1.0f, 1.0f));
 
+		//Render SkyDome
 		float sphereScale = 60.0f;
 		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 
@@ -173,7 +159,11 @@ public class Graphics3D {
 			glTranslatef(position.x, position.y, position.z);
 			glScalef(size.x, size.y, size.z);
 			glRotatef(rotation.x, 0.0f, 0.0f, 1.0f);
+			glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
+			glRotatef(rotation.z, 1.0f, 0.0f, 0.0f);
 			glCallList(models.get(modelName));
+			glRotatef(-rotation.z, 1.0f, 0.0f, 0.0f);
+			glRotatef(-rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(-rotation.x, 0.0f, 0.0f, 1.0f);
 			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
 			glTranslatef(-position.x, -position.y, -position.z);
