@@ -14,8 +14,10 @@ public class AnimationEventController{
 	
 	public void step(){
 		for(AnimationEvent e : events){
-			if((int)e.currentProgress+1 == e.states.size())
+			if((int)e.currentProgress+1 == e.states.size()){
 				events.remove(e);
+				break;
+			}
 			else{
 				e.currentState.position.x = e.states.get((int)e.currentProgress).position.x + (e.states.get((int)e.currentProgress).position.x-e.states.get((int)e.currentProgress+1).position.x)*(e.currentProgress-(int)e.currentProgress);
 				e.currentState.position.y = e.states.get((int)e.currentProgress).position.y + (e.states.get((int)e.currentProgress).position.y-e.states.get((int)e.currentProgress+1).position.y)*(e.currentProgress-(int)e.currentProgress);

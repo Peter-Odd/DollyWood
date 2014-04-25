@@ -57,18 +57,18 @@ public class Graphics3D {
 		AnimationEvent startupAnimation = new AnimationEvent();
 		startupAnimation.model = "DollyWood";
 		AnimationState startState = new AnimationState();
-		startState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-0.0f);
+		startState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
 		startState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 		startState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		startState.speed = 0.0001f;
+		startState.speed = 0.001f;
 		AnimationState endState = new AnimationState();
-		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
+		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-160.0f);
 		endState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 		endState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		endState.speed = 0.0001f;
+		endState.speed = 0.001f;
 		
-		startupAnimation.states.add(endState);
 		startupAnimation.states.add(startState);
+		startupAnimation.states.add(endState);
 		startupAnimation.currentState = startState.clone();
 		animationEventController.events.add(startupAnimation);
 		//Thread animationControllerThread = new Thread(animationEventController);
@@ -102,7 +102,7 @@ public class Graphics3D {
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
-	        //animationEventController.step();
+	        animationEventController.step();
 	        render();
 	        
 	        glPopAttrib();
@@ -122,7 +122,7 @@ public class Graphics3D {
 		for(AnimationEvent animEvent : animationEventController.events){
 			AnimationState currentState = animEvent.currentState;
 			if(currentState != null){
-				//renderModel(animEvent.model, currentState.position, currentState.rotation, currentState.scale);
+				renderModel(animEvent.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
         for(int x = 0; x < Globals.width; x++){
@@ -139,7 +139,7 @@ public class Graphics3D {
         }
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 
-		renderModel("DollyWood", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+		//renderModel("DollyWood", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
         
 		float sphereScale = 60.0f;
 		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
