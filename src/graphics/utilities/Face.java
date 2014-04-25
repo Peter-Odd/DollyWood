@@ -48,7 +48,7 @@ public class Face {
 
 	/**
 	 * Setter for normals
-	 * @param verticies New list of normals
+	 * @param normals New list of normals
 	 */
 	public void setNormals(Vector3f normals) {
 		this.normals = normals;
