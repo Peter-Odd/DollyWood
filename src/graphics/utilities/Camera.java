@@ -26,7 +26,7 @@ public class Camera {
 	private float fov;
 	private float aspectRatio;
 	private Vector2f clippingPlane;
-	private float pitch;
+	public float pitch;
 	private float yaw;
 	private float roll;
 	
@@ -87,8 +87,14 @@ public class Camera {
             position.z -= speedModifier;
         }
 
-		roll += Mouse.getDX();
-		pitch -= Mouse.getDY();
+		int dX = Mouse.getDX();
+		int dY = Mouse.getDY();
+		if(Math.abs(dX) > 10)
+			dX = 0;
+		if(Math.abs(dY) > 10)
+			dY = 0;
+		roll += dX;
+		pitch -= dY;
 
         if (Mouse.isButtonDown(0)) {
             Mouse.setGrabbed(true);

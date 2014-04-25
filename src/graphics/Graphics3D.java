@@ -61,19 +61,26 @@ public class Graphics3D {
 		startState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 		startState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
 		startState.speed = 0.001f;
+		AnimationState middleState = new AnimationState();
+		middleState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-130.0f);
+		middleState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
+		middleState.scale = new Vector3f(0.7f, 0.7f, 0.7f);
+		middleState.speed = 0.001f;
 		AnimationState endState = new AnimationState();
-		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-160.0f);
+		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-110.0f);
 		endState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		endState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
+		endState.scale = new Vector3f(0.0f, 0.0f, 0.0f);
 		endState.speed = 0.001f;
 		
 		startupAnimation.states.add(startState);
+		startupAnimation.states.add(middleState);
 		startupAnimation.states.add(endState);
 		startupAnimation.currentState = startState.clone();
 		animationEventController.events.add(startupAnimation);
 		//Thread animationControllerThread = new Thread(animationEventController);
 		//animationControllerThread.start();
-		
+
+        camera.pitch = -90.0f;
         glMatrixMode(GL_MODELVIEW);
         long lastTime = 0;
 		while(!Display.isCloseRequested()){
@@ -98,7 +105,6 @@ public class Graphics3D {
 	        glPushAttrib(GL_TRANSFORM_BIT);
 	        glPushMatrix();
 	        glLoadIdentity();
-	        
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
@@ -114,17 +120,18 @@ public class Graphics3D {
 	}
 
 	private void render() {
-        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the camera at center point
+        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
         updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
 
-		for(AnimationEvent animEvent : animationEventController.events){
+		for(AnimationEvent animEvent : animationEventController.getEvents()){
 			AnimationState currentState = animEvent.currentState;
 			if(currentState != null){
 				renderModel(animEvent.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
+		
         for(int x = 0; x < Globals.width; x++){
         	for(int y = 0; y < Globals.height; y++){
         		glColor3f(0.0f, 1.0f, 0.0f);
@@ -238,7 +245,7 @@ public class Graphics3D {
 	}
 
 	private void setupCamera() {
-		camera = new Camera(new Vector3f(0.0f, 0.0f, 10.0f), new Vector3f(0.0f, 0.0f, 0.0f), 70.0f, 0.01f, 1000.0f);
+		camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 70.0f, 0.01f, 1000.0f);
 		camera.applyPerspective();
 	}
 
