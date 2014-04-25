@@ -24,10 +24,10 @@ Sheep pasture simulation using actors as main concurrency model. Implemented in 
 ==== GROUP MEMBERS ==== 
 
 831130-2957 samuel.svensater.7105@student.uu.se
-900409-4471 viktor.andersson.7837@student.uu.se
-910915-5128 elin.parsjo.5585@student.uu.se
-920425-1970 jimmy.helmersson.6800@student.uu.se
-931007-5198 marcus.munger.6193@student.uu.se
+<br>900409-4471 viktor.andersson.7837@student.uu.se
+<br>910915-5128 elin.parsjo.5585@student.uu.se
+<br>920425-1970 jimmy.helmersson.6800@student.uu.se
+<br>931007-5198 marcus.munger.6193@student.uu.se
 
 
 ==== MAY THE SOURCE BE WITH YOU ==== 
@@ -52,10 +52,10 @@ This software was developed and tested using Java 1.7.
 Set up Eclipse workspace to point at newly cloned folder from github repository above
 and then use Eclipse to compile and run.
 
-Compile and run ==> Eclipse menu: Run -> Run.
-Clean project   ==> Project -> Clean.
-JDoc		==> Project -> Generate Javadoc
-Tests		==> TBI
+<br>Compile and run ==> Eclipse menu: Run -> Run.
+<br>Clean project   ==> Project -> Clean.
+<br>JDoc		     ==> Project -> Generate Javadoc
+<br>Tests		     ==> TBI
 
 
 ==== TO COMPILE ==== 
@@ -68,11 +68,11 @@ See note above.
 TBI.
 
 
-==== MORE INFORMATION (optional) ==== 
+==== MORE INFORMATION ==== 
 
  * How to get more information about your project?
-Send an email to main contact person below.
+<br>Send an email to main contact person below.
  * Who is the main contact person?
-Marcus Münger, marcus.munger.6193@student.uu.se
+<br>Marcus Münger, marcus.munger.6193@student.uu.se
  * Do you have a project home page?
-TBI
+<br>TBI
