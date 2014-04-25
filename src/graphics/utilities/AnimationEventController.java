@@ -4,21 +4,44 @@ import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public class AnimationEventController{
+/**
+ * AnimationEventController is a holder and executor of events.
+ * It can hold multiple animations(or events) each with multiple keyframes(or states).
+ * The controller can be run on it's own thread or step by step using step function.
+ * <br />
+ * It calculates the current state of the animation based on 2 states and a progress float.
+ * @see AnimationEvent
+ * @see AnimationState
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
+public class AnimationEventController implements Runnable{
 	
 	private int tickLength;
 	public ArrayList<AnimationEvent> events = new ArrayList<>();
 	
+	/**
+	 * Sets for how long the thread should sleep between working. Only relevant if used with a thread.
+	 * @param tickLength Time in ms
+	 */
 	public AnimationEventController(int tickLength)
 	{
 		this.tickLength = tickLength;
 	}
 	
 	@SuppressWarnings("unchecked")
+	/**
+	 * returns all animationEvents
+	 * @return
+	 */
 	public synchronized ArrayList<AnimationEvent> getEvents(){
 		return (ArrayList<AnimationEvent>) events.clone();
 	}
 	
+	/**
+	 * Calculates the current state of the animation based on 2 states and a progress float, for each of the events.
+	 * if one event completes, it stops prematurely.
+	 */
 	public synchronized void step(){
 		for(AnimationEvent e : events){
 			if((int)e.currentProgress+1 == e.states.size()){
@@ -41,6 +64,10 @@ public class AnimationEventController{
 		return new Vector3f(x,y,z);
 	}
 	
+	/**
+	 * Starter for thread.
+	 * it stops when there are no more events to animate.
+	 */
 	public void run() {
 		while(events.size() > 0){
 			step();

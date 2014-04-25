@@ -2,6 +2,11 @@ package graphics.utilities;
 
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * Represents a keyframe.
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
 public class AnimationState{
 	public Vector3f position;
 	public Vector3f rotation;
@@ -9,6 +14,9 @@ public class AnimationState{
 	public int stateType;
 	public float speed;
 	
+	/**
+	 * Returns a copy of the state
+	 */
 	public AnimationState clone(){
 		AnimationState clone = new AnimationState();
 		clone.position = new Vector3f(position.x, position.y, position.z);
