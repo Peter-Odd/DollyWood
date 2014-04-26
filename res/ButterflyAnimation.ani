@@ -1,22 +1,95 @@
+#################### LEFT WING ###################
 #DownPosition
-o ButterflyWing
-p 0.0 0.0 0.0
+o ButterflyWing leftWing
+p 0.0 0.0 0.1
 r 0.0 70.0 0.0
 sc 1.0 1.0 1.0
-s 0.05
+s 0.3
 
 #UpPosition
-o ButterflyWing
+o ButterflyWing leftWing
 p 0.0 0.0 0.0
 r 0.0 -70.0 0.0
 sc 1.0 1.0 1.0
-s 0.05
+s 0.3
 
 #DownPosition
-o ButterflyWing
-p 0.0 0.0 0.0
+o ButterflyWing leftWing
+p 0.0 0.0 0.1
 r 0.0 70.0 0.0
 sc 1.0 1.0 1.0
-s 0.05
+s 0.3
+
+lt LOOP
+
+#################### RIGHT WING ###################
+#DownPosition
+o ButterflyWing rightWing
+p 0.0 0.0 0.1
+r 0.0 70.0 0.0
+sc -1.0 1.0 1.0
+s 0.3
+
+#UpPosition
+o ButterflyWing rightWing
+p 0.0 0.0 0.0
+r 0.0 -70.0 0.0
+sc -1.0 1.0 1.0
+s 0.3
+
+#DownPosition
+o ButterflyWing rightWing
+p 0.0 0.0 0.1
+r 0.0 70.0 0.0
+sc -1.0 1.0 1.0
+s 0.3
+
+lt LOOP
+
+#################### BODY ###################
+#DownPosition
+o ButterflyBody body
+p 0.0 0.0 0.1
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.3
+
+#UpPosition
+o ButterflyBody body
+p 0.0 0.0 0.0
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.3
+
+#DownPosition
+o ButterflyBody body
+p 0.0 0.0 0.1
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.3
+
+lt LOOP
+
+#################### Animation ###################
+#BackPosition
+a default
+p 0.0 0.0 0.0
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.03
+
+#ForwardPosition
+a default
+p 0.0 1.0 0.0
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.03
+
+#BackPosition
+a default
+p 0.0 0.0 0.0
+r 0.0 0.0 0.0
+sc 1.0 1.0 1.0
+s 0.03
 
 lt LOOP

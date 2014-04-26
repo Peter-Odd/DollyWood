@@ -40,7 +40,7 @@ public class Graphics3D {
 	private HashMap<String, Integer> models = new HashMap<String, Integer>();
 	private float size = 3.5f;
 	
-	private AnimationEventController animationEventController = new AnimationEventController(100);
+	private AnimationEventController animationEventController = new AnimationEventController(40); //24 FPS
 	/**
 	 * This is all that is needed.<br />
 	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.<br />
@@ -55,18 +55,14 @@ public class Graphics3D {
 		setupLighting();
 		
 		try {
-			animationEventController.events.add(AnimationEvent.loadEvent("res/startupAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f)));
-			
+			animationEventController.loadEvent("res/startupAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 
-			animationEventController.events.add(AnimationEvent.loadEvent("res/ButterflyAnimation.ani", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f)));
-			animationEventController.events.add(AnimationEvent.loadEvent("res/ButterflyAnimation.ani", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(-2.0f, 0.0f, 0.0f)));
-			
+			animationEventController.loadEvent("res/ButterflyAnimation.ani", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		//Thread animationControllerThread = new Thread(animationEventController);
-		//animationControllerThread.start();
+		Thread animationControllerThread = new Thread(animationEventController);
+		animationControllerThread.start();
 
         camera.pitch = -90.0f;
         glMatrixMode(GL_MODELVIEW);
@@ -86,6 +82,7 @@ public class Graphics3D {
 	        }
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 				Display.destroy();
+				System.exit(0);
 				break;
 			}
 			long time = System.currentTimeMillis();
@@ -96,7 +93,7 @@ public class Graphics3D {
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
-	        animationEventController.step();
+	        //animationEventController.step();
 	        render();
 	        
 	        glPopAttrib();
@@ -114,9 +111,10 @@ public class Graphics3D {
         updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
 
 		for(AnimationEvent animEvent : animationEventController.getEvents()){
-			AnimationState currentState = animEvent.currentState;
+			AnimationState currentState = animEvent.getStateSum();
 			if(currentState != null){
-				renderModel(animEvent.model, currentState.position, currentState.rotation, currentState.scale);
+				//System.out.println(currentState.model);
+				renderModel(currentState.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
 		
@@ -133,10 +131,7 @@ public class Graphics3D {
         	}
         }
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		//renderModel("ButterflyWing", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 45.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		renderModel("ButterflyBody", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		//renderModel("ButterflyWing", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 45.0f, 0.0f), new Vector3f(-1.0f, 1.0f, 1.0f));
-
+		
 		//Render SkyDome
 		float sphereScale = 60.0f;
 		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));

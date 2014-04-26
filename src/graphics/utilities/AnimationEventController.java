@@ -1,5 +1,9 @@
 package graphics.utilities;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -46,25 +50,35 @@ public class AnimationEventController implements Runnable{
 		Iterator<AnimationEvent> it = events.iterator();
 		while(it.hasNext()){
 			AnimationEvent e = it.next();
-			if((int)e.currentProgress+1 == e.states.size()){
+			if((int)e.currentModelProgress+1 == e.modelStates.size()){
 				if(e.loopType == 0)
 					it.remove();
 				else
-					e.reset();
+					e.resetModelState();
 			}
 			else{
-				e.currentState.position = getNewProgressVector(e.states.get((int)e.currentProgress).position, e.states.get((int)e.currentProgress+1).position, e.currentProgress-(int)e.currentProgress);
-				e.currentState.scale = getNewProgressVector(e.states.get((int)e.currentProgress).scale, e.states.get((int)e.currentProgress+1).scale, e.currentProgress-(int)e.currentProgress);
-				e.currentState.rotation = getNewProgressVector(e.states.get((int)e.currentProgress).rotation, e.states.get((int)e.currentProgress+1).rotation, e.currentProgress-(int)e.currentProgress);
-				e.currentProgress += e.states.get((int)e.currentProgress).speed;
+				updateState(e.currentModelState, e.currentModelProgress, e.modelStates);
+				e.currentModelProgress += e.modelStates.get((int)e.currentModelProgress).speed;
+				
+				if((int)e.currentAnimationProgress+1 < e.animationStates.size()){
+					updateState(e.currentAnimationState, e.currentAnimationProgress, e.animationStates);
+					e.currentAnimationProgress += e.modelStates.get((int)e.currentAnimationProgress).speed;
+				}
 			}
 		}
 	}
 	
-	private Vector3f getNewProgressVector(Vector3f preVal, Vector3f postVal, float progress){
-		float x = preVal.x + (postVal.x-preVal.x)*(progress);
-		float y = preVal.y + (postVal.y-preVal.y)*(progress);
-		float z = preVal.z + (postVal.z-preVal.z)*(progress);
+	private void updateState(AnimationState state, float progress, ArrayList<AnimationState> stateList){
+		state.position = blendVectors(stateList.get((int)progress).position, stateList.get((int)progress+1).position, progress-(int)progress);
+		state.scale = blendVectors(stateList.get((int)progress).scale, stateList.get((int)progress+1).scale, progress-(int)progress);
+		state.rotation = blendVectors(stateList.get((int)progress).rotation, stateList.get((int)progress+1).rotation, progress-(int)progress);
+		state.model = stateList.get((int)progress).model;
+	}
+	
+	private Vector3f blendVectors(Vector3f preVal, Vector3f postVal, float ammount){
+		float x = preVal.x + (postVal.x-preVal.x)*(ammount);
+		float y = preVal.y + (postVal.y-preVal.y)*(ammount);
+		float z = preVal.z + (postVal.z-preVal.z)*(ammount);
 		return new Vector3f(x,y,z);
 	}
 	
@@ -82,6 +96,100 @@ public class AnimationEventController implements Runnable{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Loads a non-binary .ani file and returns the AnimationEvent within.
+	 * <br>
+	 * A .ani file consists primarily of 5 fields. and looks like the following<br />
+	 * o string with model name<br />
+	 * p x.x y.y z.z //Position vector<br />
+	 * r x.x y.y z.z //Rotation vector<br />
+	 * sc x.x y.y z.z //Scale vector<br />
+	 * s x.x //Speed of the keyframe.<br />
+	 * 
+	 * These field should appear in this order, and can be repeated for each keyframe.<br />
+	 * You can then specify if the animation should loop with the string:<br />
+	 * lt LOOP
+	 * @param filename Location of the .ani file
+	 * @param position Position offset. This is where the animation will be centered
+	 * @param rotation Rotation offset.
+	 * @param scale Scale offset. Note that they should be 0.0, if a final scale of 1.0 is desired
+	 * @return A new AnimationEvent loaded from a .ani file
+	 * @throws FileNotFoundException
+	 */
+	public void loadEvent(String filename, Vector3f position, Vector3f rotation, Vector3f scale, float speed) throws FileNotFoundException{
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		String line = null;
+		AnimationEvent event = new AnimationEvent();
+		ArrayList<AnimationEvent> events = new ArrayList<>();
+		event.animationID = "default";
+		AnimationState state = null;
+		try {
+			while((line = in.readLine()) != null){
+				if(line.startsWith("o ") || line.startsWith("a ")){
+					String[] components = line.split(" ");
+					state = new AnimationState();
+					state.model = components[1];
+					state.position = new Vector3f();
+					state.rotation = new Vector3f();
+					state.scale = new Vector3f();
+					if(components.length > 2 && !event.animationID.equals(components[2])){
+						if(event.totalStates() > 0){
+							event.currentModelState = event.modelStates.get(0).clone();
+							event.currentAnimationState = new AnimationState(position, rotation, scale, speed);
+							events.add(event);
+						}
+						event = new AnimationEvent();
+						event.animationID = components[2];
+					}
+					if(components[0].equals("o"))
+						event.modelStates.add(state);
+					else if(components[0].equals("a")){
+						event.animationStates.add(state);
+					}
+				}
+				else if(line.startsWith("p ")){
+					String[] components = line.split(" ");
+					state.position = parseVector(components, 1);
+				}
+				else if(line.startsWith("r ")){
+					String[] components = line.split(" ");
+					state.rotation = parseVector(components, 1);
+				}
+				else if(line.startsWith("sc ")){
+					String[] components = line.split(" ");
+					state.scale = parseVector(components, 1);
+				}
+				else if(line.startsWith("s ")){
+					String[] components = line.split(" ");
+					state.speed = Float.parseFloat(components[1]);
+				}
+				else if(line.startsWith("lt ")){
+					String[] components = line.split(" ");
+					if(components[1].equals("LOOP"))
+						event.loopType = 1;
+				}
+			}
+			in.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		event.currentModelState = event.modelStates.get(0).clone();
+		if(event.animationStates.size() > 0)
+			event.currentAnimationState = event.animationStates.get(0).clone();
+		else
+			event.currentAnimationState = new AnimationState(position, rotation, scale, speed);
+		events.add(event);
+		this.events.addAll(events);
+	}
+	
+	private Vector3f parseVector(String[] components, int offset){
+		float x = Float.parseFloat(components[0+offset]);
+		float y = Float.parseFloat(components[1+offset]);
+		float z = Float.parseFloat(components[2+offset]);
+		return new Vector3f(x,y,z);
 	}
 
 }
