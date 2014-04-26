@@ -62,7 +62,12 @@ public class AnimationEventController implements Runnable{
 				
 				if((int)e.currentAnimationProgress+1 < e.animationStates.size()){
 					updateState(e.currentAnimationState, e.currentAnimationProgress, e.animationStates);
-					e.currentAnimationProgress += e.modelStates.get((int)e.currentAnimationProgress).speed;
+					e.currentAnimationProgress += e.animationStates.get((int)e.currentAnimationProgress).speed;
+				}
+				if((int)e.currentAnimationProgress+1 == e.animationStates.size()){
+					if(e.loopType == 1){
+						e.resetAnimationState();
+					}
 				}
 			}
 		}
@@ -123,6 +128,7 @@ public class AnimationEventController implements Runnable{
 		String line = null;
 		AnimationEvent event = new AnimationEvent();
 		ArrayList<AnimationEvent> events = new ArrayList<>();
+		ArrayList<AnimationState> animationStates = new ArrayList<>();
 		event.animationID = "default";
 		AnimationState state = null;
 		try {
@@ -146,20 +152,23 @@ public class AnimationEventController implements Runnable{
 					if(components[0].equals("o"))
 						event.modelStates.add(state);
 					else if(components[0].equals("a")){
-						event.animationStates.add(state);
+							animationStates.add(state);
+							state.position = new Vector3f(position.x, position.y, position.z);
+							state.rotation = new Vector3f(rotation.x, rotation.y, rotation.z);
+							state.scale = new Vector3f(scale.x, scale.y, scale.z);
 					}
 				}
 				else if(line.startsWith("p ")){
 					String[] components = line.split(" ");
-					state.position = parseVector(components, 1);
+					Vector3f.add(state.position, parseVector(components, 1), state.position);
 				}
 				else if(line.startsWith("r ")){
 					String[] components = line.split(" ");
-					state.rotation = parseVector(components, 1);
+					Vector3f.add(state.rotation, parseVector(components, 1), state.rotation);
 				}
 				else if(line.startsWith("sc ")){
 					String[] components = line.split(" ");
-					state.scale = parseVector(components, 1);
+					Vector3f.add(state.scale, parseVector(components, 1), state.scale);
 				}
 				else if(line.startsWith("s ")){
 					String[] components = line.split(" ");
@@ -182,6 +191,9 @@ public class AnimationEventController implements Runnable{
 		else
 			event.currentAnimationState = new AnimationState(position, rotation, scale, speed);
 		events.add(event);
+		
+		for(AnimationEvent e : events)
+			e.animationStates.addAll(animationStates);
 		this.events.addAll(events);
 	}
 	
