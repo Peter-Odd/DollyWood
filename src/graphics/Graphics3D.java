@@ -57,7 +57,7 @@ public class Graphics3D {
 		try {
 			animationEventController.loadEvent("res/startupAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 
-			Vector3f rotation = new Vector3f(90.0f, 0.0f, 0.0f);
+			Vector3f rotation = new Vector3f(0.0f, 0.0f, 0.0f);
 			animationEventController.loadEvent("res/ButterflyAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), rotation, new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -153,15 +153,15 @@ public class Graphics3D {
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
 		if(models.containsKey(modelName)){
 			glTranslatef(position.x, position.y, position.z);
-			glScalef(size.x, size.y, size.z);
 			glRotatef(rotation.x, 1.0f, 0.0f, 0.0f);
 			glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
+			glScalef(size.x, size.y, size.z);
 			glCallList(models.get(modelName));
+			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
 			glRotatef(-rotation.z, 0.0f, 0.0f, 1.0f);
 			glRotatef(-rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(-rotation.x, 1.0f, 0.0f, 0.0f);
-			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
 			glTranslatef(-position.x, -position.y, -position.z);
 		}
 		else

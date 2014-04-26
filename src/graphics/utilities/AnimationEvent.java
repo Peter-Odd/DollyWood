@@ -31,11 +31,19 @@ public class AnimationEvent
 		Vector3f rotation = new Vector3f();
 		Vector3f scale = new Vector3f();
 		position = vectorTranslate(currentModelState.position, currentAnimationState.position, currentAnimationState.rotation);
-		rotation = vectorTranslate(currentModelState.rotation, currentAnimationState.rotation, currentAnimationState.rotation);
+		rotation = vectorRotate(currentModelState.rotation, currentAnimationState.rotation, currentAnimationState.rotation);
 		//Vector3f.add(currentModelState.position, currentAnimationState.position, position);
 		//Vector3f.add(currentModelState.rotation, currentAnimationState.rotation, rotation);
 		Vector3f.add(currentModelState.scale, currentAnimationState.scale, scale);
 		return new AnimationState(model, position, rotation, scale);
+	}
+	
+	private Vector3f vectorRotate(Vector3f addVector, Vector3f baseVector, Vector3f rotation) {
+		Vector3f result = new Vector3f();
+		result.x = (float) (baseVector.x + addVector.x*Math.cos(Math.toRadians(rotation.y)) + addVector.y*Math.sin(Math.toRadians(rotation.z)));
+		result.y = (float) (baseVector.y + addVector.y*Math.cos(Math.toRadians(rotation.z)));
+		result.z = (float) (baseVector.z + addVector.z*Math.cos(Math.toRadians(rotation.x)));
+		return result;
 	}
 	
 	private Vector3f vectorTranslate(Vector3f addVector, Vector3f baseVector, Vector3f rotation) {

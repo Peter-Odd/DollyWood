@@ -26,21 +26,21 @@ lt LOOP
 #DownPosition
 o ButterflyWing rightWing
 p 0.0 0.0 0.1
-r 0.0 70.0 0.0
+r 0.0 -70.0 0.0
 sc -1.0 1.0 1.0
 s 0.3
 
 #UpPosition
 o ButterflyWing rightWing
 p 0.0 0.0 0.0
-r 0.0 -70.0 0.0
+r 0.0 70.0 0.0
 sc -1.0 1.0 1.0
 s 0.3
 
 #DownPosition
 o ButterflyWing rightWing
 p 0.0 0.0 0.1
-r 0.0 70.0 0.0
+r 0.0 -70.0 0.0
 sc -1.0 1.0 1.0
 s 0.3
 
@@ -73,6 +73,18 @@ lt LOOP
 #################### Animation ###################
 a default
 p 0.0 0.0 0.0
-r 0.0 0.0 0.0
+r 90.0 0.0 0.0
 sc 0.0 0.0 0.0
 s 0.03
+
+a default
+p 0.0 -2.0 0.0
+r 0.0 0.0 180.0
+sc 0.0 0.0 0.0
+s 0.03
+
+a default
+p 0.0 -7.0 0.0
+r 0.0 0.0 180.0
+sc 0.0 0.0 0.0
+s 0.00003
