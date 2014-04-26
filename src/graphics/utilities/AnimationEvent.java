@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
  * Represents and entire animation with multiple keyframes.
  * @see AnimationState
  * @author OSM Group 5 - DollyWood project
- * @version 1.01
+ * @version 1.02
  */
 public class AnimationEvent 
 {
@@ -30,12 +30,22 @@ public class AnimationEvent
 		Vector3f position = new Vector3f();
 		Vector3f rotation = new Vector3f();
 		Vector3f scale = new Vector3f();
-		Vector3f.add(currentModelState.position, currentAnimationState.position, position);
-		Vector3f.add(currentModelState.rotation, currentAnimationState.rotation, rotation);
+		position = vectorTranslate(currentModelState.position, currentAnimationState.position, currentAnimationState.rotation);
+		rotation = vectorTranslate(currentModelState.rotation, currentAnimationState.rotation, currentAnimationState.rotation);
+		//Vector3f.add(currentModelState.position, currentAnimationState.position, position);
+		//Vector3f.add(currentModelState.rotation, currentAnimationState.rotation, rotation);
 		Vector3f.add(currentModelState.scale, currentAnimationState.scale, scale);
 		return new AnimationState(model, position, rotation, scale);
 	}
 	
+	private Vector3f vectorTranslate(Vector3f addVector, Vector3f baseVector, Vector3f rotation) {
+		Vector3f result = new Vector3f();
+		result.x = (float) (baseVector.x + addVector.x*Math.cos(Math.toRadians(rotation.y))*Math.cos(Math.toRadians(rotation.z)) + addVector.z*Math.sin(Math.toRadians(rotation.y)) + addVector.y*Math.sin(Math.toRadians(rotation.z)));
+		result.y = (float) (baseVector.y + addVector.y*Math.cos(Math.toRadians(rotation.x))*Math.cos(Math.toRadians(rotation.z)) + addVector.z*Math.sin(Math.toRadians(rotation.x)) + addVector.x*Math.sin(Math.toRadians(rotation.z)));
+		result.z = (float) (baseVector.z + addVector.z*Math.cos(Math.toRadians(rotation.x))*Math.cos(Math.toRadians(rotation.y)) + addVector.y*Math.sin(Math.toRadians(rotation.x)) + addVector.x*Math.sin(Math.toRadians(rotation.y)));
+		return result;
+	}
+
 	public void resetModelState() {
 		currentModelProgress = 0.0f;
 		currentModelState = modelStates.get(0).clone();

@@ -57,7 +57,8 @@ public class Graphics3D {
 		try {
 			animationEventController.loadEvent("res/startupAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 
-			animationEventController.loadEvent("res/ButterflyAnimation.ani", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-185.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+			Vector3f rotation = new Vector3f(90.0f, 0.0f, 0.0f);
+			animationEventController.loadEvent("res/ButterflyAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), rotation, new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
@@ -125,7 +126,7 @@ public class Graphics3D {
         		for(Race r:Globals.races){
         			Animal animal = r.getSpeciesAt(x, y);
         			if(animal != null)
-        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
         		}
         		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
         	}
@@ -153,13 +154,13 @@ public class Graphics3D {
 		if(models.containsKey(modelName)){
 			glTranslatef(position.x, position.y, position.z);
 			glScalef(size.x, size.y, size.z);
-			glRotatef(rotation.x, 0.0f, 0.0f, 1.0f);
+			glRotatef(rotation.x, 1.0f, 0.0f, 0.0f);
 			glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
-			glRotatef(rotation.z, 1.0f, 0.0f, 0.0f);
+			glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
 			glCallList(models.get(modelName));
-			glRotatef(-rotation.z, 1.0f, 0.0f, 0.0f);
+			glRotatef(-rotation.z, 0.0f, 0.0f, 1.0f);
 			glRotatef(-rotation.y, 0.0f, 1.0f, 0.0f);
-			glRotatef(-rotation.x, 0.0f, 0.0f, 1.0f);
+			glRotatef(-rotation.x, 1.0f, 0.0f, 0.0f);
 			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
 			glTranslatef(-position.x, -position.y, -position.z);
 		}

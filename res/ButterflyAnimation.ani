@@ -71,32 +71,8 @@ s 0.3
 lt LOOP
 
 #################### Animation ###################
-#BackPosition
 a default
 p 0.0 0.0 0.0
 r 0.0 0.0 0.0
 sc 0.0 0.0 0.0
 s 0.03
-
-#ForwardPosition
-a default
-p 0.0 10.0 0.0
-r 0.0 0.0 0.0
-sc 0.0 0.0 0.0
-s 0.03
-
-#ForwardUpPosition
-a default
-p 0.0 10.0 10.0
-r 0.0 0.0 0.0
-sc 0.0 0.0 0.0
-s 0.03
-
-#BackPosition
-a default
-p 0.0 0.0 0.0
-r 0.0 0.0 0.0
-sc 0.0 0.0 0.0
-s 0.03
-
-lt LOOP
