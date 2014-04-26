@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -56,6 +57,9 @@ public class AnimationEventController implements Runnable{
 				else
 					e.resetModelState();
 			}
+			if((int)e.currentAnimationProgress+1 == e.animationStates.size()){
+				it.remove();
+			}
 			else{
 				updateState(e.currentModelState, e.currentModelProgress, e.modelStates);
 				e.currentModelProgress += e.modelStates.get((int)e.currentModelProgress).speed;
@@ -64,11 +68,11 @@ public class AnimationEventController implements Runnable{
 					updateState(e.currentAnimationState, e.currentAnimationProgress, e.animationStates);
 					e.currentAnimationProgress += e.animationStates.get((int)e.currentAnimationProgress).speed;
 				}
-				if((int)e.currentAnimationProgress+1 == e.animationStates.size()){
+				/*if((int)e.currentAnimationProgress+1 == e.animationStates.size()){
 					if(e.loopType == 1){
 						e.resetAnimationState();
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -123,13 +127,13 @@ public class AnimationEventController implements Runnable{
 	 * @return A new AnimationEvent loaded from a .ani file
 	 * @throws FileNotFoundException
 	 */
-	public void loadEvent(String filename, Vector3f position, Vector3f rotation, Vector3f scale, float speed) throws FileNotFoundException{
+	public void loadEvent(String filename, String animationID, Vector3f position, Vector3f rotation, Vector3f scale, float speed) throws FileNotFoundException{
 		BufferedReader in = new BufferedReader(new FileReader(filename));
 		String line = null;
-		AnimationEvent event = new AnimationEvent();
+		AnimationEvent event = new AnimationEvent(animationID);
 		ArrayList<AnimationEvent> events = new ArrayList<>();
 		ArrayList<AnimationState> animationStates = new ArrayList<>();
-		event.animationID = "default";
+		event.subAnimationID = "default";
 		AnimationState state = null;
 		try {
 			while((line = in.readLine()) != null){
@@ -140,14 +144,14 @@ public class AnimationEventController implements Runnable{
 					state.position = new Vector3f();
 					state.rotation = new Vector3f();
 					state.scale = new Vector3f();
-					if(components.length > 2 && !event.animationID.equals(components[2])){
+					if(components.length > 2 && !event.subAnimationID.equals(components[2])){
 						if(event.totalStates() > 0){
 							event.currentModelState = event.modelStates.get(0).clone();
 							event.currentAnimationState = new AnimationState(position, rotation, scale, speed);
 							events.add(event);
 						}
-						event = new AnimationEvent();
-						event.animationID = components[2];
+						event = new AnimationEvent(animationID);
+						event.subAnimationID = components[2];
 					}
 					if(components[0].equals("o"))
 						event.modelStates.add(state);
@@ -202,6 +206,38 @@ public class AnimationEventController implements Runnable{
 		float y = Float.parseFloat(components[1+offset]);
 		float z = Float.parseFloat(components[2+offset]);
 		return new Vector3f(x,y,z);
+	}
+
+	public void addAnimationState(AnimationState animationState, String animationID) {
+		for(AnimationEvent e : events){
+			if(e.superAnimationID.equals(animationID))
+				e.animationStates.add(animationState);
+		}
+	}
+
+	public void setRandomAnimationSpeed(String animationID, float min, float max) {
+		float range = Math.abs(max-min)/2.0f;
+		Random random = new Random();
+		for(AnimationEvent e : events){
+			if(e.superAnimationID.equals(animationID)){
+				for(AnimationState s : e.animationStates){
+					s.speed = min+(random.nextFloat()*2.0f*range+range);
+				}
+			}
+		}
+	}
+
+	public void setRandomModelSpeed(String animationID, float min, float max) {
+		float range = Math.abs(max-min)/2.0f;
+		Random random = new Random();
+		float randomSpeed = min+(random.nextFloat()*2.0f*range+range);
+		for(AnimationEvent e : events){
+			if(e.superAnimationID.equals(animationID)){
+				for(AnimationState s : e.modelStates){
+					s.speed = randomSpeed;
+				}
+			}
+		}
 	}
 
 }

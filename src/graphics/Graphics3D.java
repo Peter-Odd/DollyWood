@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.Random;
 
 import graphics.utilities.AnimationEvent;
 import graphics.utilities.AnimationState;
@@ -55,10 +56,29 @@ public class Graphics3D {
 		setupLighting();
 		
 		try {
-			animationEventController.loadEvent("res/startupAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+			Random random = new Random();			
 
-			Vector3f rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-			animationEventController.loadEvent("res/ButterflyAnimation.ani", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), rotation, new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+			float xRange = 4.0f;
+			float yRange = 2.0f;
+			for(int i = 0; i < 100; i++){
+				Vector3f position = new Vector3f();
+				animationEventController.loadEvent("res/ButterflyAnimation.ani", "Butterfly"+i, position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+				position = new Vector3f(Globals.width/2*size+(random.nextFloat()*2.0f*xRange-xRange), Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*2.0f*yRange-yRange));
+				animationEventController.addAnimationState(new AnimationState(position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
+
+				animationEventController.addAnimationState(new AnimationState(new Vector3f(position.x, position.y-2.0f, position.z), new Vector3f(0.0f, 0.0f, 180.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
+				position = new Vector3f(position.x+(random.nextFloat()*2.0f*xRange-xRange), position.y-5.0f, position.z+(random.nextFloat()*2.0f*yRange-yRange));
+				animationEventController.addAnimationState(new AnimationState(new Vector3f(position.x, position.y-2.0f, position.z), new Vector3f(0.0f, 0.0f, 180.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
+
+				animationEventController.setRandomAnimationSpeed("Butterfly"+i, 0.02f, 0.06f);
+				animationEventController.setRandomModelSpeed("Butterfly"+i, 0.2f, 0.4f);
+			}
+			
+			//animationEventController.loadEvent("res/ButterflyAnimation.ani", "ButterflyTest", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+			//Vector3f position = new Vector3f(Globals.width/2*size+(random.nextFloat()*6.0f-3.0f), Globals.height/2*size-2.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*6.0f-3.0f));
+			//animationEventController.addAnimationState(new AnimationState(position, rotation, new Vector3f(1.0f, 1.0f, 1.0f), 0.03f), "ButterflyTest");
+			
+			animationEventController.loadEvent("res/startupAnimation.ani", "StartupAnimation", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}

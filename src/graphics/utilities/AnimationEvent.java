@@ -14,7 +14,8 @@ public class AnimationEvent
 {
 	public static final int ANIMATION_STATE_LINEAR = 0;//TBI
 	public static final int ANIMATION_STATE_SMOOTH = 1;//TBI
-	public String animationID;
+	public String subAnimationID;
+	public String superAnimationID;
 	public float currentModelProgress;
 	public float currentAnimationProgress;
 	public ArrayList<AnimationState> modelStates = new ArrayList<AnimationState>();
@@ -24,6 +25,10 @@ public class AnimationEvent
 	public AnimationState currentAnimationState;
 	public AnimationState currentCameraState;
 	public int loopType;
+
+	public AnimationEvent(String animationID) {
+		this.superAnimationID = animationID;
+	}
 
 	public AnimationState getStateSum(){
 		String model = currentModelState.model;
