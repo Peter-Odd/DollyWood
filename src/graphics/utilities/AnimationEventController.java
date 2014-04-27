@@ -56,9 +56,11 @@ public class AnimationEventController implements Runnable{
 					it.remove();
 				else
 					e.resetModelState();
+				continue;
 			}
 			if((int)e.currentAnimationProgress+1 == e.animationStates.size()){
 				it.remove();
+				continue;
 			}
 			else{
 				updateState(e.currentModelState, e.currentModelProgress, e.modelStates);
