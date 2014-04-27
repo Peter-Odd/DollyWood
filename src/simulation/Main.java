@@ -33,6 +33,10 @@ public class Main {
 		
 		Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
+		for(int[] position : HexagonUtils.neighborTiles(6,6)){
+			sheep.setSpeciesAt(position[0], position[1], new Sheep());
+		}
+		/*
 		sheep.setSpeciesAt(3, 4, new Sheep());
 		sheep.setSpeciesAt(4, 4, new Sheep());
 		sheep.setSpeciesAt(3, 3, new Sheep());
@@ -40,6 +44,7 @@ public class Main {
 		sheep.setSpeciesAt(2, 4, new Sheep());
 		sheep.setSpeciesAt(2, 5, new Sheep());
 		sheep.setSpeciesAt(4, 5, new Sheep());
+		*/
 		
 		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
