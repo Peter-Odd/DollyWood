@@ -54,7 +54,53 @@ public class Graphics3D {
 		setupCamera();
 		setupStates();
 		setupLighting();
+		setupStarterAnimation();
 		
+
+        camera.pitch = -90.0f;
+        glMatrixMode(GL_MODELVIEW);
+        long lastTime = 0;
+		while(!Display.isCloseRequested()){
+			processInput();
+			long time = System.currentTimeMillis();
+	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	        glPushAttrib(GL_TRANSFORM_BIT);
+	        glPushMatrix();
+	        glLoadIdentity();
+	        camera.processInput(lastTime*0.05f);
+	        camera.applyTranslations();
+
+	        //animationEventController.step();
+	        render();
+	        
+	        glPopAttrib();
+	        
+	        lastTime = System.currentTimeMillis() - time;
+	        glPopMatrix();
+			Display.update();
+		}
+	}
+
+	private void processInput() {
+		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+			try {
+				Display.setFullscreen(!Display.isFullscreen());
+				Thread.sleep(100);
+			} catch (LWJGLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+			Display.destroy();
+			System.exit(0);
+		}
+	}
+
+	private void setupStarterAnimation() {
 		try {
 			Random random = new Random();			
 
@@ -62,7 +108,10 @@ public class Graphics3D {
 			float yRange = 2.0f;
 			for(int i = 0; i < 100; i++){
 				Vector3f position = new Vector3f();
-				animationEventController.loadEvent("res/ButterflyAnimation.ani", "Butterfly"+i, position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+				String animation = "res/ButterflyAnimationRed.ani";
+				if(random.nextInt(2) == 0)
+					animation = "res/ButterflyAnimationGreen.ani";
+				animationEventController.loadEvent(animation, "Butterfly"+i, position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 				position = new Vector3f(Globals.width/2*size+(random.nextFloat()*2.0f*xRange-xRange), Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*2.0f*yRange-yRange));
 				animationEventController.addAnimationState(new AnimationState(position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
 
@@ -84,45 +133,6 @@ public class Graphics3D {
 		}
 		Thread animationControllerThread = new Thread(animationEventController);
 		animationControllerThread.start();
-
-        camera.pitch = -90.0f;
-        glMatrixMode(GL_MODELVIEW);
-        long lastTime = 0;
-		while(!Display.isCloseRequested()){
-			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-				try {
-					Display.setFullscreen(!Display.isFullscreen());
-					Thread.sleep(100);
-				} catch (LWJGLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        }
-			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-				Display.destroy();
-				System.exit(0);
-				break;
-			}
-			long time = System.currentTimeMillis();
-	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	        glPushAttrib(GL_TRANSFORM_BIT);
-	        glPushMatrix();
-	        glLoadIdentity();
-	        camera.processInput(lastTime*0.05f);
-	        camera.applyTranslations();
-
-	        //animationEventController.step();
-	        render();
-	        
-	        glPopAttrib();
-	        
-	        lastTime = System.currentTimeMillis() - time;
-	        glPopMatrix();
-			Display.update();
-		}
 	}
 
 	private void render() {
