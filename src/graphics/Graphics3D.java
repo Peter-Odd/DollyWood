@@ -29,6 +29,7 @@ import simulation.Grass;
 import simulation.Race;
 import simulation.Water;
 import utilities.Globals;
+import utilities.HexagonUtils;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -151,12 +152,17 @@ public class Graphics3D {
 			}
 		}
 
+		//Render Water system
+		float[][] cloudWaterLevel = Globals.water.getCloudWaterLevel();
         for(int x = 0; x < Globals.width; x++){
         	for(int y = 0; y < Globals.height; y++){
-        		if(Globals.water.getCloudWaterLevel()[x][y] != 1.0f)
-            		renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(Globals.water.getCloudWaterLevel()[x][y], Globals.water.getCloudWaterLevel()[x][y], Globals.water.getCloudWaterLevel()[x][y]));
-        			if(Globals.water.getGroundWaterLevel(x, y) > 0.1f)
-        				renderModel("Water", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
+        		if(cloudWaterLevel[x][y] != 1.0f){
+        			float cloudSize = cloudWaterLevel[x][y]*3.0f;
+        			if(cloudWaterLevel[x][y] > 0.0f)
+        				renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f+cloudSize*2), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize));
+        		}
+            	if(Globals.water.getGroundWaterLevel(x, y) > 0.1f)
+        			renderModel("Water", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
         	}
         }
 		

@@ -41,7 +41,7 @@ public class Water implements Runnable{
 	}
 	
 	public float[][] getCloudWaterLevel(){
-		return cloudWaterLevel;
+		return cloudWaterLevel.clone();
 	}
 	
 	private void step() {
@@ -63,14 +63,15 @@ public class Water implements Runnable{
 	
 
 	private void dissipate() {
-		float flowRate = 0.015f;
+		float flowRate = 0.1f;
 		for(int x = 1; x < Globals.width-1; x++){
 			for(int y = 1; y < Globals.height-1; y++){
 				if(groundWaterLevel[x][y] >= flowRate){
 					for(int[] neighbor : HexagonUtils.neighborTiles(x, y, false)){
-						if(groundWaterLevel[neighbor[0]][neighbor[1]] < 1.0f-flowRate){
-							groundWaterLevel[x][y] -= flowRate;
-							groundWaterLevel[neighbor[0]][neighbor[1]] += flowRate;
+						if(groundWaterLevel[neighbor[0]][neighbor[1]] < groundWaterLevel[x][y]){
+							float flow = (groundWaterLevel[x][y]-groundWaterLevel[neighbor[0]][neighbor[1]])*flowRate;
+							groundWaterLevel[x][y] -= flow;
+							groundWaterLevel[neighbor[0]][neighbor[1]] += flow;
 						}
 					}
 				}
@@ -119,7 +120,6 @@ public class Water implements Runnable{
 
 	private void downfall() {
 		if(downfall){
-			System.out.println("Downfall active");
 			for(int x = 0; x < Globals.width; x++){
 				for(int y = 0; y < Globals.height; y++){
 					groundWaterLevel[x][y] += 1.0f-cloudWaterLevel[x][y];
