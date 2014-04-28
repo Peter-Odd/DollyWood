@@ -46,6 +46,8 @@ public class Main {
 		sheep.setSpeciesAt(4, 5, new Sheep());
 		*/
 		Globals.water = new Water(100);
+		Thread waterThread = new Thread(Globals.water);
+		waterThread.start();
 		Grass grass = new Grass(100);
 		Thread grassThread = new Thread(grass);
 		Globals.races.add(grass);

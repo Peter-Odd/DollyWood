@@ -12,6 +12,10 @@ public class Water implements Runnable{
 	}
 	
 	public void run() {
+		for(int x = 0; x < Globals.width; x++)
+			for(int y = 0; y < Globals.height; y++)
+				groundWaterLevel[x][y] = 0.75f;
+		
 		while(true){
 			step();
 			try{
@@ -24,10 +28,16 @@ public class Water implements Runnable{
 	}
 	
 	public float getGroundWaterLevel(int x, int y){
-		return 0.5f;//groundWaterLevel[x][y];
+		return groundWaterLevel[x][y];
 	}
 	
 	private void step() {
-		
+		for(int x = 0; x < Globals.width; x++){
+			for(int y = 0; y < Globals.height; y++){
+				groundWaterLevel[x][y] -= 0.001f;
+				if(groundWaterLevel[x][y] < 0.0f)
+					groundWaterLevel[x][y] = 0.0f;
+			}
+		}
 	}
 }

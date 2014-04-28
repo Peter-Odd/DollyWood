@@ -43,9 +43,9 @@ public class HexagonUtils {
 			tiles[i][0] %= Globals.width;
 			tiles[i][1] %= Globals.height;
 			if(tiles[i][0] < 0)
-				tiles[i][0] = Globals.width - tiles[i][0] - 1;
+				tiles[i][0] = Globals.width - tiles[i][0]-2;
 			if(tiles[i][1] < 0)
-				tiles[i][1] = Globals.height - tiles[i][1] - 1;
+				tiles[i][1] = Globals.height - tiles[i][1]-2;
 		}
 		return tiles;
 	}
