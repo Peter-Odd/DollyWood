@@ -10,14 +10,14 @@ public class Fractal {
 	}
 	
 	/** Fills map with floats which are calculated with the DiamondSquare algorithm. The floats will have a value
-	 *  between 
+	 *  between 0 and 255.
 	 * 
 	 * @param map The array which will be filled.
-	 * @param max 
-	 * @param min
-	 * @param randomRange
-	 * @param randomDiv
-	 * @return
+	 * @param max Used to calculate the max value for the initial corners.
+	 * @param min Used to calculate the minimal value for the initial corners
+	 * @param randomRange A value in this range will be added to every position in the array when the value is calculated
+	 * @param randomDiv The randomRange will be divided by this every recursive call. 
+	 * @return map filled with floats.
 	 */
 	
 	public static float[][] generateFractal(float[][] map, float max, float min, float randomRange, float randomDiv){
@@ -27,6 +27,15 @@ public class Fractal {
 		
 		return map;
 	}
+	
+	/** Fills the corners of map with a value between (max-min)/2 + randomRande and (max-min)/2 - randomRange.
+	 * 
+	 * @param map The array which will be used.
+	 * @param max Used to calculate the values for the corners.
+	 * @param min Used to calculate the values for the corners.
+	 * @param randomRange Used to calculate the values for the corners.
+	 * @return map with the corner spots filled with values.
+	 */
 	
 	public static float[][] intitateCorners(float[][] map, float max, float min, float randomRange){
 		int largestX = map.length - 1;
@@ -41,10 +50,20 @@ public class Fractal {
 	}
 	
 	
+	/** Executes the diamond and square step of the diamondsqaure alorithm.
+	 * 
+	 * @param map The array wich will be used.
+	 * @param xSide The width of the squares, from corner to corner. Or the distance between the right and left edge of a diamond.
+	 * @param ySide The height of the squares, from corner to corner. Or the distance between the upper and lower edge of a diamond.
+	 * @param randomRange The random number which is added in every step will be within this range.
+	 * @param randomDiv The randomRange is divided with this every recursive call.
+	 * @return The array filled with floats, generated with diamondsqaure algorithm.
+	 */
+	
 	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv){
 
-		map = squareStep(map, xSide, ySide, randomRange);
 		map = diamondStep(map, xSide, ySide, randomRange);
+		map = squareStep(map, xSide, ySide, randomRange);
 		
 		if(xSide >= 4)
 			map = diamondSquare(map, xSide/2, ySide/2, randomRange/randomDiv, randomDiv);
@@ -53,7 +72,18 @@ public class Fractal {
 		return map;
 	}
 	
-	public static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange){
+	/** Executes the diamond step of the diamondsquare algorithm. Taking a square of four points, generate a random value 
+	 *  at the square midpoint, where the two diagonals meet. The midpoint value is calculated by averaging the four corner 
+	 *  values, plus a random amount. This gives you diamonds when you have multiple squares arranged in a grid.
+	 * 
+	 * @param map The array which will be used.
+	 * @param xSide The width of the squares.
+	 * @param ySide The height of the squares.
+	 * @param randomRange The random value will be in this range.
+	 * @return map with diamonds calculated.
+	 */
+	
+	public static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange){
 		
 		float center = 0.0f;
 		int xHalfSide = xSide/2;
@@ -82,7 +112,18 @@ public class Fractal {
 		return map;
 	}
 	
-	public static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange){
+	/** Executes the square step of the diamond square algorithm. Taking each diamond of four points, generate a 
+	 * random value at the center of the diamond. Calculate the midpoint value by averaging the corner values, plus a 
+	 * random amount generated in the same range as used for the diamond step. This gives you squares again.
+	 * 
+	 * @param map The array which will be used.
+	 * @param xSide The distance between the right and left edge of a diamond.
+	 * @param ySide The distance between the upper and lower edge of a diamond.
+	 * @param randomRange The random value will be in this range.
+	 * @return map with squares calculated.
+	 */
+	
+	public static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange){
 		
 		float value = 0;
 		float elements = 0.0f;
@@ -129,7 +170,15 @@ public class Fractal {
 		
 	return map;
 		
-	}		
+	}	
+	
+	/** Sets every float in map which are >max to max and every float which are <min to min.
+	 * 
+	 * @param map The array which will be used.
+	 * @param max The max value.
+	 * @param min The min value.
+	 * @return map with the values modified.
+	 */
 	
 	public static float[][] cutMap(float[][] map, float max, float min){
 		
