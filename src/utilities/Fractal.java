@@ -9,10 +9,21 @@ public class Fractal {
 		return r.nextFloat() * (max-min) + min;
 	}
 	
-	public static float[][] generateFractal(float[][] map, float max, float min){
+	/** Fills map with floats which are calculated with the DiamondSquare algorithm. The floats will have a value
+	 *  between 
+	 * 
+	 * @param map The array which will be filled.
+	 * @param max 
+	 * @param min
+	 * @param randomRange
+	 * @param randomDiv
+	 * @return
+	 */
+	
+	public static float[][] generateFractal(float[][] map, float max, float min, float randomRange, float randomDiv){
 		
-		map = intitateCorners(map, max, min, 50.0f);
-		map = diamondSquare(map, map.length-1, map.length-1, 50.0f);
+		map = intitateCorners(map, max, min, randomRange);
+		map = diamondSquare(map, map.length-1, map.length-1, randomRange, randomDiv);
 		
 		return map;
 	}
@@ -29,21 +40,14 @@ public class Fractal {
 		return map;
 	}
 	
-	private static float[][] reset(float[][] map){
-		for(int x = 0; x < map.length; x++)
-			for(int y = 0; y < map[x].length; y++)
-				if(map[x][y] != 0.0f)
-					map[x][y] = 1.0f;
-		return map;
-	}
 	
-	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange){
+	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv){
 
 		map = squareStep(map, xSide, ySide, randomRange);
 		map = diamondStep(map, xSide, ySide, randomRange);
 		
 		if(xSide >= 4)
-			map = diamondSquare(map, xSide/2, ySide/2, randomRange/3.0f);
+			map = diamondSquare(map, xSide/2, ySide/2, randomRange/randomDiv, randomDiv);
 		
 		
 		return map;
@@ -109,7 +113,7 @@ public class Fractal {
 					}
 					
 					if(elements != 0)					
-					value = (value/elements) + getRandom(randomRange, 0) - randomRange;
+					value = (value/elements) + getRandom(randomRange*2, 0) - randomRange;
 					
 					if(value > 255.0f)
 						value = 255.0f;
