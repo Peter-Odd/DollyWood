@@ -12,7 +12,7 @@ public class Fractal {
 	public static float[][] generateFractal(float[][] map, float max, float min){
 		
 		map = intitateCorners(map, max, min);
-		map = diamondSquare(map, map.length-1, map.length-1, 0.0f);
+		map = diamondSquare(map, map.length-1, map.length-1, 100.0f);
 		
 		return map;
 	}
@@ -29,39 +29,48 @@ public class Fractal {
 		return map;
 	}
 	
-	public static float[][] diamondSquare(float[][] map, int xHalfSide, int yHalfSide, float randomRange){
+	private static float[][] reset(float[][] map){
+		for(int x = 0; x < map.length; x++)
+			for(int y = 0; y < map[x].length; y++)
+				if(map[x][y] != 0.0f)
+					map[x][y] = 1.0f;
+		return map;
+	}
+	
+	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange){
 
-		map = diamondStep(map, xHalfSide, yHalfSide, randomRange);
-		map = squareStep(map, xHalfSide, yHalfSide, randomRange);
+		map = squareStep(map, xSide, ySide, randomRange);
+		map = diamondStep(map, xSide, ySide, randomRange);
 		
-		if(xHalfSide >= 2){
-			diamondSquare(map, xHalfSide/2, yHalfSide/2, randomRange/2);
-		} else
-			return map;
+		if(xSide >= 4)
+			map = diamondSquare(map, xSide/2, ySide/2, randomRange/3.0f);
+		
 		
 		return map;
 	}
 	
-	public static float[][] diamondStep(float[][] map, int xHalfSide, int yHalfSide, float randomRange){
+	public static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange){
 		
-		float center = 0;
+		float center = 0.0f;
+		int xHalfSide = xSide/2;
+		int yHalfSide = ySide/2;
 		
-		for(int x=xHalfSide; x<map.length-1;x+=xHalfSide){
-			for(int y=yHalfSide;y<map[0].length-1;y+=yHalfSide){
-				if(map[x][y] == 0){
-					center = ((map[x + xHalfSide][y + yHalfSide] +
-							 map[x + xHalfSide][y - yHalfSide] + 
-							 map[x - xHalfSide][y + yHalfSide] + 
-							 map[x - xHalfSide][y - yHalfSide])/4.0f);// +
-							 //5.0f;//getRandom(randomRange*2, 0) - randomRange;
+		for(int x=0; x<map.length-1;x+=xSide){
+			for(int y=0;y<map[0].length-1;y+=ySide){
+				if(map[x+xHalfSide][y+yHalfSide] == 0.0f){
+					center = ((map[x][y] +								// left upper corner
+							 map[x + xSide][y]  + 						// right upper corner
+							 map[x][y + ySide] + 						// left lower corner
+							 map[x + xSide][y + ySide])/4.0f) +			// right lower corner
+							 getRandom(randomRange*2, 0) - randomRange;
 					
 					if(center > 255.0f)
 						center = 250.0f;
 					
 					if(center < 0.0f)
-						center = 0.0f;
+						center = 0.001f;
 					
-					map[x][y] = center;
+					map[x+xHalfSide][y+yHalfSide] = center;
 				}
 			}
 		}
@@ -69,43 +78,46 @@ public class Fractal {
 		return map;
 	}
 	
-	public static float[][] squareStep(float[][] map, int xHalfSide, int yHalfSide, float randomRange){
+	public static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange){
 		
 		float value = 0;
 		float elements = 0.0f;
-		
+		int xHalfSide = xSide/2;
+		int yHalfSide = ySide/2;
+		int count = 0;
 		for(int x=0;x<map.length;x+=xHalfSide){
-			for(int y=0;y<map[0].length;y+=yHalfSide){
-				
-				if(map[x][y] == 0.0){
+			count++;
+			for(int y=0+(((count)%2)*yHalfSide);y<map[0].length;y+=ySide){
+				if(map[x][y] == 0.0f){
 					elements = 0;
 					value = 0;
 					if((x - xHalfSide) >= 0){
-						value += map[x - xHalfSide][y];
+						value += map[(x-xHalfSide)][y]; // left of center
 						elements++;
 					}
 					if((x + xHalfSide) < map.length){
-						value += map[x + xHalfSide][y];
+						value += map[(x+xHalfSide)][y]; // right of center
 						elements++;
 					}
 					if((y - yHalfSide) >= 0){
-						value += map[x][y - yHalfSide];
+						value += map[x][(y-yHalfSide)]; // above center
 						elements++;
 					}
 					if((y + yHalfSide) < map[0].length){
-						value += map[x][y + yHalfSide];
+						value += map[x][(y+yHalfSide)]; // below center
 						elements++;
 					}
 					
-					if(elements != 0.0f)					
-					value = (value/elements);// + 5.0f;//getRandom(randomRange, 0) - randomRange;
+					if(elements != 0)					
+					value = (value/elements) + getRandom(randomRange, 0) - randomRange;
 					
 					if(value > 255.0f)
 						value = 255.0f;
 					
 					if(value < 0.0f)
-						value = 0.0f;
+						value = 0.001f;
 						
+					if(map[x][y] == 0.0f)
 					map[x][y] = value;
 				}
 			}
@@ -114,6 +126,19 @@ public class Fractal {
 	return map;
 		
 	}		
+	
+	public static float[][] cutMap(float[][] map, float min, float max){
+		
+		for(int x=0;x<map.length;x++)
+			for(int y=0;y<map[0].length;y++){
+				if(map[x][y]<min)
+					map[x][y] = min;
+				
+				else if(map[x][y]>max)
+					map[x][y] = max;
+			}
+		return map;
+	}
 
 }
 

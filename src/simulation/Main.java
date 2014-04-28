@@ -20,18 +20,19 @@ public class Main {
 		
 		// Used to test Fractal.java
 
-		Globals.height = 33;
-		Globals.width = 33;
+		Globals.height = 65;
+		Globals.width = 65;
 		Globals.heightmap = new float[Globals.width][Globals.height];
 	
 		//Globals.heightmap = Fractal.intitateCorners(Globals.heightmap, 50.0f, 255.0f);
 		//Globals.heightmap = Fractal.diamondStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
 		//Globals.heightmap = Fractal.squareStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
 	
+
+		new Graphics2D();
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 255.0f, 50.0f);
 		
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 255.0f, 0.0f);
-		
-		Race sheep = new Race("Sheep");
+		/*Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
 		sheep.setSpeciesAt(3, 4, new Sheep());
 		sheep.setSpeciesAt(4, 4, new Sheep());
@@ -44,8 +45,7 @@ public class Main {
 		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
-		new Graphics3D();
-		//new Graphics2D();
+		new Graphics3D();*/
 	}
 
 }
