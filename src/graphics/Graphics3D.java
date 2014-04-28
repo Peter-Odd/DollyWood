@@ -25,6 +25,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
 import simulation.Animal;
+import simulation.Grass;
 import simulation.Race;
 import utilities.Globals;
 
@@ -157,8 +158,10 @@ public class Graphics3D {
         			Animal animal = r.getSpeciesAt(x, y);
         			if(animal != null)
         				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
+        			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
+                		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
+        			}
         		}
-        		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
         	}
         }
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
@@ -244,7 +247,7 @@ public class Graphics3D {
 	private void setupLighting() {
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
-        glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.2f, 0.2f, 0.2f, 1.0f}).flip());
+        glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
         //glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{100.0f, 100.0f, 100.0f, 1.0f}).flip());
