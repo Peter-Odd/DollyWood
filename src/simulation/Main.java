@@ -20,8 +20,8 @@ public class Main {
 		
 		// Used to test Fractal.java
 
-		Globals.height = 65;
-		Globals.width = 65;
+		Globals.height = 33;
+		Globals.width = 33;
 		Globals.heightmap = new float[Globals.width][Globals.height];
 	
 		//Globals.heightmap = Fractal.intitateCorners(Globals.heightmap, 50.0f, 255.0f);
@@ -29,10 +29,11 @@ public class Main {
 		//Globals.heightmap = Fractal.squareStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
 	
 
-		new Graphics2D();
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 255.0f, 50.0f);
 		
-		/*Race sheep = new Race("Sheep");
+		Globals.heightmap = Fractal.cutMap(Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f), 125.0f, 75.0f);
+		
+		
+		Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
 		for(int[] position : HexagonUtils.neighborTiles(6,6)){
 			sheep.setSpeciesAt(position[0], position[1], new Sheep());
@@ -50,7 +51,7 @@ public class Main {
 		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
-		new Graphics3D();*/
+		new Graphics3D();
 	}
 
 }

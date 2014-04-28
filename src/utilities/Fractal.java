@@ -11,20 +11,20 @@ public class Fractal {
 	
 	public static float[][] generateFractal(float[][] map, float max, float min){
 		
-		map = intitateCorners(map, max, min);
-		map = diamondSquare(map, map.length-1, map.length-1, 100.0f);
+		map = intitateCorners(map, max, min, 50.0f);
+		map = diamondSquare(map, map.length-1, map.length-1, 50.0f);
 		
 		return map;
 	}
 	
-	public static float[][] intitateCorners(float[][] map, float max, float min){
+	public static float[][] intitateCorners(float[][] map, float max, float min, float randomRange){
 		int largestX = map.length - 1;
 		int largestY = map[0].length - 1;
 		
-		map[0][0] = getRandom(max, min);
-		map[largestX][0] = getRandom(max, min);
-		map[largestX][largestY] = getRandom(max, min);
-		map[0][largestY] = getRandom(max, min);
+		map[0][0] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
+		map[largestX][0] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
+		map[largestX][largestY] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
+		map[0][largestY] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
 
 		return map;
 	}
@@ -127,7 +127,7 @@ public class Fractal {
 		
 	}		
 	
-	public static float[][] cutMap(float[][] map, float min, float max){
+	public static float[][] cutMap(float[][] map, float max, float min){
 		
 		for(int x=0;x<map.length;x++)
 			for(int y=0;y<map[0].length;y++){
