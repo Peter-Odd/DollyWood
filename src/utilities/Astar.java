@@ -50,7 +50,7 @@ public class Astar {
 			for (int[] neighbor : neighbors) {
 				Node newNode = new Node(calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), calculateDistanceToGoal(nodeX, nodeY, neighbor[0], neighbor[1]), currentNode);
 				openList.add(newNode);
-				//TBI sort openList hej
+				//TBI sort openList
 			}
 			closedList.add(currentNode);
 			
