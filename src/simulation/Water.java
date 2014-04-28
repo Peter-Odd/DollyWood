@@ -5,6 +5,7 @@ import utilities.Globals;
 public class Water implements Runnable{
 	int tickLength;
 	private float[][] groundWaterLevel;
+	private float[][] cloudWaterLevel;
 	
 	public Water(int tickLength){
 		this.tickLength = tickLength;
@@ -32,12 +33,18 @@ public class Water implements Runnable{
 	}
 	
 	private void step() {
+		float waterSum = 0.0f;
+		float waterLossFactor = 0.003f;
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
-				groundWaterLevel[x][y] -= 0.001f;
+				groundWaterLevel[x][y] -= 0.003f;
 				if(groundWaterLevel[x][y] < 0.0f)
 					groundWaterLevel[x][y] = 0.0f;
+				waterSum += groundWaterLevel[x][y];
 			}
+		}
+		if(waterSum < Globals.width*Globals.height*0.2f){
+			//toggleDownfall();
 		}
 	}
 }
