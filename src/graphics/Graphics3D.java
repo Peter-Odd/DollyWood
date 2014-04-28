@@ -27,6 +27,7 @@ import static org.lwjgl.opengl.GL11.*;
 import simulation.Animal;
 import simulation.Grass;
 import simulation.Race;
+import simulation.Water;
 import utilities.Globals;
 
 /**
@@ -149,21 +150,33 @@ public class Graphics3D {
 				renderModel(currentState.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
+
+        for(int x = 0; x < Globals.width; x++){
+        	for(int y = 0; y < Globals.height; y++){
+        		if(Globals.water.getCloudWaterLevel()[x][y] != 1.0f)
+            		renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(Globals.water.getCloudWaterLevel()[x][y], Globals.water.getCloudWaterLevel()[x][y], Globals.water.getCloudWaterLevel()[x][y]));
+        	}
+        }
 		
         for(int x = 0; x < Globals.width; x++){
         	for(int y = 0; y < Globals.height; y++){
-        		glColor3f(0.0f, 1.0f, 0.0f);
+        		//Render ground tiles
         		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        		
+        		//Render races
         		for(Race r:Globals.races){
         			Animal animal = r.getSpeciesAt(x, y);
+        			//Render animal
         			if(animal != null)
         				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
+        			//Special case for plants
         			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
                 		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
         			}
         		}
         	}
         }
+        //Random tree
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 		
 		//Render SkyDome
