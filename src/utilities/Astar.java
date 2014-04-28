@@ -11,7 +11,15 @@ public class Astar {
 	LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, sort after TotalCost
 	ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
 	
-	private int calculateDistance(int startX, int startY, int goalX, int goalY) {
+	/**
+	 * 
+	 * @param startX
+	 * @param startY
+	 * @param goalX
+	 * @param goalY
+	 * @return
+	 */
+	private int calculateDistanceToGoal(int startX, int startY, int goalX, int goalY) {
 		return Math.abs((goalX-startX)+(goalY-startY));
 	}
 	
@@ -25,10 +33,9 @@ public class Astar {
 	public int[][] calculatePath(int[][] world, int startX, int startY, int goalX, int goalY) {
 		/*	check that start and goal is inside world
 			if start == goal return path directly
-			
 		*/
 		
-		Node start = new Node(calculateDistance(startX, startY, goalX, goalY), 0, null);
+		Node start = new Node(calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
 		Node goal = new Node(0, 0, null);
 		boolean goalFound = false;
 		int nodeX = startX;
@@ -41,9 +48,9 @@ public class Astar {
 			int[][] neighbors = HexagonUtils.neighborTiles(nodeX, nodeY, false);
 			
 			for (int[] neighbor : neighbors) {
-				Node newNode = new Node(calculateDistance(neighbor[0], neighbor[1] , goalX, goalY), calculateDistance(nodeX, nodeY, neighbor[0], neighbor[1]), currentNode);
+				Node newNode = new Node(calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), calculateDistanceToGoal(nodeX, nodeY, neighbor[0], neighbor[1]), currentNode);
 				openList.add(newNode);
-				//ev. sort list
+				//TBI sort openList
 			}
 			closedList.add(currentNode);
 			
