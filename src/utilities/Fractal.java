@@ -2,10 +2,19 @@ package utilities;
 
 import java.util.Random;
 
+/** Generates floats in a 2D array using the DiamondSqaure algorithm.
+ * 
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ *
+ */
+
 public class Fractal {
 	static Random r = new Random();
 	
-	public static float getRandom(float max, float min){
+	
+	
+	private static float getRandom(float max, float min){
 		return r.nextFloat() * (max-min) + min;
 	}
 	
