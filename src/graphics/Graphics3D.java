@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.Random;
 
 import graphics.utilities.AnimationEvent;
 import graphics.utilities.AnimationState;
@@ -40,7 +41,7 @@ public class Graphics3D {
 	private HashMap<String, Integer> models = new HashMap<String, Integer>();
 	private float size = 3.5f;
 	
-	private AnimationEventController animationEventController = new AnimationEventController(100);
+	private AnimationEventController animationEventController = new AnimationEventController(40); //24 FPS
 	/**
 	 * This is all that is needed.<br />
 	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.<br />
@@ -53,52 +54,19 @@ public class Graphics3D {
 		setupCamera();
 		setupStates();
 		setupLighting();
+		setupStarterAnimation();
 		
-		AnimationEvent startupAnimation = new AnimationEvent();
-		startupAnimation.model = "DollyWood";
-		AnimationState startState = new AnimationState();
-		startState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-0.0f);
-		startState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		startState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		startState.speed = 0.0001f;
-		AnimationState endState = new AnimationState();
-		endState.position = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f);
-		endState.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-		endState.scale = new Vector3f(1.0f, 1.0f, 1.0f);
-		endState.speed = 0.0001f;
-		
-		startupAnimation.states.add(endState);
-		startupAnimation.states.add(startState);
-		startupAnimation.currentState = startState.clone();
-		animationEventController.events.add(startupAnimation);
-		//Thread animationControllerThread = new Thread(animationEventController);
-		//animationControllerThread.start();
-		
+
+        camera.pitch = -90.0f;
         glMatrixMode(GL_MODELVIEW);
         long lastTime = 0;
 		while(!Display.isCloseRequested()){
-			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-				try {
-					Display.setFullscreen(!Display.isFullscreen());
-					Thread.sleep(100);
-				} catch (LWJGLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        }
-			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-				Display.destroy();
-				break;
-			}
+			processInput();
 			long time = System.currentTimeMillis();
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	        glPushAttrib(GL_TRANSFORM_BIT);
 	        glPushMatrix();
 	        glLoadIdentity();
-	        
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
@@ -113,18 +81,74 @@ public class Graphics3D {
 		}
 	}
 
+	private void processInput() {
+		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+			try {
+				Display.setFullscreen(!Display.isFullscreen());
+				Thread.sleep(100);
+			} catch (LWJGLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+			Display.destroy();
+			System.exit(0);
+		}
+	}
+
+	private void setupStarterAnimation() {
+		try {
+			Random random = new Random();			
+
+			float xRange = 4.0f;
+			float yRange = 2.0f;
+			for(int i = 0; i < 100; i++){
+				Vector3f position = new Vector3f();
+				String animation = "res/ButterflyAnimationRed.ani";
+				if(random.nextInt(2) == 0)
+					animation = "res/ButterflyAnimationGreen.ani";
+				animationEventController.loadEvent(animation, "Butterfly"+i, position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+				position = new Vector3f(Globals.width/2*size+(random.nextFloat()*2.0f*xRange-xRange), Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*2.0f*yRange-yRange));
+				animationEventController.addAnimationState(new AnimationState(position, new Vector3f(90.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
+
+				animationEventController.addAnimationState(new AnimationState(new Vector3f(position.x, position.y-2.0f, position.z), new Vector3f(0.0f, 0.0f, 180.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
+				position = new Vector3f(position.x+(random.nextFloat()*2.0f*xRange-xRange), position.y-5.0f, position.z+(random.nextFloat()*2.0f*yRange-yRange));
+				animationEventController.addAnimationState(new AnimationState(new Vector3f(position.x, position.y-2.0f, position.z), new Vector3f(0.0f, 0.0f, 180.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.03f), "Butterfly"+i);
+
+				animationEventController.setRandomAnimationSpeed("Butterfly"+i, 0.02f, 0.06f);
+				animationEventController.setRandomModelSpeed("Butterfly"+i, 0.2f, 0.4f);
+			}
+			
+			//animationEventController.loadEvent("res/ButterflyAnimation.ani", "ButterflyTest", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+			//Vector3f position = new Vector3f(Globals.width/2*size+(random.nextFloat()*6.0f-3.0f), Globals.height/2*size-2.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*6.0f-3.0f));
+			//animationEventController.addAnimationState(new AnimationState(position, rotation, new Vector3f(1.0f, 1.0f, 1.0f), 0.03f), "ButterflyTest");
+			
+			animationEventController.loadEvent("res/startupAnimation.ani", "StartupAnimation", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		Thread animationControllerThread = new Thread(animationEventController);
+		animationControllerThread.start();
+	}
+
 	private void render() {
-        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the camera at center point
+        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
         updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
 
-		for(AnimationEvent animEvent : animationEventController.events){
-			AnimationState currentState = animEvent.currentState;
+		for(AnimationEvent animEvent : animationEventController.getEvents()){
+			AnimationState currentState = animEvent.getStateSum();
 			if(currentState != null){
-				//renderModel(animEvent.model, currentState.position, currentState.rotation, currentState.scale);
+				//System.out.println(currentState.model);
+				renderModel(currentState.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
+		
         for(int x = 0; x < Globals.width; x++){
         	for(int y = 0; y < Globals.height; y++){
         		glColor3f(0.0f, 1.0f, 0.0f);
@@ -132,15 +156,14 @@ public class Graphics3D {
         		for(Race r:Globals.races){
         			Animal animal = r.getSpeciesAt(x, y);
         			if(animal != null)
-        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(animal.getRotation(), 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
         		}
         		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
         	}
         }
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-
-		renderModel("DollyWood", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-        
+		
+		//Render SkyDome
 		float sphereScale = 60.0f;
 		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 
@@ -160,11 +183,15 @@ public class Graphics3D {
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
 		if(models.containsKey(modelName)){
 			glTranslatef(position.x, position.y, position.z);
+			glRotatef(rotation.x, 1.0f, 0.0f, 0.0f);
+			glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
+			glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
 			glScalef(size.x, size.y, size.z);
-			glRotatef(rotation.x, 0.0f, 0.0f, 1.0f);
 			glCallList(models.get(modelName));
-			glRotatef(-rotation.x, 0.0f, 0.0f, 1.0f);
 			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
+			glRotatef(-rotation.z, 0.0f, 0.0f, 1.0f);
+			glRotatef(-rotation.y, 0.0f, 1.0f, 0.0f);
+			glRotatef(-rotation.x, 1.0f, 0.0f, 0.0f);
 			glTranslatef(-position.x, -position.y, -position.z);
 		}
 		else
@@ -238,7 +265,7 @@ public class Graphics3D {
 	}
 
 	private void setupCamera() {
-		camera = new Camera(new Vector3f(0.0f, 0.0f, 10.0f), new Vector3f(0.0f, 0.0f, 0.0f), 70.0f, 0.01f, 1000.0f);
+		camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 70.0f, 0.01f, 1000.0f);
 		camera.applyPerspective();
 	}
 
