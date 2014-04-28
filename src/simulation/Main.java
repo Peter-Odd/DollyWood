@@ -28,8 +28,10 @@ public class Main {
 		//Globals.heightmap = Fractal.diamondStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
 		//Globals.heightmap = Fractal.squareStep(Globals.heightmap, Globals.width-1, 0, Globals.height-1, 0);
 	
+
 		
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 255.0f, 0.0f);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 50.0f, 3.0f);
+		
 		
 		Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
@@ -54,7 +56,6 @@ public class Main {
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
 		new Graphics3D();
-		//new Graphics2D();
 	}
 
 }
