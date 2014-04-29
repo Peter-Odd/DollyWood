@@ -30,12 +30,12 @@ public class Main {
 	
 
 		
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 50.0f, 5.0f);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 25.0f, 3.0f);
 		
 		
 		Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
-		for(int[] position : HexagonUtils.neighborTiles(6,6)){
+		for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
 			sheep.setSpeciesAt(position[0], position[1], new Sheep());
 		}
 		/*
@@ -47,7 +47,13 @@ public class Main {
 		sheep.setSpeciesAt(2, 5, new Sheep());
 		sheep.setSpeciesAt(4, 5, new Sheep());
 		*/
-		
+		Globals.water = new Water(100);
+		Thread waterThread = new Thread(Globals.water);
+		waterThread.start();
+		Grass grass = new Grass(100);
+		Thread grassThread = new Thread(grass);
+		Globals.races.add(grass);
+		grassThread.start();
 		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();

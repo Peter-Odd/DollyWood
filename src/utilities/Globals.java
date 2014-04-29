@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import simulation.DayNightCycle;
 import simulation.Race;
+import simulation.Water;
 
 public class Globals {
 	/*
@@ -15,4 +16,5 @@ public class Globals {
 	public static ArrayList<Race> races = new ArrayList<>();
 	
 	public static DayNightCycle dayNightCycle;
+	public static Water water;
 }
