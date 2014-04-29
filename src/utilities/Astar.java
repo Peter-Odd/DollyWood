@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
+
+import simulation.Race;
 
 //import java.util.Random;
 
@@ -54,19 +57,40 @@ public class Astar {
 	/**
 	 * Go through list to find path from start to goal
 	 * @param list
-	 * @return List with elements from head in list to just before null
+	 * @return Stack with elements from head in list to just before null
 	 */
-	private List<Node> tracePath(List<Node> list) {
-		List<Node> resultList = new LinkedList<>();
+	private Stack<Node> tracePath(List<Node> list) {
+		Stack<Node> resultStack = new Stack<>();
 		Node cursor = list.get(0);
 
 		while (cursor != null) {
-			resultList.add(cursor);
+			resultStack.push(cursor);
 			cursor = cursor.getParent();
 		}
-		return resultList;
+		return resultStack;
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private boolean findSpecies(int x, int y) {
+		boolean walkable = true;
+		for (Race r : Globals.races) {
+			if (r.getSpeciesAt(x, y) != null) {
+				walkable = false;
+				break;
+			}
+		}
+		 return walkable;
+	}
+	
+	private int calculateMovementCost(int x, int y) {
+		return 1 + (int) (Globals.heightmap[x][y] / 75);
+	}
+	
 	/**
 	 * Calculates path from (startX, startY) to (goalX, goalY) within world.
 	 * @param world world coordinates represented as a two dimensional array
@@ -76,31 +100,32 @@ public class Astar {
 	 * @param goalY Y-coordinate of goal node
 	 * @return List with elements representing shortest path from start to goal
 	 */
-	public List<Node> calculatePath(int[][] world, int startX, int startY, int goalX, int goalY) {
+	public Stack<Node> calculatePath(int[][] world, int startX, int startY, int goalX, int goalY) {
 		assert(startX <= world.length || goalX <= world.length || startY <= world[0].length || goalY <= world[0].length);
 
 		if (startX == goalX && startY == goalY) {
 			return null; //TBI
 		}
-
+		boolean goalFound = false;
+		
 		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
-		openList.add(start);			
+		openList.add(start);		
 
 		do {
 			Node currentNode = findLowestHeuristicCost(openList);
 			openList.remove(currentNode);
 			closedList.add(currentNode);
-			if (currentNode.getX() == goalX && currentNode.getY() == goalY) //Goal found
+			if (currentNode.getX() == goalX && currentNode.getY() == goalY) { //Goal found
+				goalFound = true;
 				break;
+			}
 
-			int[][] neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
+			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
 
 			for (int[] neighbor : neighbors) {
-				if ( true /*neighbor is walkable or not in the closedList*/) { //<--- TBI
-					//Kolla ��ven heightmap (v��rde som s��ger om G-v��rdet ska ��kas med ngt)
-					//Om vatten ska G ox�� ��kas med ngt
-					//Andra hinder? Var specas det om en ruta ��r walkable?
-					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), 1, currentNode);
+				if ( findSpecies(neighbor[0], neighbor[1]) ) {
+					//if water what to do?
+					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), calculateMovementCost(neighbor[0], neighbor[1]), currentNode);
 					if (openList.contains(newNode)) 
 					{ 	/*check to see if this path to that square is better, using G cost as the measure*/
 						if ((currentNode.getMovementCost() + 1) < newNode.getMovementCost()) {
@@ -114,7 +139,7 @@ public class Astar {
 			}
 		} while (openList.size() > 0);
 
-		if (openList.size() == 0) { return null; }
+		if (openList.size() == 0 && goalFound == false) { return null; }
 
 		return tracePath(closedList);
 	}
