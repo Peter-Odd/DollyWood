@@ -12,7 +12,12 @@ import java.util.Random;
 public class Fractal {
 	static Random r = new Random();
 	
-	
+	/** Generates a random value between max and min.
+	 * 
+	 * @param max The max value.
+	 * @param min The min value
+	 * @return A value between max and min.
+	 */
 	
 	private static float getRandom(float max, float min){
 		return r.nextFloat() * (max-min) + min;
@@ -59,14 +64,14 @@ public class Fractal {
 	}
 	
 	
-	/** Executes the diamond and square step of the diamondsqaure alorithm.
+	/** Executes the diamond and square step of the Diamond-Square algorithm.
 	 * 
-	 * @param map The array wich will be used.
+	 * @param map The array which will be used.
 	 * @param xSide The width of the squares, from corner to corner. Or the distance between the right and left edge of a diamond.
 	 * @param ySide The height of the squares, from corner to corner. Or the distance between the upper and lower edge of a diamond.
 	 * @param randomRange The random number which is added in every step will be within this range.
 	 * @param randomDiv The randomRange is divided with this every recursive call.
-	 * @return The array filled with floats, generated with diamondsqaure algorithm.
+	 * @return The array filled with floats, generated with Diamond-Square algorithm.
 	 */
 	
 	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv){
@@ -81,7 +86,7 @@ public class Fractal {
 		return map;
 	}
 	
-	/** Executes the diamond step of the diamondsquare algorithm. Taking a square of four points, generate a random value 
+	/** Executes the diamond step of the Diamond-Square algorithm. Taking a square of four points, generate a random value 
 	 *  at the square midpoint, where the two diagonals meet. The midpoint value is calculated by averaging the four corner 
 	 *  values, plus a random amount. This gives you diamonds when you have multiple squares arranged in a grid.
 	 * 
@@ -121,7 +126,7 @@ public class Fractal {
 		return map;
 	}
 	
-	/** Executes the square step of the diamond square algorithm. Taking each diamond of four points, generate a 
+	/** Executes the square step of the Diamond-Square algorithm. Taking each diamond of four points, generate a 
 	 * random value at the center of the diamond. Calculate the midpoint value by averaging the corner values, plus a 
 	 * random amount generated in the same range as used for the diamond step. This gives you squares again.
 	 * 
