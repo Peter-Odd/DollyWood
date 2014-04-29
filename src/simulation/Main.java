@@ -30,7 +30,7 @@ public class Main {
 	
 
 		
-		Globals.heightmap = Fractal.cutMap(Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f), 125.0f, 75.0f);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 50.0f, 5.0f);
 		
 		
 		Race sheep = new Race("Sheep");
