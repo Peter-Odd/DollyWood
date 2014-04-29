@@ -1,5 +1,8 @@
 package simulation;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import utilities.Fractal;
 import utilities.Globals;
 import utilities.HexagonUtils;
@@ -8,6 +11,8 @@ public class Water implements Runnable{
 	int tickLength;
 	private float[][] groundWaterLevel;
 	private float[][] cloudWaterLevel;
+	
+	private ArrayList<Cloud> clouds = new ArrayList<>();
 	
 	private float[][] fractalMap;
 	private boolean downfall;
@@ -25,6 +30,13 @@ public class Water implements Runnable{
 			for(int y = 0; y < Globals.height; y++)
 				groundWaterLevel[x][y] = 0.75f;
 		
+		Random random = new Random();
+		for(int i = 0; i < (int)(random.nextInt(5))+10; i++){
+			Cloud cloud = new Cloud(100, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height);
+			Thread cloudThread = new Thread(cloud);
+			cloudThread.start();
+			clouds.add(cloud);
+		}
 		while(true){
 			step();
 			try{
@@ -39,20 +51,35 @@ public class Water implements Runnable{
 	public float getGroundWaterLevel(int x, int y){
 		return groundWaterLevel[x][y];
 	}
+	public void addGroundWaterLevel(int x, int y, float ammount){
+		groundWaterLevel[x][y] += ammount;
+	}
+	public boolean drawGroundWaterLevel(int x, int y, float ammount){
+		if(groundWaterLevel[x][y] >= ammount){
+			groundWaterLevel[x][y] -= ammount;
+			return true;
+		}
+		else
+			return false;
+	}
 	
 	public float[][] getCloudWaterLevel(){
 		return cloudWaterLevel.clone();
 	}
 	
+	public ArrayList<Cloud> getClouds(){
+		return clouds;
+	}
+	
 	private void step() {
-		evaporate();
+		//evaporate();
 		
 		float waterSum = countWaterTotal();
 		cloudWaterLevel = Fractal.cutMap(fractalMap.clone(), 1.0f, 0.99f-(waterSum/(Globals.width*Globals.height)));
 		if(waterSum < Globals.width*Globals.height*0.2f){
 			this.downfall = true;
 		}
-		downfall();
+		//downfall();
 		if(waterSum > Globals.width*Globals.height*0.7f){
 			this.downfall = false;
 		}
