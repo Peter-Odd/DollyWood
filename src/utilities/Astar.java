@@ -8,7 +8,6 @@ import java.util.Stack;
 
 import simulation.Race;
 
-//import java.util.Random;
 
 /**
  * Path finding algorithm A*
