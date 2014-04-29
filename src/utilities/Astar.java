@@ -40,7 +40,7 @@ public class Astar {
 	private Node findLowestHeuristicCost(LinkedList<Node> list) {
 		int heuristicPrev = VERYHIGHVALUE; 
 		Node returnMe = null;
-		
+
 		for (Node l : list) {
 			int tmpTotalCost = l.getTotalCost();
 			if (tmpTotalCost < heuristicPrev) {
@@ -59,7 +59,7 @@ public class Astar {
 	private List<Node> tracePath(List<Node> list) {
 		List<Node> resultList = new LinkedList<>();
 		Node cursor = list.get(0);
-		
+
 		while (cursor != null) {
 			resultList.add(cursor);
 			cursor = cursor.getParent();
@@ -78,11 +78,11 @@ public class Astar {
 	 */
 	public List<Node> calculatePath(int[][] world, int startX, int startY, int goalX, int goalY) {
 		assert(startX <= world.length || goalX <= world.length || startY <= world[0].length || goalY <= world[0].length);
-		
+
 		if (startX == goalX && startY == goalY) {
 			return null; //TBI
 		}
-				
+
 		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
 		openList.add(start);			
 
