@@ -96,10 +96,10 @@ public class Astar {
 			int[][] neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
 
 			for (int[] neighbor : neighbors) {
-				if (/*neighbor is walkable or not in the closedList*/) { //<--- TBI
-					//Kolla även heightmap (värde som säger om G-värdet ska ökas med ngt)
-					//Om vatten ska G oxå ökas med ngt
-					//Andra hinder? Var specas det om en ruta är walkable?
+				if ( true /*neighbor is walkable or not in the closedList*/) { //<--- TBI
+					//Kolla ��ven heightmap (v��rde som s��ger om G-v��rdet ska ��kas med ngt)
+					//Om vatten ska G ox�� ��kas med ngt
+					//Andra hinder? Var specas det om en ruta ��r walkable?
 					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), 1, currentNode);
 					if (openList.contains(newNode)) 
 					{ 	/*check to see if this path to that square is better, using G cost as the measure*/
