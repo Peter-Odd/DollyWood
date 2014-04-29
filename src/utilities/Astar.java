@@ -17,9 +17,9 @@ import simulation.Race;
 
 public class Astar {
 
-	LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, possibly sort after TotalCost
-	ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
-	final int VERYHIGHVALUE = 999999;
+	static LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, possibly sort after TotalCost
+	static ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
+	final static int VERYHIGHVALUE = 999999;
 
 
 	/**
@@ -30,7 +30,8 @@ public class Astar {
 	 * @param goalY Y-coordinate of goal node
 	 * @return Distance from start node to goal node
 	 */
-	private int calculateDistanceToGoal(int startX, int startY, int goalX, int goalY) {
+	private static int calculateDistanceToGoal(int startX, int startY, int goalX, int goalY) {
+	//	System.out.println("Distance: " + Math.abs((goalX-startX)+(goalY-startY)));
 		return Math.abs((goalX-startX)+(goalY-startY));
 	}
 
@@ -39,7 +40,7 @@ public class Astar {
 	 * @param list List containing nodes with heuristic values added by calculatePath
 	 * @return Node with lowest heuristic value from list
 	 */
-	private Node findLowestHeuristicCost(LinkedList<Node> list) {
+	private static Node findLowestTotalCost(LinkedList<Node> list) {
 		int heuristicPrev = VERYHIGHVALUE; 
 		Node returnMe = null;
 
@@ -50,6 +51,7 @@ public class Astar {
 				returnMe = l;
 			}
 		}
+		//System.out.println(returnMe.toString());
 		return returnMe;
 	}
 
@@ -58,7 +60,7 @@ public class Astar {
 	 * @param list
 	 * @return Stack with elements from head in list to just before null
 	 */
-	private Stack<Node> tracePath(List<Node> list) {
+	private static Stack<Node> tracePath(List<Node> list) {
 		Stack<Node> resultStack = new Stack<>();
 		Node cursor = list.get(0);
 
@@ -75,19 +77,21 @@ public class Astar {
 	 * @param y
 	 * @return
 	 */
-	private boolean findSpecies(int x, int y) {
+	private static boolean findSpecies(int x, int y) {
 		boolean walkable = true;
-		for (Race r : Globals.races) {
+		/*for (Race r : Globals.races) {
 			if (r.getSpeciesAt(x, y) != null) {
 				walkable = false;
 				break;
 			}
-		}
+		}*/
 		 return walkable;
 	}
 	
-	private int calculateMovementCost(int x, int y) {
-		return 1 + (int) (Globals.heightmap[x][y] / 75);
+	private static int calculateMovementCost(int x, int y) {
+		return (int) (1 + AstarDriver.world[x][y]);
+		//return 1 + (int) (Globals.heightmap[x][y] / 75);
+		
 	}
 	
 	/**
@@ -99,21 +103,26 @@ public class Astar {
 	 * @param goalY Y-coordinate of goal node
 	 * @return List with elements representing shortest path from start to goal
 	 */
-	public Stack<Node> calculatePath(int[][] world, int startX, int startY, int goalX, int goalY) {
-		assert(startX <= world.length || goalX <= world.length || startY <= world[0].length || goalY <= world[0].length);
+	public static Stack<Node> calculatePath(/*int[][] world, */int startX, int startY, int goalX, int goalY) {
+	//	assert(startX <= world.length || goalX <= world.length || startY <= world[0].length || goalY <= world[0].length);
 
-		if (startX == goalX && startY == goalY) {
+		/*if (startX == goalX && startY == goalY) {
 			return null; //TBI
-		}
+		}*/
 		boolean goalFound = false;
 		
 		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
 		openList.add(start);		
 
 		do {
-			Node currentNode = findLowestHeuristicCost(openList);
+			//System.out.println("OpenList size: " + openList.size());
+			for (int i=0; i<openList.size();i++) {
+				System.out.println("openList, X: " + openList.get(i).getX() + ", Y: " + openList.get(i).getY());
+			}
+			Node currentNode = findLowestTotalCost(openList);
 			openList.remove(currentNode);
 			closedList.add(currentNode);
+			//System.out.println("X: " + currentNode.getX() + " " + "Y: " + currentNode.getY());
 			if (currentNode.getX() == goalX && currentNode.getY() == goalY) { //Goal found
 				goalFound = true;
 				break;
@@ -121,6 +130,7 @@ public class Astar {
 
 			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
 
+				
 			for (int[] neighbor : neighbors) {
 				if ( findSpecies(neighbor[0], neighbor[1]) ) {
 					//if water what to do?

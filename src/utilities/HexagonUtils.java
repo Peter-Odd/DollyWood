@@ -52,12 +52,18 @@ public class HexagonUtils {
 			tiles.add(tile);
 		}
 		for(int[] tileIterator : tiles){
-			tileIterator[0] %= Globals.width;
+			/*tileIterator[0] %= Globals.width;
 			tileIterator[1] %= Globals.height;
 			if(tileIterator[0] < 0)
 				tileIterator[0] = Globals.width - tileIterator[0]-2;
 			if(tileIterator[1] < 0)
-				tileIterator[1] = Globals.height - tileIterator[1]-2;
+				tileIterator[1] = Globals.height - tileIterator[1]-2;*/
+			tileIterator[0] %= AstarDriver.width;
+			tileIterator[1] %= AstarDriver.height;
+			if(tileIterator[0] < 0)
+				tileIterator[0] = AstarDriver.width - tileIterator[0]-2;
+			if(tileIterator[1] < 0)
+				tileIterator[1] = AstarDriver.height - tileIterator[1]-2;
 		}
 		return tiles;
 	}
