@@ -28,8 +28,4 @@ public class Race {
 			return false;
 		}
 	}
-	
-	
-
 }
-

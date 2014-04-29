@@ -25,9 +25,12 @@ import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
 import simulation.Animal;
+import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
+import simulation.Water;
 import utilities.Globals;
+import utilities.HexagonUtils;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -149,21 +152,45 @@ public class Graphics3D {
 				renderModel(currentState.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
+
+		//Render Water system
+		for(Cloud c : Globals.water.getClouds()){
+			if(c.getSize() > 0.01f){
+				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
+			}
+		}
+		//float[][] cloudWaterLevel = Globals.water.getCloudWaterLevel();
+        for(int x = 0; x < Globals.width; x++){
+        	for(int y = 0; y < Globals.height; y++){
+        		/*if(cloudWaterLevel[x][y] != 1.0f){
+        			float cloudSize = cloudWaterLevel[x][y]*3.0f;
+        			if(cloudWaterLevel[x][y] > 0.0f)
+        				renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f+cloudSize*2), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize));
+        		}*/
+            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
+        			renderModel("Water", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
+        	}
+        }
 		
         for(int x = 0; x < Globals.width; x++){
         	for(int y = 0; y < Globals.height; y++){
-        		glColor3f(0.0f, 1.0f, 0.0f);
+        		//Render ground tiles
         		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        		
+        		//Render races
         		for(Race r:Globals.races){
         			Animal animal = r.getSpeciesAt(x, y);
+        			//Render animal
         			if(animal != null)
         				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
+        			//Special case for plants
         			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
                 		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
         			}
         		}
         	}
         }
+        //Random tree
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 		
 		//Render SkyDome
