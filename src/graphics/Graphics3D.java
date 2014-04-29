@@ -161,7 +161,7 @@ public class Graphics3D {
         			if(cloudWaterLevel[x][y] > 0.0f)
         				renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f+cloudSize*2), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize));
         		}
-            	if(Globals.water.getGroundWaterLevel(x, y) > 0.1f)
+            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
         			renderModel("Water", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
         	}
         }

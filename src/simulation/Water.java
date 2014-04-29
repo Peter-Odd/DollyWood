@@ -63,7 +63,7 @@ public class Water implements Runnable{
 	
 
 	private void dissipate() {
-		float flowRate = 0.1f;
+		float flowRate = 0.5f;
 		for(int x = 1; x < Globals.width-1; x++){
 			for(int y = 1; y < Globals.height-1; y++){
 				if(groundWaterLevel[x][y] >= flowRate){
