@@ -28,11 +28,15 @@ public class Water implements Runnable{
 	public void run() {
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
-				groundWaterLevel[x][y] = 0.75f;
+				groundWaterLevel[x][y] = 0.5f;
 		
 		Random random = new Random();
+		float[][] xCurrent = new float[Globals.width][Globals.height];
+		float[][] yCurrent = new float[Globals.width][Globals.height];
+		Fractal.generateFractal(xCurrent, 1.0f, 0.0f, 2.0f, 1.5f);
+		Fractal.generateFractal(yCurrent, 1.0f, 0.0f, 2.0f, 1.5f);
 		for(int i = 0; i < (int)(random.nextInt(5))+10; i++){
-			Cloud cloud = new Cloud(100, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height);
+			Cloud cloud = new Cloud(100, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height, random.nextFloat()*3.0f, xCurrent, yCurrent);
 			Thread cloudThread = new Thread(cloud);
 			cloudThread.start();
 			clouds.add(cloud);
@@ -90,9 +94,9 @@ public class Water implements Runnable{
 	
 
 	private void dissipate() {
-		float flowRate = 0.5f;
-		for(int x = 1; x < Globals.width-1; x++){
-			for(int y = 1; y < Globals.height-1; y++){
+		float flowRate = 0.3f;
+		for(int x = 0; x < Globals.width; x++){
+			for(int y = 0; y < Globals.height; y++){
 				if(groundWaterLevel[x][y] >= flowRate){
 					for(int[] neighbor : HexagonUtils.neighborTiles(x, y, false)){
 						if(groundWaterLevel[neighbor[0]][neighbor[1]] < groundWaterLevel[x][y]){
@@ -128,7 +132,7 @@ public class Water implements Runnable{
 	}
 
 	private void waterFlow() {
-		float flowRate = 0.02f;
+		float flowRate = 0.04f;
 		float flowThreshold = 0.1f;
 		for(int x = 1; x < Globals.width-1; x++){
 			for(int y = 1; y < Globals.height-1; y++){

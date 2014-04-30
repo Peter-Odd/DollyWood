@@ -157,6 +157,17 @@ public class Graphics3D {
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
 				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
+				if(c.downfall()){
+					glPointSize(3.0f);
+					glColor3f(0.0f, 0.6f, 1.0f);
+					Random random = new Random();
+					glBegin(GL_POINTS);
+						for(int i = 0; i < 150; i++){
+							Vector3f vertex = new Vector3f(c.getxPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
+							glVertex3f(vertex.x, vertex.y, vertex.z);
+						}
+					glEnd();
+				}
 			}
 		}
 		//float[][] cloudWaterLevel = Globals.water.getCloudWaterLevel();
