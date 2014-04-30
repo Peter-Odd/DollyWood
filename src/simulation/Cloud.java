@@ -5,6 +5,11 @@ import java.util.Random;
 import utilities.Globals;
 import utilities.HexagonUtils;
 
+/**
+ * Clouds will roam around the world sucking up water and after a set time release all the stored water.
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
 public class Cloud implements Runnable{
 	
 	private int tickLength;
@@ -15,6 +20,15 @@ public class Cloud implements Runnable{
 	private float[][] xCurrent;
 	private float[][] yCurrent;
 	
+	/**
+	 * Cloud constructor
+	 * @param tickLength Sets the sleep duration for the Thread
+	 * @param xPos Initial xPosition
+	 * @param yPos Initial yPosition
+	 * @param size Calculates starting tick. After a hardcoded amount of ticks the cloud will release water. This sets where to start counting
+	 * @param xCurrent A map of how strong the wind is in the x-axis at any given position.
+	 * @param yCurrent A map of how strong the wind is in the y-axis at any given position.
+	 */
 	public Cloud(int tickLength, float xPos, float yPos, float size, float[][] xCurrent, float[][] yCurrent){
 		this.tickLength = tickLength;
 		this.xPos = xPos;
@@ -26,6 +40,10 @@ public class Cloud implements Runnable{
 	}
 	
 	int ticks = 0;
+	/**
+	 * Starter for cloudThread
+	 * This will check if it should rain or not. It will also step the cloud once during each loop
+	 */
 	public void run() {
 		while(true){
 			ticks++;
@@ -51,6 +69,10 @@ public class Cloud implements Runnable{
 		}
 	}
 
+	/**
+	 * Steps the clouds simulation one frame forward.
+	 * This moves the cloud in relation to the wind and it also sucks up/releases water.
+	 */
 	private void step() {
 		float windStrength = (6.0f-this.size)*0.01f;
 		float drawSize = 0.02f;
@@ -68,6 +90,10 @@ public class Cloud implements Runnable{
 		}
 	}
 
+	/**
+	 * 
+	 * @return <code>(boolean)(Is it raining?)</code>
+	 */
 	public boolean downfall(){
 		return downfall;
 	}
