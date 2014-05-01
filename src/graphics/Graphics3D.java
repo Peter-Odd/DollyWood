@@ -64,6 +64,7 @@ public class Graphics3D {
         camera.pitch = -90.0f;
         glMatrixMode(GL_MODELVIEW);
         long lastTime = 0;
+        updateLight(GL_LIGHT1, camera.getPosition(), new Vector3f(0.3f, 0.35f, 0.45f));
 		while(!Display.isCloseRequested()){
 			processInput();
 			long time = System.currentTimeMillis();
@@ -143,7 +144,7 @@ public class Graphics3D {
         glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
-        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(worldSunIntensity, worldSunIntensity, worldSunIntensity));
+        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
 
 		for(AnimationEvent animEvent : animationEventController.getEvents()){
 			AnimationState currentState = animEvent.getStateSum();
@@ -157,6 +158,17 @@ public class Graphics3D {
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
 				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
+				if(c.downfall()){
+					glPointSize(3.0f);
+					glColor3f(0.0f, 1.2f, 2.0f);
+					Random random = new Random();
+					glBegin(GL_POINTS);
+						for(int i = 0; i < 150; i++){
+							Vector3f vertex = new Vector3f(c.getxPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
+							glVertex3f(vertex.x, vertex.y, vertex.z);
+						}
+					glEnd();
+				}
 			}
 		}
 		//float[][] cloudWaterLevel = Globals.water.getCloudWaterLevel();
@@ -277,7 +289,7 @@ public class Graphics3D {
         glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
-        //glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{100.0f, 100.0f, 100.0f, 1.0f}).flip());
+        //glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{75.0f, 75.0f, 75.0f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         //glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
@@ -285,6 +297,7 @@ public class Graphics3D {
         //glCullFace(GL_FRONT);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT1);
         glEnable(GL_COLOR_MATERIAL);
         glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	}
