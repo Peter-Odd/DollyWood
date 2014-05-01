@@ -293,6 +293,7 @@ public class Graphics3D {
         glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         //glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+        glLight(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0001f, 0.0001f, 0.0001f, 1.0f}).flip());
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_FRONT);
         glEnable(GL_LIGHTING);
