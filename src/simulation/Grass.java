@@ -2,6 +2,9 @@ package simulation;
 
 import utilities.Globals;
 import utilities.HexagonUtils;
+import utilities.NeedsController;
+import utilities.Needs;
+import utilities.NeedsController.NeedsControlled;
 
 /**
  * Grass system that simulates the growth and decay of grass across the world.
@@ -13,9 +16,9 @@ import utilities.HexagonUtils;
  * And lastly if there is too much water it will also die.
  * <br /><b>-((x-3.5)^2)/6.125+1.0</b> this is what determines the growth rate, where x = waterAmmount.
  * @author OSM Group 5 - DollyWood project
- * @version 1.0
+ * @version 1.1
  */
-public class Grass extends Race implements Runnable{
+public class Grass extends Race implements Runnable, NeedsControlled{
 
 	private int tickLength;
 	private float[][] grassLevel;
@@ -32,6 +35,7 @@ public class Grass extends Race implements Runnable{
 		this("Grass");
 		this.tickLength = tickLength;
 		grassLevel = new float[Globals.width][Globals.height];
+		NeedsController.registerNeed("Plant", this);
 	}
 
 	public float getGrassAt(int x, int y){
@@ -43,7 +47,10 @@ public class Grass extends Race implements Runnable{
 			for(int y = 0; y < Globals.height; y++){
 				float waterAmmount = 0.0f;
 				for(int[] neighbor : HexagonUtils.neighborTiles(x, y, true)){
-					waterAmmount += Globals.water.getGroundWaterLevel(neighbor[0], neighbor[1]);
+					//waterAmmount += Globals.water.getGroundWaterLevel(neighbor[0], neighbor[1]);
+					for(NeedsControlled nc : NeedsController.getNeed("Water")){
+						waterAmmount += nc.getNeed(new Needs("Water", 1.0f), neighbor[0], neighbor[1]);
+					}
 				}
 				//-((x-3.5)^2)/6.125+1.0 = exponential, ranging from -1 to 1, with center i 3.5. This asumes that waterAmmount ranges from 0 to 7
 				float grassGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
@@ -70,6 +77,18 @@ public class Grass extends Race implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public float getNeed(Needs need, int x, int y) {
+		if(grassLevel[x][y] >= need.getAmmount()){
+			grassLevel[x][y] -= need.getAmmount();
+			return need.getAmmount();
+		}
+		else{
+			float tmp = grassLevel[x][y];
+			grassLevel[x][y] = 0.0f;
+			return tmp;
 		}
 	}
 }

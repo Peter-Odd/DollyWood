@@ -33,34 +33,9 @@ public class NeedsController {
 		return needs.get(need);
 	}
 	
-	/**
-	 * Don't know yet. TBI
-	 * @author OSM Group 5 - DollyWood project
-	 * @version 1.0
-	 */
-	public class Needs{
-		private String need;
-		private int ammount;
-		public Needs(String need, int ammount){
-			this.need = need;
-			this.ammount = ammount;
-		}
-		public String getNeed() {
-			return need;
-		}
-		public void setNeed(String need) {
-			this.need = need;
-		}
-		public int getAmmount() {
-			return ammount;
-		}
-		public void setAmmount(int ammount) {
-			this.ammount = ammount;
-		}
-	}
-	
 	//TODO implement this class!
 	public interface NeedsControlled{
-		
+		//This will kill a sheep and return 1.0f if the sheep is an adult. if called on grass, it will return however much grass there is on that tile and remove that tile of grass
+		public float getNeed(Needs need, int x, int y);
 	}
 }
