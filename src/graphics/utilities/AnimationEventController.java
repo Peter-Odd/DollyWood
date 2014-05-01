@@ -126,7 +126,6 @@ public class AnimationEventController implements Runnable{
 	 * @param position Position offset. This is where the animation will be centered
 	 * @param rotation Rotation offset.
 	 * @param scale Scale offset. Note that they should be 0.0, if a final scale of 1.0 is desired
-	 * @return A new AnimationEvent loaded from a .ani file
 	 * @throws FileNotFoundException
 	 */
 	public void loadEvent(String filename, String animationID, Vector3f position, Vector3f rotation, Vector3f scale, float speed) throws FileNotFoundException{
