@@ -12,8 +12,10 @@ import utilities.NeedsController.NeedsControlled;
 /**
  * The complete water system will simulate both water flowing down to a lower position and the dissipation through dry ground.
  * This is also a container for the clouds which extends the simulation with rain and evaporation.
+ * <br /><br />
+ * Water registers a provider of the need <code>"Water"</code>
  * @author OSM Group 5 - DollyWood project
- * @version 1.01
+ * @version 1.1
  */
 public class Water implements Runnable, NeedsControlled{
 	int tickLength;

@@ -29,8 +29,9 @@ public class NeedsController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static ArrayList<NeedsControlled> getNeed(String need){
-		return needs.get(need);
+		return (ArrayList<NeedsControlled>) needs.get(need).clone();
 	}
 	
 	//TODO implement this class!
