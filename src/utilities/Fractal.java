@@ -37,7 +37,7 @@ public class Fractal {
 	public static float[][] generateFractal(float[][] map, float max, float min, float randomRange, float randomDiv){
 		
 		map = intitateCorners(map, max, min, randomRange);
-		map = diamondSquare(map, map.length-1, map.length-1, randomRange, randomDiv);
+		map = diamondSquare(map, map.length-1, map.length-1, randomRange, randomDiv, max, min);
 		
 		return map;
 	}
@@ -55,6 +55,10 @@ public class Fractal {
 		int largestX = map.length - 1;
 		int largestY = map[0].length - 1;
 		
+		if(randomRange > (max-min)/4){
+			randomRange = (max-min)/4;
+		}
+		
 		map[0][0] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
 		map[largestX][0] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
 		map[largestX][largestY] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
@@ -71,16 +75,18 @@ public class Fractal {
 	 * @param ySide The height of the squares, from corner to corner. Or the distance between the upper and lower edge of a diamond.
 	 * @param randomRange The random number which is added in every step will be within this range.
 	 * @param randomDiv The randomRange is divided with this every recursive call.
+	 * @param max The max value which the floats in the array can have.
+	 * @param min The min value which the floats in the array can have.
 	 * @return The array filled with floats, generated with Diamond-Square algorithm.
 	 */
 	
-	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv){
+	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv, float max, float min){
 
-		map = diamondStep(map, xSide, ySide, randomRange);
-		map = squareStep(map, xSide, ySide, randomRange);
+		map = diamondStep(map, xSide, ySide, randomRange, max, min);
+		map = squareStep(map, xSide, ySide, randomRange, max, min);
 		
 		if(xSide >= 4)
-			map = diamondSquare(map, xSide/2, ySide/2, randomRange/randomDiv, randomDiv);
+			map = diamondSquare(map, xSide/2, ySide/2, randomRange/randomDiv, randomDiv, max, min);
 		
 		
 		return map;
@@ -94,10 +100,12 @@ public class Fractal {
 	 * @param xSide The width of the squares.
 	 * @param ySide The height of the squares.
 	 * @param randomRange The random value will be in this range.
+	 * @param max The max value which the floats in the array can have.
+	 * @param min The min value which the floats in the array can have.
 	 * @return map with diamonds calculated.
 	 */
 	
-	public static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange){
+	public static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange, float max, float min){
 		
 		float center = 0.0f;
 		int xHalfSide = xSide/2;
@@ -110,13 +118,13 @@ public class Fractal {
 							 map[x + xSide][y]  + 						// right upper corner
 							 map[x][y + ySide] + 						// left lower corner
 							 map[x + xSide][y + ySide])/4.0f) +			// right lower corner
-							 getRandom(randomRange*2, 0) - randomRange;
+							 getRandom(randomRange, -randomRange);
 					
-					if(center > 255.0f)
-						center = 250.0f;
+					if(center > max)
+						center = max;
 					
-					if(center < 0.0f)
-						center = 0.001f;
+					if(center < min)
+						center = min + 0.001f;
 					
 					map[x+xHalfSide][y+yHalfSide] = center;
 				}
@@ -134,10 +142,12 @@ public class Fractal {
 	 * @param xSide The distance between the right and left edge of a diamond.
 	 * @param ySide The distance between the upper and lower edge of a diamond.
 	 * @param randomRange The random value will be in this range.
+	 * @param max The max value which the floats in the array can have.
+	 * @param min The min value which the floats in the array can have.
 	 * @return map with squares calculated.
 	 */
 	
-	public static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange){
+	public static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange, float max, float min){
 		
 		float value = 0;
 		float elements = 0.0f;
@@ -168,15 +178,14 @@ public class Fractal {
 					}
 					
 					if(elements != 0)					
-					value = (value/elements) + getRandom(randomRange*2, 0) - randomRange;
+					value = (value/elements) + getRandom(randomRange, -randomRange);
 					
-					if(value > 255.0f)
-						value = 255.0f;
+					if(value > max)
+						value = max;
 					
-					if(value < 0.0f)
-						value = 0.001f;
+					if(value < min)
+						value = min + 0.001f;
 						
-					if(map[x][y] == 0.0f)
 					map[x][y] = value;
 				}
 			}
