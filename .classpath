@@ -9,6 +9,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jars/slick.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jimmy/Downloads/jumi-actors-0.1.196.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
