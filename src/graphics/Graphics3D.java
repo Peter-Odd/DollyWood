@@ -29,8 +29,10 @@ import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
 import simulation.Water;
+import utilities.Astar;
 import utilities.Globals;
 import utilities.HexagonUtils;
+import utilities.Node;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -146,6 +148,11 @@ public class Graphics3D {
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
         updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
 
+        //A* Testing ground
+        for(Node n : Astar.calculatePath(3, 3, 24, 12)){
+        	renderModel("Sheep", new Vector3f(n.getX()*size, n.getY()*size, -90.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        }
+        
 		for(AnimationEvent animEvent : animationEventController.getEvents()){
 			AnimationState currentState = animEvent.getStateSum();
 			if(currentState != null){
