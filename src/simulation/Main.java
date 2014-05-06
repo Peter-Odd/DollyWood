@@ -35,9 +35,10 @@ public class Main {
 		
 		Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
-		for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
+		for(int[] position : HexagonUtils.neighborTiles(6,6, 6, false)){
 			sheep.setSpeciesAt(position[0], position[1], new Sheep());
 		}
+		
 		/*
 		sheep.setSpeciesAt(3, 4, new Sheep());
 		sheep.setSpeciesAt(4, 4, new Sheep());

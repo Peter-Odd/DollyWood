@@ -1,6 +1,7 @@
 package utilities;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * UtilityObject that will mostly help with converting a square map to a hexagonal map.
@@ -8,6 +9,54 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class HexagonUtils {
+	
+	private static boolean contains(ArrayList<int[]> list, int[] elem){
+		for(int[] e : list){
+			if(e[0] == elem[0] && e[1] == elem[1])
+				return true;
+		}
+		return false;
+	}
+	
+	private static void remove(ArrayList<int[]> list, int[] elem){
+		Iterator<int[]> it = list.iterator();
+		while(it.hasNext()){
+			int[] e = it.next();
+			if(e[0] == elem[0] && e[1] == elem[1]){
+				it.remove();
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Calculates neighboring points
+	 * @param x X-centerPoint
+	 * @param y Y-centerPoint
+	 * @param radius The radius of the search pattern
+	 * @return Returns a two-dimensional array containing all points that are within the radius of the point(x,y)
+	 */
+	public static ArrayList<int[]> neighborTiles(int x, int y, int radius, boolean includeCenter){
+		ArrayList<int[]> tiles = new ArrayList<int[]>();
+		tiles.add(new int[]{x, y});
+		ArrayList<int[]> workingList = null;
+		for(int i = radius; i > 0; i--){
+			@SuppressWarnings("unchecked")
+			ArrayList<int[]> tileClone = (ArrayList<int[]>) tiles.clone();
+			for(int[] tile : tileClone){
+				workingList = neighborTiles(tile[0], tile[1], false);
+				for(int[] neighbors : workingList){
+					if(!contains(tiles, neighbors))
+						tiles.add(neighbors);
+				}
+			}
+		}
+		if(!includeCenter){
+			remove(tiles, new int[]{x, y});
+		}
+		return tiles;
+	}
+	
 	/**
 	 * Calculates neighboring points
 	 * @param x X-centerPoint

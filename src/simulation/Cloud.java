@@ -80,15 +80,14 @@ public class Cloud implements Runnable, NeedsControlled{
 	 * This moves the cloud in relation to the wind and it also sucks up/releases water.
 	 */
 	private void step() {
-		float windStrength = (6.0f-this.size)*0.01f;
-		float drawSize = 0.02f;
+		float windStrength = Math.abs((6.0f-this.size)*0.01f); //Dirty trick to solve the -1 arrayindex problem
+		float drawSize = 0.04f;
 		float fallSize = 0.4f;
 		float sunIntensity = 0.0f;
 		for(NeedsControlled nc : NeedsController.getNeed("SunLight")){
 			sunIntensity += nc.getNeed(new Needs("SunLight", 1.0f), (int)this.xPos, (int)this.yPos);
 		}
 		drawSize *= sunIntensity;
-		fallSize *= sunIntensity;
 		xPos = (xPos+xCurrent[(int)xPos][(int)(yPos)]*windStrength)%Globals.width;
 		yPos = (yPos+yCurrent[(int)xPos][(int)(yPos)]*windStrength)%Globals.height;
 		for(int[] neighbor : HexagonUtils.neighborTiles((int)xPos, (int)yPos, true)){

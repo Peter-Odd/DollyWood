@@ -28,9 +28,8 @@ import simulation.Animal;
 import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
-import simulation.Water;
+import simulation.Sheep;
 import utilities.Globals;
-import utilities.HexagonUtils;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -102,6 +101,15 @@ public class Graphics3D {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 			Display.destroy();
 			System.exit(0);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+			int xPos = (int) ((int) ((Globals.width/2-camera.getPosition().x/size)));
+			int yPos = (int) ((int) ((Globals.height/2-(camera.getPosition().y-((xPos%2)*(size/2)))/size)));
+			
+			for(Race r : Globals.races)
+				if(r.getSpecies().equals("Sheep"))
+					r.setSpeciesAt(xPos, yPos, new Sheep());
+			
 		}
 	}
 
