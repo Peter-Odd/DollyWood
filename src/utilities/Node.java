@@ -12,7 +12,6 @@ public class Node {
 	private Node Parent; 		//Parent of this node
 	private int X; 				//Position X-coordinate
 	private int Y; 				//Position Y-coordinate
-	private boolean walkable; 		//is node walkable or non-walkable? TBI, not used now
 	
 	/**
 	 * 
@@ -29,9 +28,6 @@ public class Node {
 		setMovementCost(movementCost);
 		setTotalCost(heuristic + movementCost);
 		setParent(parent);
-		if (movementCost > 100) {
-			walkable = false;
-		}
 	}
 
 	public Node getParent() {
@@ -70,12 +66,4 @@ public class Node {
 		return Y;
 	}
 
-	public boolean getWalkable() {
-		return walkable;
-	}
-
-	public void setWalkable() {
-		this.walkable = true;
-	}
-	
 }
