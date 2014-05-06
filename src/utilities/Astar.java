@@ -20,9 +20,9 @@ public class Astar {
 
 	static LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, possibly sort after TotalCost
 	static ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
-	static ArrayList<Node> obstacleList = new ArrayList<>(); //contains unwalkable objects
+//	static ArrayList<Node> obstacleList = new ArrayList<>(); //contains unwalkable objects
 
-	static int count = 0;
+//	static int count = 0;
 	final static int VERYHIGHVALUE = 999999;
 
 
@@ -55,7 +55,7 @@ public class Astar {
 				returnMe = l;
 			}
 		}
-		System.out.println("Lowest total cost: " + returnMe.getTotalCost());
+//		System.out.println("Lowest total cost: " + returnMe.getTotalCost());
 		return returnMe;
 	}
 
@@ -98,7 +98,7 @@ public class Astar {
 	private static int calculateMovementCost(int x, int y) {
 		// 	System.out.println("WORLD AT X, Y: " + x + ", " + y + ": " + (int) (AstarDriver.world[x][y]));
 		return (int) (AstarDriver.world[x][y]);
-		//return 1 + (int) (Globals.heightmap[x][y] / 75);
+		//return (int) (Globals.heightmap[x][y] / 75);
 
 	}
 
@@ -121,8 +121,8 @@ public class Astar {
 
 		do {
 			Node currentNode = findLowestTotalCost(openList);
-			//openList.remove(currentNode);
-			System.out.println("currentNode:" + currentNode.getX() + ":" + currentNode.getY());
+			openList.remove(currentNode);
+			//System.out.println("currentNode:" + currentNode.getX() + ":" + currentNode.getY());
 			
 			if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
 				//goal found
@@ -135,27 +135,27 @@ public class Astar {
 			for (int[] neighbor : neighbors) {
 				Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0],  neighbor[1]) + 1, currentNode);
 
-				boolean existsInOpenList = true;
+				boolean existsInOpenList = false;
 
 				for (Node nodeInOpenList : openList) {
 					if (nodeInOpenList.getX() == newNode.getX() && nodeInOpenList.getY() == newNode.getY()) { //check X&Y-value n and newNode
 						if (nodeInOpenList.getMovementCost() < newNode.getMovementCost()) {
 							//node exists in openList, do not add it to the openList.
 							//nothing to do, exit foreach-loop
-							existsInOpenList = false;
+							existsInOpenList = true;
 							break;
 						} else {
 							//node exists in openList, do not add it to the openList.
 							//update movementCost and its parent
 							nodeInOpenList.setParent(newNode);
 							nodeInOpenList.setMovementCost(1 + newNode.getMovementCost());
-							existsInOpenList = false;
+							existsInOpenList = true;
 							break;
 						}
 					}	
 				}
 				
-				if (existsInOpenList) {
+				if (!existsInOpenList) {
 					System.out.println("Adding to openList:" + neighbor[0] + ":" + neighbor[1]);
 					openList.add(newNode);
 				}
