@@ -5,12 +5,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import utilities.*;
-import fi.jumi.actors.ActorRef;
-import fi.jumi.actors.ActorThread;
-import fi.jumi.actors.MultiThreadedActors;
-import fi.jumi.actors.eventizers.dynamic.DynamicEventizerProvider;
-import fi.jumi.actors.listeners.CrashEarlyFailureHandler;
-import fi.jumi.actors.listeners.NullMessageListener;
 import graphics.*;
 public class Main {
 
@@ -30,13 +24,14 @@ public class Main {
 		
 		// Used to test Fractal.java
 
-		Globals.height = 65;
-		Globals.width = 65;
+		Globals.height = 33;
+		Globals.width = 33;
 		Globals.heightmap = new float[Globals.width][Globals.height];
 	
 		
+		
 
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 50.0f, 2.0f);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 25.0f, 3.0f);
 		
 
 		
@@ -44,9 +39,8 @@ public class Main {
 		Globals.races.add(sheep);
 		for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
 			sheep.setSpeciesAt(position[0], position[1], new Animal());
-		}
-		
-		
+			sheep.setSpeciesAt(position[0], position[1], new Sheep());
+
 		Globals.water = new Water(100);
 		Thread waterThread = new Thread(Globals.water);
 		waterThread.start();
@@ -60,4 +54,5 @@ public class Main {
 		new Graphics3D();
 	}
 
+	}
 }
