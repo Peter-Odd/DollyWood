@@ -156,7 +156,7 @@ public class Astar {
 				}
 				
 				if (existsInOpenList) {
-					System.out.println("Adding to openList(flipped):" + neighbor[1] + ":" + neighbor[0]);
+					System.out.println("Adding to openList:" + neighbor[0] + ":" + neighbor[1]);
 					openList.add(newNode);
 				}
 			}
