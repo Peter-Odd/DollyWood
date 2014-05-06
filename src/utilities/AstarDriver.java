@@ -4,7 +4,7 @@ import java.util.Stack;
 
 public class AstarDriver {
 
-	public static int width = 5;
+	public static int width = 6;
 	public static int height = 6;
 	final static float WALL = 999.9f;
 
@@ -15,7 +15,8 @@ public class AstarDriver {
 
 	static float[][] world ={ {WALL,	WALL,	WALL,	WALL, 	WALL	, WALL},
 						  	  {WALL,	0.0f,  	0.0f,	WALL,	0.0f	, WALL}, 
-						  	  {WALL,	0.0f,  	0.0f,	WALL,	0.0f	, WALL},
+						  	  {WALL,	0.0f,  	WALL,	WALL,	0.0f	, WALL},
+						  	  {WALL,	0.0f,  	0.0f,  	WALL, 	0.0f	, WALL},
 						  	  {WALL,	0.0f,  	0.0f,  	0.0f, 	0.0f	, WALL},
 						  	  {WALL,	WALL,	WALL,	WALL, 	WALL	, WALL} };
 	 
