@@ -45,7 +45,7 @@ public class AstarDriver {
 //		}
 
 
-		Stack<Node> path = Astar.calculatePath(1, 1, 4, 1);
+		Stack<Node> path = Astar.calculatePath(1, 1, 1, 4);
 
 //		System.out.println("Path size: " + path.size());
 

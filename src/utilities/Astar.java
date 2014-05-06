@@ -121,7 +121,8 @@ public class Astar {
 
 		do {
 			Node currentNode = findLowestTotalCost(openList);
-			openList.remove(currentNode);
+			//openList.remove(currentNode);
+			System.out.println("currentNode:" + currentNode.getX() + ":" + currentNode.getY());
 			
 			if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
 				//goal found
@@ -131,7 +132,6 @@ public class Astar {
 			}
 
 			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
-
 			for (int[] neighbor : neighbors) {
 				Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0],  neighbor[1]) + 1, currentNode);
 
@@ -154,7 +154,9 @@ public class Astar {
 						}
 					}	
 				}
+				
 				if (existsInOpenList) {
+					System.out.println("Adding to openList(flipped):" + neighbor[1] + ":" + neighbor[0]);
 					openList.add(newNode);
 				}
 			}
