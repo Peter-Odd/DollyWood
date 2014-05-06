@@ -23,7 +23,7 @@ public class Graphics2D extends JPanel{
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		this.setBackground(Color.PINK);
-		int size = 10;
+		int size = 4;
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
 				g.setColor(new Color((int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y]),(int)(Globals.heightmap[x][y])));

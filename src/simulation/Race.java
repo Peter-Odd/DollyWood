@@ -1,5 +1,6 @@
 package simulation;
 
+
 import utilities.Globals;
 
 public class Race {
@@ -8,7 +9,7 @@ public class Race {
 
 	public Race(String specName) {
 		this.specName = specName;
-		species = new Animal[Globals.width][Globals.height];
+		species = new Animal[Globals.height][Globals.width];
 	}
 
 	public String getSpecies() {
@@ -29,3 +30,4 @@ public class Race {
 		}
 	}
 }
+
