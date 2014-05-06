@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import simulation.Race;
@@ -19,6 +20,9 @@ public class Astar {
 
 	static LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, possibly sort after TotalCost
 	static ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
+	static ArrayList<Node> obstacleList = new ArrayList<>(); //contains unwalkable objects
+	
+	static int count = 0;
 	final static int VERYHIGHVALUE = 999999;
 
 
@@ -31,8 +35,8 @@ public class Astar {
 	 * @return Distance from start node to goal node
 	 */
 	private static int calculateDistanceToGoal(int startX, int startY, int goalX, int goalY) {
-	//	System.out.println("Distance: " + Math.abs((goalX-startX)+(goalY-startY)));
-		return Math.abs((goalX-startX)+(goalY-startY));
+		//	System.out.println("Distance: " + Math.abs((goalX-startX)+(goalY-startY)));
+		return ( Math.abs(goalX-startX) + Math.abs(goalY-startY) );
 	}
 
 	/**
@@ -46,12 +50,12 @@ public class Astar {
 
 		for (Node l : list) {
 			int tmpTotalCost = l.getTotalCost();
-			if (tmpTotalCost < heuristicPrev) {
+			if (tmpTotalCost < heuristicPrev && !closedList.contains(l)) {
 				heuristicPrev = tmpTotalCost;
 				returnMe = l;
 			}
 		}
-		//System.out.println(returnMe.toString());
+		System.out.println("Lowest total cost: " + returnMe.getTotalCost());
 		return returnMe;
 	}
 
@@ -60,16 +64,19 @@ public class Astar {
 	 * @param list
 	 * @return Stack with elements from head in list to just before null
 	 */
-	private static Stack<Node> tracePath(List<Node> list) {
+	private static Stack<Node> tracePath(int position) {
+		System.out.println("GOAL FOUND, EUREKA!");
+
 		Stack<Node> resultStack = new Stack<>();
-		Node cursor = list.get(0);
+		Node cursor = closedList.get(position);
 
 		while (cursor != null) {
+			System.out.println("(" + cursor.getX() + "," + cursor.getY() + ")." );	
 			resultStack.push(cursor);
 			cursor = cursor.getParent();
 		}
 		return resultStack;
-	}
+	}	
 
 	/**
 	 * 
@@ -85,15 +92,18 @@ public class Astar {
 				break;
 			}
 		}*/
-		 return walkable;
+		return walkable;
 	}
-	
+
 	private static int calculateMovementCost(int x, int y) {
-		return (int) (1 + AstarDriver.world[x][y]);
+			// 	System.out.println("WORLD AT X, Y: " + x + ", " + y + ": " + (int) (AstarDriver.world[x][y]));
+		return (int) (AstarDriver.world[x][y]);
 		//return 1 + (int) (Globals.heightmap[x][y] / 75);
-		
+
 	}
-	
+
+
+
 	/**
 	 * Calculates path from (startX, startY) to (goalX, goalY) within world.
 	 * @param world world coordinates represented as a two dimensional array
@@ -103,54 +113,145 @@ public class Astar {
 	 * @param goalY Y-coordinate of goal node
 	 * @return List with elements representing shortest path from start to goal
 	 */
-	public static Stack<Node> calculatePath(/*int[][] world, */int startX, int startY, int goalX, int goalY) {
-	//	assert(startX <= world.length || goalX <= world.length || startY <= world[0].length || goalY <= world[0].length);
 
-		/*if (startX == goalX && startY == goalY) {
-			return null; //TBI
-		}*/
+	public static Stack<Node> calculatePath(int startX, int startY, int goalX, int goalY) {
 		boolean goalFound = false;
-		
 		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
-		openList.add(start);		
+		openList.add(start);
 
 		do {
-			//System.out.println("OpenList size: " + openList.size());
-			for (int i=0; i<openList.size();i++) {
-				System.out.println("openList, X: " + openList.get(i).getX() + ", Y: " + openList.get(i).getY());
-			}
 			Node currentNode = findLowestTotalCost(openList);
 			openList.remove(currentNode);
-			closedList.add(currentNode);
-			//System.out.println("X: " + currentNode.getX() + " " + "Y: " + currentNode.getY());
-			if (currentNode.getX() == goalX && currentNode.getY() == goalY) { //Goal found
+
+			if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
+				closedList.add(currentNode);
 				goalFound = true;
 				break;
 			}
 
 			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
 
-				
 			for (int[] neighbor : neighbors) {
-				if ( findSpecies(neighbor[0], neighbor[1]) ) {
-					//if water what to do?
-					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), calculateMovementCost(neighbor[0], neighbor[1]), currentNode);
-					if (openList.contains(newNode)) 
-					{ 	/*check to see if this path to that square is better, using G cost as the measure*/
-						if ((currentNode.getMovementCost() + 1) < newNode.getMovementCost()) {
-							newNode.setParent(currentNode);
-						} else {/*Do nothing*/}
+				//				System.out.println("X: " + neighbor[0] + " Y: " + neighbor[1]);
+				//				System.out.println("Movement: " + calculateMovementCost(neighbor[0], neighbor[1]));
+				Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + 1 + calculateMovementCost(neighbor[0], neighbor[1]), currentNode);
 
-					} else {
-						openList.add(newNode);
+//				if (calculateMovementCost(neighbor[0],  neighbor[1]) > 990) {
+//					newNode.setParent(null);
+//					closedList.add(newNode);
+//					continue;
+//				}
+				
+				boolean existsInOpenList = false;
+
+				for (Node n : openList) {
+					
+
+					
+					if (n.getX() == newNode.getX() && n.getY() == newNode.getY()) {
+						if (n.getMovementCost() < newNode.getMovementCost()) {
+							existsInOpenList = true; 
+							break;
+						}
+						else {
+							n.setParent(newNode.getParent());
+							n.setMovementCost(newNode.getMovementCost());
+							//System.out.println("Total cost (before): " + n.getTotalCost());
+							n.recalculateTotalCost();
+							//System.out.println("Total cost (after): " + n.getTotalCost());
+							existsInOpenList = true;
+							break;
+						}
 					}
-				} else {/*Do nothing*/}
+				}
+
+				if (!existsInOpenList) {  //node doesnt exist in the openList yet.. lets add it.
+					//	if (newNode.getTotalCost() < 100) 
+					openList.add(newNode); 
+				} else 
+				{/*do nothing*/};
 			}
+			if (currentNode.getTotalCost() < 100) { 
+				closedList.add(currentNode);
+			}
+
 		} while (openList.size() > 0);
 
-		if (openList.size() == 0 && goalFound == false) { return null; }
 
-		return tracePath(closedList);
+		if (openList.size() == 0 && goalFound == false) {
+			return null;  //TBI, what to return if goal not found...? Will this ever happen?
+		}
+
+		return tracePath(closedList.size() - 1); //start to trace from the back, where the goal-node can be found...
+
 	}
+
+
+
+	//	public static Stack<Node> calculatePath(int startX, int startY, int goalX, int goalY) {
+	//		//	assert(startX <= world.length || goalX <= world.length || startY <= world[0].length || goalY <= world[0].length);
+	//
+	//		/*if (startX == goalX && startY == goalY) {
+	//			return null; //TBI
+	//		}*/
+	//		boolean goalFound = false;
+	//
+	//		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
+	//		openList.add(start);		
+	//
+	//		do {
+	//
+	//			Node currentNode = findLowestTotalCost(openList);
+	//
+	//			openList.remove(currentNode);
+	//			closedList.add(currentNode);
+	//
+	//			if (currentNode.getX() == goalX && currentNode.getY() == goalY) { //Goal found
+	//				goalFound = true;
+	//				System.out.println("ClosedList: " + closedList.size());
+	//				System.out.println("GOAL FOUND");
+	//				break;
+	//			}
+	//
+	//			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
+	//
+	//			for (int[] neighbor : neighbors) {
+	//				//if ( findSpecies(neighbor[0], neighbor[1]) ) {
+	//					//if water what to do?
+	//					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1] , goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0], neighbor[1]), currentNode);
+	//
+	//			
+	//					
+	//					
+	//					for (Node n : openList) {
+	//						
+	//						if (n.getX() == newNode.getX() && n.getY() == newNode.getY()) {
+	//							//node exists in openList, ev. update parent and calculate new movement cost and total cost
+	//							System.out.println("CurrentNode movementcost: " + currentNode.getMovementCost());
+	//							System.out.println("newNode movementcost: " + newNode.getMovementCost());
+	//							if ((currentNode.getMovementCost() + 1) < newNode.getMovementCost()) {
+	//								//TODO calculate new MovementCost and TotalValue
+	//								newNode.setParent(currentNode);
+	//								break;
+	//							}
+	//						}
+	//						
+	//					}
+	//					openList.add(newNode);
+	//
+	//
+	//
+	//				/*} else { //belongs to if (findSpecies...)
+	//					//species exists on neighbor[0], neighbor[1]. What to do? TBI
+	//				}*/
+	//			}
+	//
+	//		} while (openList.size() > 0);
+	//
+	//		if (openList.size() == 0 && goalFound == false) { return null; }
+	//
+	//		return tracePath(closedList);
+	//	}
+
 
 }
