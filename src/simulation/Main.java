@@ -1,8 +1,6 @@
 package simulation;
 
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import utilities.*;
 import graphics.*;
@@ -33,13 +31,14 @@ public class Main {
 
 		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 25.0f, 3.0f);
 		
+		
 
 		
 		Race sheep = new Race("Sheep");
 		Globals.races.add(sheep);
 		for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
-			sheep.setSpeciesAt(position[0], position[1], new Animal());
 			sheep.setSpeciesAt(position[0], position[1], new Sheep());
+		}
 
 		Globals.water = new Water(100);
 		Thread waterThread = new Thread(Globals.water);
@@ -52,7 +51,7 @@ public class Main {
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
 		new Graphics3D();
-	}
+	
 
 	}
 }
