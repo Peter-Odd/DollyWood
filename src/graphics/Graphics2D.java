@@ -14,6 +14,11 @@ import utilities.Globals;
 import utilities.Node;
 
 public class Graphics2D extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Graphics2D(){
 		JFrame frame = new JFrame("DollyWood");
 		frame.setSize(1200, 1200);
