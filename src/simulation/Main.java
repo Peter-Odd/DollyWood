@@ -79,8 +79,8 @@ public class Main {
 		
 		for (int x = 0; x < Globals.height; x++) {
 			for  (int y = 0; y < Globals.width; y++) {
-				if (treeArray[x][y] > 0.99) {
-					Tree tree = new Tree(0, x, y);	
+				if (treeArray[x][y] > 0.80) {
+					Tree tree = new Tree(1000, x, y, treeRace);	
 					treeRace.setSpeciesAt(x, y, tree);
 					Thread treeThread = new Thread(tree);
 					treeThread.start();
