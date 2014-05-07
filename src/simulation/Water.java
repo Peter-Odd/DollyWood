@@ -6,13 +6,18 @@ import java.util.Random;
 import utilities.Fractal;
 import utilities.Globals;
 import utilities.HexagonUtils;
+import utilities.NeedsController;
+import utilities.Needs;
+import utilities.NeedsController.NeedsControlled;
 /**
  * The complete water system will simulate both water flowing down to a lower position and the dissipation through dry ground.
  * This is also a container for the clouds which extends the simulation with rain and evaporation.
+ * <br /><br />
+ * Water registers a provider of the need <code>"Water"</code>
  * @author OSM Group 5 - DollyWood project
- * @version 1.0
+ * @version 1.1
  */
-public class Water implements Runnable{
+public class Water implements Runnable, NeedsControlled{
 	int tickLength;
 	private float[][] groundWaterLevel;
 	
@@ -29,6 +34,7 @@ public class Water implements Runnable{
 		groundWaterLevel = new float[Globals.width][Globals.height];		
 		fractalMap = new float[Globals.width][Globals.height];
 		Fractal.generateFractal(fractalMap, 6.0f, 0.0f, 3.0f, 1.5f);
+		NeedsController.registerNeed("Water", this);
 	}
 	
 	/**
@@ -151,6 +157,18 @@ public class Water implements Runnable{
 					}
 				}
 			}
+		}
+	}
+
+	public float getNeed(Needs need, int x, int y) {
+		if(groundWaterLevel[x][y] >= need.getAmmount()){
+			//groundWaterLevel[x][y] -= need.getAmmount();
+			return need.getAmmount();
+		}
+		else{
+			float tmp = groundWaterLevel[x][y];
+			//groundWaterLevel[x][y] = 0.0f;
+			return tmp;
 		}
 	}
 }

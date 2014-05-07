@@ -21,6 +21,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.vector.ReadableVector3f;
 import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -28,7 +29,7 @@ import simulation.Animal;
 import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
-import simulation.Water;
+import simulation.Sheep;
 import utilities.Globals;
 import utilities.HexagonUtils;
 
@@ -103,6 +104,13 @@ public class Graphics3D {
 			Display.destroy();
 			System.exit(0);
 		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+			int[] position = camera.getArrayPosition(size);
+			for(Race r : Globals.races)
+				if(r.getSpecies().equals("Sheep"))
+					r.setSpeciesAt(position[0], position[1], new Sheep());
+			
+		}
 	}
 
 	private void setupStarterAnimation() {
@@ -154,7 +162,7 @@ public class Graphics3D {
 			}
 		}
 
-		//Render Water system
+		//Render clud system
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
 				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
@@ -171,44 +179,56 @@ public class Graphics3D {
 				}
 			}
 		}
-		//float[][] cloudWaterLevel = Globals.water.getCloudWaterLevel();
-        for(int x = 0; x < Globals.width; x++){
-        	for(int y = 0; y < Globals.height; y++){
-        		/*if(cloudWaterLevel[x][y] != 1.0f){
-        			float cloudSize = cloudWaterLevel[x][y]*3.0f;
-        			if(cloudWaterLevel[x][y] > 0.0f)
-        				renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f+cloudSize*2), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize));
-        		}*/
-            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
-        			renderModel("Water", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
-        	}
-        }
+		renderTileFromCameraPosition(10);
+        //Random tree
+		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 		
-        for(int x = 0; x < Globals.width; x++){
-        	for(int y = 0; y < Globals.height; y++){
+		//Render SkyDome
+		float skyDomeScale = 60.0f;
+		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
+		Vector3f skyDomePosition = (Vector3f) camera.getPosition().negate();
+		skyDomePosition.x += skyDomeScale;
+		skyDomePosition.y += skyDomeScale;
+		skyDomePosition.z -= skyDomeScale;
+		renderModel("sphereInvNorm", new Vector3f(skyDomePosition), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(skyDomeScale, skyDomeScale, skyDomeScale));
+
+	}
+	
+	private void renderTileFromCameraPosition(int visionRadius){
+        int[] cameraPos = camera.getArrayPosition(size);
+        for(int xX = -visionRadius; xX <= visionRadius; xX++){
+        	for(int yY = -visionRadius; yY <= visionRadius; yY++){
+        		int x = cameraPos[0] + xX;
+        		int y = cameraPos[1] + yY;
+        		int xOffset = (int) (x/Globals.width*(size*Globals.width));
+        		int yOffset = (int) (y/Globals.height*(size*Globals.height));
+        		System.out.println(xOffset + ":" + yOffset);
+        		if(x < 0)
+        			x = Globals.width - x-2;
+        		if(y < 0)
+        			y = Globals.height - y-2;
+        		x %= Globals.width;
+        		y %= Globals.height;
         		//Render ground tiles
-        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        		renderModel("tile", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
         		
+        		//Render Water
+            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
+        			renderModel("Water", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
+            	
         		//Render races
         		for(Race r:Globals.races){
         			Animal animal = r.getSpeciesAt(x, y);
         			//Render animal
         			if(animal != null)
-        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
+        				renderModel(r.getSpecies(), new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
         			//Special case for plants
         			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
-                		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
+                		renderModel("grass", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
         			}
         		}
         	}
         }
-        //Random tree
-		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		
-		//Render SkyDome
-		float sphereScale = 60.0f;
-		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
-
 	}
 
 	private void updateLight(int light, Vector3f position, Vector3f color) {

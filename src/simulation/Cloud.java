@@ -4,13 +4,18 @@ import java.util.Random;
 
 import utilities.Globals;
 import utilities.HexagonUtils;
+import utilities.Needs;
+import utilities.NeedsController;
+import utilities.NeedsController.NeedsControlled;
 
 /**
  * Clouds will roam around the world sucking up water and after a set time release all the stored water.
+ * <br /><br />
+ * Cloud registers a negative provider of the need <code>"SunLight"</code>
  * @author OSM Group 5 - DollyWood project
  * @version 1.0
  */
-public class Cloud implements Runnable{
+public class Cloud implements Runnable, NeedsControlled{
 	
 	private int tickLength;
 	private float size = 0.0f;
@@ -37,6 +42,7 @@ public class Cloud implements Runnable{
 		this.ticks = (int) (size*10);
 		this.xCurrent = xCurrent;
 		this.yCurrent = yCurrent;
+		NeedsController.registerNeed("SunLight", this);
 	}
 	
 	int ticks = 0;
@@ -51,8 +57,8 @@ public class Cloud implements Runnable{
 				downfall = true;
 				ticks = 0;
 			}
-			//if(this.size > 3.0f)
-			//	downFall = true;
+			if(this.size > 3.0f)
+				downfall = true;
 			if(this.size < 0.0f){
 				Random random = new Random();
 				xPos = random.nextFloat()*(Globals.width-1);
@@ -74,9 +80,14 @@ public class Cloud implements Runnable{
 	 * This moves the cloud in relation to the wind and it also sucks up/releases water.
 	 */
 	private void step() {
-		float windStrength = (6.0f-this.size)*0.01f;
-		float drawSize = 0.02f;
+		float windStrength = Math.abs((6.0f-this.size)*0.01f); //Dirty trick to solve the -1 arrayindex problem
+		float drawSize = 0.04f;
 		float fallSize = 0.4f;
+		float sunIntensity = 0.0f;
+		for(NeedsControlled nc : NeedsController.getNeed("SunLight")){
+			sunIntensity += nc.getNeed(new Needs("SunLight", 1.0f), (int)this.xPos, (int)this.yPos);
+		}
+		drawSize *= sunIntensity;
 		xPos = (xPos+xCurrent[(int)xPos][(int)(yPos)]*windStrength)%Globals.width;
 		yPos = (yPos+yCurrent[(int)xPos][(int)(yPos)]*windStrength)%Globals.height;
 		for(int[] neighbor : HexagonUtils.neighborTiles((int)xPos, (int)yPos, true)){
@@ -120,5 +131,13 @@ public class Cloud implements Runnable{
 
 	public void setyPos(float yPos) {
 		this.yPos = yPos;
+	}
+
+	public float getNeed(Needs need, int x, int y) {
+		for(int[] neighbors : HexagonUtils.neighborTiles((int)this.xPos, (int)this.yPos, true)){
+			if(neighbors[0] == x && neighbors[1] == y)
+				return -0.1f;
+		}
+		return 0;
 	}
 }

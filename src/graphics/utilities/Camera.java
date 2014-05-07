@@ -111,6 +111,17 @@ public class Camera {
 	}
 	
 	/**
+	 * Gets the hexagon grid position based on the size of the hexagons
+	 * @param size size of each hexagon
+	 * @return new int[]{x-position, y-position}
+	 */
+	public int[] getArrayPosition(float size){
+		int x = (int) ((int) ((Globals.width/2-getPosition().x/size)));
+		int y = (int) ((int) ((Globals.height/2-(getPosition().y-((x%2)*(size/2)))/size)));
+		return new int[]{x,y};
+	}
+	
+	/**
 	 * Changes simulated camera position and rotation.
 	 */
 	public void applyTranslations(){
@@ -140,7 +151,7 @@ public class Camera {
 	 * @return The current position vector of the camera
 	 */
 	public Vector3f getPosition() {
-		return position;
+		return new Vector3f(position.x, position.y, position.z);
 	}
 
 	/**
