@@ -48,8 +48,7 @@ public class Main {
 		//	sheep.setSpeciesAt(position[0], position[1], new Sheep());
 		//}
 
-	
-
+		
 		Globals.water = new Water(100);
 		Thread waterThread = new Thread(Globals.water);
 		waterThread.start();
