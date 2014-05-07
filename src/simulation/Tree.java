@@ -20,7 +20,7 @@ public class Tree extends Animal implements Runnable {
 	private int xPos;
 	private int yPos;
 	private Race race;
-//	private Random random;
+	//	private Random random;
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class Tree extends Animal implements Runnable {
 	public float getTreeHealth() {
 		return treeHealth; 
 	}	
-	
+
 
 	public float getSize() {
 		return treeHealth; //this manages the growth/degrowth of the tree
@@ -61,13 +61,13 @@ public class Tree extends Animal implements Runnable {
 		float treeGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
 		//TODO: if too much water around tree, decrease treeHealth
 
-		//		if (treeGrowth > 0.0f) {	//if trees should depend on sunlight
-		//			float sunIntensity = 0.0f;
-		//			for (NeedsControlled nc : NeedsController.getNeed("SunLight")) {
-		//				sunIntensity += nc.getNeed(new Needs("SunLight", 1.0f), xPos, yPos);
-		//			}
-		//			treeHealth += sunIntensity;
-		//		}
+//		if (treeGrowth > 0.0f) {	//if trees should depend on sunlight
+//			float sunIntensity = 0.0f;
+//			for (NeedsControlled nc : NeedsController.getNeed("SunLight")) {
+//				sunIntensity += nc.getNeed(new Needs("SunLight", 0.4f), xPos, yPos);
+//			}
+//			treeHealth += sunIntensity;
+//		}
 
 		treeHealth += treeGrowth*0.1f; //increase treeHealth
 
@@ -78,10 +78,10 @@ public class Tree extends Animal implements Runnable {
 
 		treeHealth -= 0.05; //decrease treeHealth
 
-//		if (treeHealth < 0.1) { //tree's health too bad, lets kill it
-//			race.getAndRemoveSpeciesAt(xPos, yPos);
-//		}
-		
+		//		if (treeHealth < 0.1) { //tree's health too bad, lets kill it
+		//			race.getAndRemoveSpeciesAt(xPos, yPos);
+		//		}
+
 		getSize(); //this manages the growth/degrowth of the tree
 	} 
 
