@@ -16,6 +16,10 @@ public class Animal{
 		return rotation;
 	}
 	
+	public float getSize(){
+		return 1.0f;
+	}
+	
 	public void setRotation(float rotation){
 		this.rotation = rotation;
 	}

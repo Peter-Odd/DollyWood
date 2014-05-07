@@ -201,7 +201,7 @@ public class Graphics3D {
         			Animal animal = r.getSpeciesAt(x, y);
         			//Render animal
         			if(animal != null)
-        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
+        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(animal.getSize(), animal.getSize(), animal.getSize()));
         			//Special case for plants
         			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
                 		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
