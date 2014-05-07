@@ -63,12 +63,6 @@ public class Main {
 		dayNightThread.start();
 
 		/* Test environment for tree */
-		/*Race treeRace = new Race("Tree");
-		Globals.races.add(treeRace);
-		Tree tree = new Tree(10, 10, treeRace);
-		treeRace.setSpeciesAt(10, 10, tree);
-		Thread treeThread = new Thread(tree);
-		treeThread.start();*/
 
 		float[][] treeArray = new float[Globals.height][Globals.width];
 		Random random;
@@ -79,21 +73,17 @@ public class Main {
 				treeArray[x][y] = random.nextFloat();
 			}
 		}
-		
-		Tree tree = new Tree(1000);	
-		Race treeRace = new Race("Tree");
 
+		Race treeRace = new Race("Tree");
+		Globals.races.add(treeRace);
+		
 		for (int x = 0; x < Globals.height; x++) {
 			for  (int y = 0; y < Globals.width; y++) {
-
 				if (treeArray[x][y] > 0.99) {
-					//if (treeRace.getSpeciesAt(x, y) == null) { //if water
-
-					Globals.races.add(treeRace);
+					Tree tree = new Tree(0, x, y);	
 					treeRace.setSpeciesAt(x, y, tree);
 					Thread treeThread = new Thread(tree);
 					treeThread.start();
-					//}
 				}
 
 
