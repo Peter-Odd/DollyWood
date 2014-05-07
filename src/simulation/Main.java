@@ -51,6 +51,21 @@ public class Main {
 		//}
 
 	
+
+		
+		
+
+		Globals.water = new Water(100);
+		Thread waterThread = new Thread(Globals.water);
+		waterThread.start();
+		Grass grass = new Grass(100);
+		Thread grassThread = new Thread(grass);
+		Globals.races.add(grass);
+		grassThread.start();
+		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
+		Thread dayNightThread = new Thread(Globals.dayNightCycle);
+		dayNightThread.start();
+
 		/* Test environment for tree */
 		/*Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
@@ -91,18 +106,6 @@ public class Main {
 		}
 		
 		
-
-		Globals.water = new Water(100);
-		Thread waterThread = new Thread(Globals.water);
-		waterThread.start();
-		Grass grass = new Grass(100);
-		Thread grassThread = new Thread(grass);
-		Globals.races.add(grass);
-		grassThread.start();
-		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
-		Thread dayNightThread = new Thread(Globals.dayNightCycle);
-		dayNightThread.start();
-
 		new Graphics3D();
 	}
 
