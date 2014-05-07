@@ -1,12 +1,16 @@
 package graphics;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import graphics.utilities.AnimationEvent;
 import graphics.utilities.AnimationState;
@@ -28,11 +32,7 @@ import simulation.Animal;
 import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
-import simulation.Water;
-import utilities.Astar;
 import utilities.Globals;
-import utilities.HexagonUtils;
-import utilities.Node;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -146,7 +146,9 @@ public class Graphics3D {
         glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
-        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
+        Vector3f sunPosition = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f);
+        Vector3f.add(sunPosition, (Vector3f)camera.getPosition().negate(), sunPosition);
+        updateLight(GL_LIGHT0, sunPosition, new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
 
         //A* Testing ground
 //        for(Node n : Astar.calculatePath(3, 3, 24, 12)){
@@ -161,61 +163,84 @@ public class Graphics3D {
 			}
 		}
 
-		//Render Water system
+		
+		renderWorldFromCameraPosition(15);
+        //Random tree
+		renderModel("Tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+		
+		//Render SkyDome
+		float skyDomeScale = 60.0f;
+		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
+		Vector3f skyDomePosition = (Vector3f) camera.getPosition().negate();
+		skyDomePosition.x += skyDomeScale;
+		skyDomePosition.y += skyDomeScale;
+		skyDomePosition.z -= skyDomeScale;
+		renderModel("sphereInvNorm", new Vector3f(skyDomePosition), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(skyDomeScale, skyDomeScale, skyDomeScale));
+
+	}
+	
+	private void renderWorldFromCameraPosition(int visionRadius){
+        int[] cameraPos = camera.getArrayPosition(size);
+		int xOffset = (int) (cameraPos[0]/Globals.width*(size*Globals.width));
+		int yOffset = (int) (cameraPos[1]/Globals.height*(size*Globals.height));
+		
+		//Render cloud system
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
-				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
+				renderModel("Sphere", new Vector3f(c.getxPos()*size+xOffset, c.getyPos()*size+yOffset, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
 				if(c.downfall()){
 					glPointSize(3.0f);
 					glColor3f(0.0f, 1.2f, 2.0f);
 					Random random = new Random();
 					glBegin(GL_POINTS);
 						for(int i = 0; i < 150; i++){
-							Vector3f vertex = new Vector3f(c.getxPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
+							Vector3f vertex = new Vector3f(c.getxPos()*size+xOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+yOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
 							glVertex3f(vertex.x, vertex.y, vertex.z);
 						}
 					glEnd();
 				}
 			}
 		}
-		//float[][] cloudWaterLevel = Globals.water.getCloudWaterLevel();
-        for(int x = 0; x < Globals.width; x++){
-        	for(int y = 0; y < Globals.height; y++){
-        		/*if(cloudWaterLevel[x][y] != 1.0f){
-        			float cloudSize = cloudWaterLevel[x][y]*3.0f;
-        			if(cloudWaterLevel[x][y] > 0.0f)
-        				renderModel("Sphere", new Vector3f(x*size,y*size+((x%2)*(size/2)),-75.0f+cloudSize*2), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize, cloudWaterLevel[x][y]*cloudSize));
-        		}*/
-            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
-        			renderModel("Water", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
-        	}
-        }
 		
-        for(int x = 0; x < Globals.width; x++){
-        	for(int y = 0; y < Globals.height; y++){
-        		//Render ground tiles
-        		renderModel("tile", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        for(int xX = -visionRadius; xX <= visionRadius; xX++){
+        	for(int yY = -visionRadius; yY <= visionRadius; yY++){
+        		int x = cameraPos[0] + xX;
+        		int y = cameraPos[1] + yY;
+        		xOffset = (int) (x/Globals.width*(size*Globals.width));
+        		yOffset = (int) (y/Globals.height*(size*Globals.height));
+        		//TODO fix negative world scrolling
+        		//System.out.println(xOffset + ":" + yOffset + "\t" + x + ":" + y);
+        		if(x < 0){
+            		//xOffset = (int) ((-(x+Globals.width))/Globals.width*(size*Globals.width)); 
+        			x = Globals.width - x-2;
+        		}
+        		if(y < 0){
+            		//yOffset = (int) ((-(y+Globals.height))/Globals.height*(size*Globals.height));
+        			y = Globals.height - y-2;
+        		}
+        		x %= Globals.width;
+        		y %= Globals.height;
         		
+        		//Render ground tiles
+        		renderModel("tile", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+        		
+        		//Render Water
+            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
+        			renderModel("Water", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
+            	
         		//Render races
         		for(Race r:Globals.races){
         			Animal animal = r.getSpeciesAt(x, y);
         			//Render animal
         			if(animal != null)
-        				renderModel(r.getSpecies(), new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
+        				renderModel(r.getSpecies(), new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
         			//Special case for plants
         			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
-                		renderModel("grass", new Vector3f(x*size,y*size+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
+                		renderModel("grass", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
         			}
         		}
         	}
         }
-        //Random tree
-		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		
-		//Render SkyDome
-		float sphereScale = 60.0f;
-		renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
-
 	}
 
 	private void updateLight(int light, Vector3f position, Vector3f color) {
@@ -300,6 +325,7 @@ public class Graphics3D {
         glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
         //glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
         glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+        glLight(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0001f, 0.0001f, 0.0001f, 1.0f}).flip());
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_FRONT);
         glEnable(GL_LIGHTING);
@@ -328,10 +354,37 @@ public class Graphics3D {
 			}
 			//Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
 			Display.setTitle("DOLLYWOOD");
+			
+			ByteBuffer[] iconList = new ByteBuffer[2];
+			iconList[0] = loadIcon("res/ICON16.png");
+			iconList[1] = loadIcon("res/ICON32.png");
+			Display.setIcon(iconList);
+			
 			Display.create();
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+	
+	private ByteBuffer loadIcon(String filename) throws IOException {
+	    BufferedImage image = ImageIO.read(new File(filename)); // load image
+	    // convert image to byte array
+	    byte[] buffer = new byte[image.getWidth() * image.getHeight() * 4];
+		int counter = 0;
+		for (int x = 0; x < image.getHeight(); x++)
+			for (int y = 0; y < image.getWidth(); y++)
+			{
+				int colorSpace = image.getRGB(y, x);
+				buffer[counter + 0] = (byte) ((colorSpace << 8) >> 24);
+				buffer[counter + 1] = (byte) ((colorSpace << 16) >> 24);
+				buffer[counter + 2] = (byte) ((colorSpace << 24) >> 24);
+				buffer[counter + 3] = (byte) (colorSpace >> 24);
+				counter += 4;
+			}
+		return ByteBuffer.wrap(buffer);
 	}
 }

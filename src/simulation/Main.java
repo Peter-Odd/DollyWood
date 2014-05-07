@@ -44,10 +44,7 @@ public class Main {
 		sheepRace.setSpeciesAt(17, 10, sheep2);
 		Thread sheepThread2 = new Thread(sheep2);
 		sheepThread2.start();
-		//for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
-		//	sheep.setSpeciesAt(position[0], position[1], new Sheep());
-		//}
-
+		
 		
 		Globals.water = new Water(100);
 		Thread waterThread = new Thread(Globals.water);
