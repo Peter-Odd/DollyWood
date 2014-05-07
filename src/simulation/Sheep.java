@@ -3,7 +3,11 @@ package simulation;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 import utilities.HexagonUtils;
+import utilities.NeedsController;
+import utilities.NeedsController.NeedsControlled;
+import utilities.Needs;
 
 
 public class Sheep extends Animal implements  Runnable{
@@ -34,7 +38,11 @@ public class Sheep extends Animal implements  Runnable{
 			Random myRandomizer = new Random();
 			int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
 			
+			float food;
 			
+			for(NeedsControlled nc : NeedsController.getNeed("Plant")){
+				   food += nc.getNeed(new Needs("Plant", 1.0f), x, y);
+				}
 			
 			
 			

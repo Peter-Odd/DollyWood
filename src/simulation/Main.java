@@ -30,17 +30,17 @@ public class Main {
 
 		Race sheepRace = new Race("Sheep");
 		Globals.races.add(sheepRace);
-		Sheep sheep = new Sheep(15, 15, sheepRace);
+		Sheep sheep = new Sheep(15, 15, sheepRace, 0.5f);
 		sheepRace.setSpeciesAt(15, 15, sheep);
 		Thread sheepThread = new Thread(sheep);
 		sheepThread.start();
 		
-		Sheep sheep1 = new Sheep(16, 20, sheepRace);
+		Sheep sheep1 = new Sheep(16, 20, sheepRace, 0.5f);
 		sheepRace.setSpeciesAt(16, 20, sheep1);
 		Thread sheepThread1 = new Thread(sheep1);
 		sheepThread1.start();
 		
-		Sheep sheep2 = new Sheep(17, 10, sheepRace);
+		Sheep sheep2 = new Sheep(17, 10, sheepRace, 0.5f);
 		sheepRace.setSpeciesAt(17, 10, sheep2);
 		Thread sheepThread2 = new Thread(sheep2);
 		sheepThread2.start();

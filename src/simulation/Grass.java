@@ -38,6 +38,10 @@ public class Grass extends Race implements Runnable{
 		return grassLevel[x][y];
 	}
 	
+	public void decrementGrassLevel(int x, int y, float value){
+		grassLevel[x][y] -= value;
+	}
+	
 	private void step() {
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
