@@ -68,6 +68,9 @@ public class Camera {
 	 * @param speedModifier sets how much the cameras position should change
 	 */
 	public void processInput(float speedModifier){
+		if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+			position = new Vector3f(0.0f, 0.0f, 0.0f);
+        }
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			relativeMovement(speedModifier, 0.0f, 0.0f);
         }

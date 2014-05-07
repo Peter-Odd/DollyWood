@@ -152,7 +152,9 @@ public class Graphics3D {
         glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
-        updateLight(GL_LIGHT0, new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f), new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
+        Vector3f sunPosition = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f);
+        Vector3f.add(sunPosition, (Vector3f)camera.getPosition().negate(), sunPosition);
+        updateLight(GL_LIGHT0, sunPosition, new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
 
 		for(AnimationEvent animEvent : animationEventController.getEvents()){
 			AnimationState currentState = animEvent.getStateSum();
@@ -162,7 +164,7 @@ public class Graphics3D {
 			}
 		}
 
-		//Render clud system
+		//Render cloud system
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
 				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
@@ -202,7 +204,6 @@ public class Graphics3D {
         		int y = cameraPos[1] + yY;
         		int xOffset = (int) (x/Globals.width*(size*Globals.width));
         		int yOffset = (int) (y/Globals.height*(size*Globals.height));
-        		System.out.println(xOffset + ":" + yOffset);
         		if(x < 0)
         			x = Globals.width - x-2;
         		if(y < 0)
