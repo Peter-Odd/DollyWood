@@ -164,24 +164,8 @@ public class Graphics3D {
 			}
 		}
 
-		//Render cloud system
-		for(Cloud c : Globals.water.getClouds()){
-			if(c.getSize() > 0.01f){
-				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
-				if(c.downfall()){
-					glPointSize(3.0f);
-					glColor3f(0.0f, 1.2f, 2.0f);
-					Random random = new Random();
-					glBegin(GL_POINTS);
-						for(int i = 0; i < 150; i++){
-							Vector3f vertex = new Vector3f(c.getxPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
-							glVertex3f(vertex.x, vertex.y, vertex.z);
-						}
-					glEnd();
-				}
-			}
-		}
-		renderTileFromCameraPosition(10);
+		
+		renderWorldFromCameraPosition(10);
         //Random tree
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 		
@@ -196,20 +180,43 @@ public class Graphics3D {
 
 	}
 	
-	private void renderTileFromCameraPosition(int visionRadius){
+	private void renderWorldFromCameraPosition(int visionRadius){
         int[] cameraPos = camera.getArrayPosition(size);
+		int xOffset = (int) (cameraPos[0]/Globals.width*(size*Globals.width));
+		int yOffset = (int) (cameraPos[1]/Globals.height*(size*Globals.height));
+		
+		//Render cloud system
+		for(Cloud c : Globals.water.getClouds()){
+			if(c.getSize() > 0.01f){
+				renderModel("Sphere", new Vector3f(c.getxPos()*size+xOffset, c.getyPos()*size+yOffset, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
+				if(c.downfall()){
+					glPointSize(3.0f);
+					glColor3f(0.0f, 1.2f, 2.0f);
+					Random random = new Random();
+					glBegin(GL_POINTS);
+						for(int i = 0; i < 150; i++){
+							Vector3f vertex = new Vector3f(c.getxPos()*size+xOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+yOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
+							glVertex3f(vertex.x, vertex.y, vertex.z);
+						}
+					glEnd();
+				}
+			}
+		}
+		
         for(int xX = -visionRadius; xX <= visionRadius; xX++){
         	for(int yY = -visionRadius; yY <= visionRadius; yY++){
         		int x = cameraPos[0] + xX;
         		int y = cameraPos[1] + yY;
-        		int xOffset = (int) (x/Globals.width*(size*Globals.width));
-        		int yOffset = (int) (y/Globals.height*(size*Globals.height));
+        		xOffset = (int) (x/Globals.width*(size*Globals.width));
+        		yOffset = (int) (y/Globals.height*(size*Globals.height));
         		if(x < 0)
         			x = Globals.width - x-2;
         		if(y < 0)
         			y = Globals.height - y-2;
         		x %= Globals.width;
         		y %= Globals.height;
+        		
+        		
         		//Render ground tiles
         		renderModel("tile", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
         		
