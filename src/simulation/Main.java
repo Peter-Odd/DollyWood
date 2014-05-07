@@ -62,8 +62,8 @@ public class Main {
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
 
-		/* Test environment for tree */
 
+		/* Test environment for tree */
 		float[][] treeArray = new float[Globals.height][Globals.width];
 		Random random;
 		random = new Random();
@@ -79,15 +79,12 @@ public class Main {
 		
 		for (int x = 0; x < Globals.height; x++) {
 			for  (int y = 0; y < Globals.width; y++) {
-				if (treeArray[x][y] > 0.80) {
+				if (treeArray[x][y] > 0.98) {
 					Tree tree = new Tree(1000, x, y, treeRace);	
 					treeRace.setSpeciesAt(x, y, tree);
 					Thread treeThread = new Thread(tree);
 					treeThread.start();
 				}
-
-
-
 			}
 		}
 		
