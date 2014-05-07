@@ -1,6 +1,8 @@
 package simulation;
 
 
+import java.util.Random;
+
 import utilities.HexagonUtils;
 import utilities.Needs;
 import utilities.NeedsController;
@@ -18,6 +20,7 @@ public class Tree extends Animal implements Runnable {
 	private int xPos;
 	private int yPos;
 	private Race race;
+//	private Random random;
 
 	/**
 	 * 
@@ -32,11 +35,17 @@ public class Tree extends Animal implements Runnable {
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.race = race;
+		setRotation(new Random().nextFloat() * 360); //Rotate tree randomized between 0 & 360 degrees
 	}
 
 	public float getTreeHealth() {
-		return treeHealth;
+		return treeHealth; 
 	}	
+	
+
+	public float getSize() {
+		return treeHealth; //this manages the growth/degrowth of the tree
+	}
 
 	/**
 	 * Each "tickLength" (see doc for constructor) this method will run once
@@ -62,17 +71,19 @@ public class Tree extends Animal implements Runnable {
 
 		treeHealth += treeGrowth*0.1f; //increase treeHealth
 
-		if (treeHealth > 1.0f)
-			treeHealth = 1.0f;
+		if (treeHealth > 1.5f)
+			treeHealth = 1.5f;
 		else if (treeHealth < 0.0f) 
 			treeHealth = 0.0f;
 
 		treeHealth -= 0.05; //decrease treeHealth
 
-		if (treeHealth < 0.1) { //tree's health too bad, lets kill it
-			race.getAndRemoveSpeciesAt(xPos, yPos);
-		}
-	}
+//		if (treeHealth < 0.1) { //tree's health too bad, lets kill it
+//			race.getAndRemoveSpeciesAt(xPos, yPos);
+//		}
+		
+		getSize(); //this manages the growth/degrowth of the tree
+	} 
 
 
 	/**
