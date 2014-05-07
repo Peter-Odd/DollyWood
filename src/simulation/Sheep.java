@@ -29,28 +29,50 @@ public class Sheep extends Animal implements  Runnable{
 	public void run(){
 		while(true){
 			try {
-			    Thread.sleep(1000);
+			    Thread.sleep(200);
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
+			hunger -= 0.05f;
 		
 			ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 			Random myRandomizer = new Random();
 			int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
 			
-			float food = 0.0f;
+		
 			
 			if(hunger < 0.4f){
-				for(NeedsControlled nc : NeedsController.getNeed("Plant")){
-					   food += nc.getNeed(new Needs("Plant", 0.2f), xPos, yPos);
-				}
+				eat();
 			}
+			
+			
 			
 			
 			sheep.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
 			calcRotation(randomNeighbor);
 			xPos = randomNeighbor[0];
 			yPos = randomNeighbor[1];
+		}
+	}
+	
+
+	
+	public void eat(){
+		
+		float food = 0.0f;
+		
+		for(NeedsControlled nc : NeedsController.getNeed("Plant")){
+			   food += nc.getNeed(new Needs("Plant", 0.6f), xPos, yPos);
+		}
+		
+		hunger += food;
+		
+		if(hunger > 0.4f){
+			try {
+			    Thread.sleep(2000);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}	
 		}
 	}
 	
