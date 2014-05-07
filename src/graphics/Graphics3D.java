@@ -165,7 +165,7 @@ public class Graphics3D {
 		}
 
 		
-		renderWorldFromCameraPosition(10);
+		renderWorldFromCameraPosition(15);
         //Random tree
 		renderModel("tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 		
@@ -209,13 +209,18 @@ public class Graphics3D {
         		int y = cameraPos[1] + yY;
         		xOffset = (int) (x/Globals.width*(size*Globals.width));
         		yOffset = (int) (y/Globals.height*(size*Globals.height));
-        		if(x < 0)
+        		//TODO fix negative world scrolling
+        		//System.out.println(xOffset + ":" + yOffset + "\t" + x + ":" + y);
+        		if(x < 0){
+            		//xOffset = (int) ((-(x+Globals.width))/Globals.width*(size*Globals.width)); 
         			x = Globals.width - x-2;
-        		if(y < 0)
+        		}
+        		if(y < 0){
+            		//yOffset = (int) ((-(y+Globals.height))/Globals.height*(size*Globals.height));
         			y = Globals.height - y-2;
+        		}
         		x %= Globals.width;
         		y %= Globals.height;
-        		
         		
         		//Render ground tiles
         		renderModel("tile", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
