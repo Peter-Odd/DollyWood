@@ -1,12 +1,16 @@
 package graphics;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import graphics.utilities.AnimationEvent;
 import graphics.utilities.AnimationState;
@@ -355,10 +359,37 @@ public class Graphics3D {
 			}
 			//Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
 			Display.setTitle("DOLLYWOOD");
+			
+			ByteBuffer[] iconList = new ByteBuffer[2];
+			iconList[0] = loadIcon("res/ICON16.png");
+			iconList[1] = loadIcon("res/ICON32.png");
+			Display.setIcon(iconList);
+			
 			Display.create();
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+	
+	private ByteBuffer loadIcon(String filename) throws IOException {
+	    BufferedImage image = ImageIO.read(new File(filename)); // load image
+	    // convert image to byte array
+	    byte[] buffer = new byte[image.getWidth() * image.getHeight() * 4];
+		int counter = 0;
+		for (int x = 0; x < image.getHeight(); x++)
+			for (int y = 0; y < image.getWidth(); y++)
+			{
+				int colorSpace = image.getRGB(y, x);
+				buffer[counter + 0] = (byte) ((colorSpace << 8) >> 24);
+				buffer[counter + 1] = (byte) ((colorSpace << 16) >> 24);
+				buffer[counter + 2] = (byte) ((colorSpace << 24) >> 24);
+				buffer[counter + 3] = (byte) (colorSpace >> 24);
+				counter += 4;
+			}
+		return ByteBuffer.wrap(buffer);
 	}
 }
