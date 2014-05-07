@@ -28,12 +28,17 @@ public class Main {
 		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 25.0f, 3.0f);
 
 
-		Race sheep = new Race("Sheep");
-		Globals.races.add(sheep);
-		for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
-			sheep.setSpeciesAt(position[0], position[1], new Sheep());
-		}
+		Race sheepRace = new Race("Sheep");
+		Globals.races.add(sheepRace);
+		Sheep sheep = new Sheep(1, 1, sheepRace);
+		sheepRace.setSpeciesAt(1, 1, sheep);
+		Thread sheepThread = new Thread(sheep);
+		sheepThread.start();
+		//for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
+		//	sheep.setSpeciesAt(position[0], position[1], new Sheep());
+		//}
 
+	
 
 		Globals.water = new Water(100);
 		Thread waterThread = new Thread(Globals.water);
