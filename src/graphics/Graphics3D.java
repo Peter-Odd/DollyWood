@@ -2,6 +2,7 @@ package graphics;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,12 +22,15 @@ import graphics.utilities.Model;
 import graphics.utilities.ModelPart;
 import graphics.utilities.OBJLoader;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.ReadableVector3f;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
 import static org.lwjgl.opengl.GL11.*;
 import simulation.Animal;
@@ -74,14 +78,19 @@ public class Graphics3D {
 			processInput();
 			long time = System.currentTimeMillis();
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	        camera.applyPerspective();
+	        glEnable(GL_LIGHTING);
+	        
 	        glPushAttrib(GL_TRANSFORM_BIT);
 	        glPushMatrix();
 	        glLoadIdentity();
 	        camera.processInput(lastTime*0.05f);
 	        camera.applyTranslations();
 
-	        //animationEventController.step();
-	        render();
+	        render3D();
+	        camera.applyOrthographic();
+	        glDisable(GL_LIGHTING);
+	        render2D();
 	        
 	        glPopAttrib();
 	        
@@ -152,7 +161,31 @@ public class Graphics3D {
 		animationControllerThread.start();
 	}
 
-	private void render() {
+	private void render2D() {
+		glColor3f(0.3f, 0.3f, 0.3f);
+		//glRectf(10f, 10f, 0.0f, 0.0f);
+		try {
+	        glEnable(GL_TEXTURE_2D);
+	        Texture image = TextureLoader.getTexture("JPG", new FileInputStream(new File("res/ICON512.jpg")));
+	        image.bind();
+	        int size = 1;
+	        glBegin(GL_QUADS);
+	        	glTexCoord2f(0, 0);
+	        	glVertex2i(size, size);
+	        	glTexCoord2f(1, 0);
+	        	glVertex2i(0, size);
+	        	glTexCoord2f(1, 1);
+	        	glVertex2i(0, 0);
+	        	glTexCoord2f(0, 1);
+	        	glVertex2i(size, 0);
+	        glEnd();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void render3D() {
         glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
         float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
@@ -361,8 +394,8 @@ public class Graphics3D {
 			Display.setTitle("DOLLYWOOD");
 			
 			ByteBuffer[] iconList = new ByteBuffer[2];
-			iconList[0] = loadIcon("res/ICON16.png");
-			iconList[1] = loadIcon("res/ICON32.png");
+			iconList[0] = loadImageBuffer("res/ICON16.png");
+			iconList[1] = loadImageBuffer("res/ICON32.png");
 			Display.setIcon(iconList);
 			
 			Display.create();
@@ -375,7 +408,7 @@ public class Graphics3D {
 		}
 	}
 	
-	private ByteBuffer loadIcon(String filename) throws IOException {
+	private ByteBuffer loadImageBuffer(String filename) throws IOException {
 	    BufferedImage image = ImageIO.read(new File(filename)); // load image
 	    // convert image to byte array
 	    byte[] buffer = new byte[image.getWidth() * image.getHeight() * 4];

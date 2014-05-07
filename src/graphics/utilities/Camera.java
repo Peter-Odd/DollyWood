@@ -142,14 +142,28 @@ public class Camera {
 	 * <br> <b>Top right object is in perspective view.</b>
 	 */
 	public void applyPerspective(){
-		//glPushAttrib(GL_TRANSFORM_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		//gluPerspective(170.0f, 1.0f, 0.1f, 1.0f);
 		gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
-		//glPopAttrib();
+	    glMatrixMode(GL_MODELVIEW);
+	    glLoadIdentity();
 	}
-
+	
+	/**
+	 * Set orthographic view to the world
+	 * <br><br><img src="http://media-cache-ak0.pinimg.com/originals/61/e6/ae/61e6aee28960b816fe55fbb0384dc859.jpg" style="width:30%">
+	 * <br> <b>Top right object is in perspective view.</b>
+	 */
+	public void applyOrthographic(){
+		glMatrixMode (GL_PROJECTION);
+	    glLoadIdentity();
+	    int halfWidth = Globals.width/2;
+	    int halfHeight = Globals.height/2;
+	    glOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, 0.0, 30.0); 
+	    glMatrixMode(GL_MODELVIEW); 
+	    glLoadIdentity();
+	}
+	
 	/**
 	 * @return The current position vector of the camera
 	 */
