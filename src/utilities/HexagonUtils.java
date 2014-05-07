@@ -37,6 +37,12 @@ public class HexagonUtils {
 	 * @return Returns a two-dimensional array containing all points that are within the radius of the point(x,y)
 	 */
 	public static ArrayList<int[]> neighborTiles(int x, int y, int radius, boolean includeCenter){
+		x %= Globals.width;
+		y %= Globals.height;
+		if(x < 0)
+			x = Globals.width - x-2;
+		if(y < 0)
+			y = Globals.height - y-2;
 		ArrayList<int[]> tiles = new ArrayList<int[]>();
 		tiles.add(new int[]{x, y});
 		ArrayList<int[]> workingList = null;
