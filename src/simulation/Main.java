@@ -30,10 +30,20 @@ public class Main {
 
 		Race sheepRace = new Race("Sheep");
 		Globals.races.add(sheepRace);
-		Sheep sheep = new Sheep(1, 1, sheepRace);
-		sheepRace.setSpeciesAt(1, 1, sheep);
+		Sheep sheep = new Sheep(15, 15, sheepRace);
+		sheepRace.setSpeciesAt(15, 15, sheep);
 		Thread sheepThread = new Thread(sheep);
 		sheepThread.start();
+		
+		Sheep sheep1 = new Sheep(16, 20, sheepRace);
+		sheepRace.setSpeciesAt(16, 20, sheep1);
+		Thread sheepThread1 = new Thread(sheep1);
+		sheepThread1.start();
+		
+		Sheep sheep2 = new Sheep(17, 10, sheepRace);
+		sheepRace.setSpeciesAt(17, 10, sheep2);
+		Thread sheepThread2 = new Thread(sheep2);
+		sheepThread2.start();
 		//for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
 		//	sheep.setSpeciesAt(position[0], position[1], new Sheep());
 		//}
