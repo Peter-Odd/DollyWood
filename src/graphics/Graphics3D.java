@@ -162,7 +162,7 @@ public class Graphics3D {
 			}
 		}
 
-		//Render clud system
+		//Render cloud system
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
 				renderModel("Sphere", new Vector3f(c.getxPos()*size, c.getyPos()*size, -75.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(c.getSize(), c.getSize(), c.getSize()));
@@ -202,7 +202,6 @@ public class Graphics3D {
         		int y = cameraPos[1] + yY;
         		int xOffset = (int) (x/Globals.width*(size*Globals.width));
         		int yOffset = (int) (y/Globals.height*(size*Globals.height));
-        		System.out.println(xOffset + ":" + yOffset);
         		if(x < 0)
         			x = Globals.width - x-2;
         		if(y < 0)

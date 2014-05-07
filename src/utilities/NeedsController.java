@@ -31,7 +31,10 @@ public class NeedsController {
 	
 	@SuppressWarnings("unchecked")
 	public static ArrayList<NeedsControlled> getNeed(String need){
-		return (ArrayList<NeedsControlled>) needs.get(need).clone();
+		ArrayList<NeedsControlled> toReturn = (ArrayList<NeedsControlled>) needs.get(need);
+		if(toReturn != null)
+			return (ArrayList<NeedsControlled>) toReturn.clone();
+		return null;
 	}
 	
 	//TODO implement this class!
