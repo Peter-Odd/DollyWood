@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 import graphics.utilities.AnimationEvent;
 import graphics.utilities.AnimationState;
@@ -22,12 +23,10 @@ import graphics.utilities.Model;
 import graphics.utilities.ModelPart;
 import graphics.utilities.OBJLoader;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.vector.ReadableVector3f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -39,7 +38,6 @@ import simulation.Grass;
 import simulation.Race;
 import simulation.Sheep;
 import utilities.Globals;
-import utilities.HexagonUtils;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -53,7 +51,7 @@ public class Graphics3D {
 	private int modelDisplayList;
 	private HashMap<String, Integer> models = new HashMap<String, Integer>();
 	private float size = 3.5f;
-	
+	private JFrame settingsWindow = new JFrame("Settings");
 	private AnimationEventController animationEventController = new AnimationEventController(40); //24 FPS
 	/**
 	 * This is all that is needed.<br />
@@ -88,9 +86,10 @@ public class Graphics3D {
 	        camera.applyTranslations();
 
 	        render3D();
-	        camera.applyOrthographic();
-	        glDisable(GL_LIGHTING);
-	        render2D();
+	        
+	        //camera.applyOrthographic();
+	        //glDisable(GL_LIGHTING);
+	        //render2D();
 	        
 	        glPopAttrib();
 	        
@@ -117,12 +116,9 @@ public class Graphics3D {
 			Display.destroy();
 			System.exit(0);
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
-			int[] position = camera.getArrayPosition(size);
-			for(Race r : Globals.races)
-				if(r.getSpecies().equals("Sheep"))
-					r.setSpeciesAt(position[0], position[1], new Sheep());
-			
+		if(Keyboard.isKeyDown(Keyboard.KEY_TAB)){
+			settingsWindow.setVisible(!settingsWindow.isVisible());
+			settingsWindow.setAlwaysOnTop(true);
 		}
 	}
 
