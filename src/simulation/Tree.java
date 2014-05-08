@@ -31,7 +31,7 @@ public class Tree extends Animal implements Runnable {
 	 */
 	public Tree(int tickLength, int xPos, int yPos, Race race) {
 		this.tickLength = tickLength;
-		treeHealth = 1.0f; //initial health value of 1.0f (max). ev random
+		treeHealth = new Random().nextFloat(); //initial health value of 1.0f (max). ev random
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.race = race;
@@ -69,14 +69,14 @@ public class Tree extends Animal implements Runnable {
 //			treeHealth += sunIntensity;
 //		}
 
-		treeHealth += treeGrowth*0.1f; //increase treeHealth
+		treeHealth += treeGrowth*0.02f; //increase treeHealth
 
 		if (treeHealth > 1.5f)
 			treeHealth = 1.5f;
 		else if (treeHealth < 0.0f) 
 			treeHealth = 0.0f;
 
-		treeHealth -= 0.05; //decrease treeHealth
+		treeHealth -= 0.01; //decrease treeHealth
 
 		//		if (treeHealth < 0.1) { //tree's health too bad, lets kill it
 		//			race.getAndRemoveSpeciesAt(xPos, yPos);
