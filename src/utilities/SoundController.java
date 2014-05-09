@@ -28,7 +28,7 @@ public class SoundController {
 	 * @param x position in the world where the sound should come from
 	 * @param y position in the world where the sound should come from
 	 */
-	public static void playSound(final String sound, final int x, final int y){
+	public synchronized static void playSound(final String sound, final int levelBoost, final int x, final int y){
 		if(camera != null){
 			new Thread(new Runnable() {
 				public void run(){
@@ -36,12 +36,12 @@ public class SoundController {
 						int[] cameraPos = camera.getArrayPosition(size);
 						int dist = Math.abs(x-cameraPos[0]) + Math.abs(y-cameraPos[1]);
 						
-						Clip clip = AudioSystem.getClip();
 						AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("res/" + sound));
+						Clip clip = AudioSystem.getClip();
 						clip.open(inputStream);
 						
 						FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-						gainControl.setValue(dist/100.0f);
+						gainControl.setValue(-80+Math.abs(((Globals.height+Globals.width)-dist))+levelBoost);
 						clip.loop(0);
 					} catch (LineUnavailableException e) {
 						// TODO Auto-generated catch block
