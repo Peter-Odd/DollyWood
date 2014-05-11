@@ -16,13 +16,15 @@ public class Sheep extends Animal implements  Runnable{
 	int yPos;
 	Race sheep;
 	float hunger;
+	float thirst;
 	
-	public Sheep(int xPos, int yPos, Race sheep, float hunger){
+	public Sheep(int xPos, int yPos, Race sheep){
 		super();
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.sheep = sheep;
-		this.hunger = hunger;
+		this.hunger = 0.5f;
+		this.thirst = 0.5f;
 	}	
 	
 	
@@ -33,29 +35,59 @@ public class Sheep extends Animal implements  Runnable{
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
-			hunger -= 0.05f;
+			hunger -= 0.02f;
+			thirst -= 0.02f;
 		
-			ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
-			Random myRandomizer = new Random();
-			int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
+
 			
 		
-			
-			if(hunger < 0.4f){
+
+			if(thirst < 0.4f){
+				drink();
+			}else if(hunger < 0.4f){
 				eat();
 			}
 			
+			if(hunger < 0.0f){
+				sheep.getAndRemoveSpeciesAt(xPos, yPos);
+			}
+			if(thirst < 0.0f){
+				sheep.getAndRemoveSpeciesAt(xPos, yPos);
+			}
+			
+			moveRandom();
 			
 			
-			
-			sheep.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
-			calcRotation(randomNeighbor);
-			xPos = randomNeighbor[0];
-			yPos = randomNeighbor[1];
 		}
 	}
 	
-
+	public void drink(){
+		float water = 0.0f;
+		
+		for(NeedsControlled nc : NeedsController.getNeed("Water")){
+			   water += nc.getNeed(new Needs("Water", 0.6f), xPos, yPos);
+		}
+		
+		thirst += water;
+		
+		if(thirst > 0.4f){
+			
+			try {
+				Thread.sleep(2000);
+			} catch(InterruptedException ex) {
+				Thread.currentThread().interrupt();
+			}	
+		}
+	}
+	
+	public void moveRandom(){
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
+		Random myRandomizer = new Random();
+		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
+		
+		sheep.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
+		calcRotation(randomNeighbor);
+	}
 	
 	public void eat(){
 		
@@ -119,5 +151,7 @@ public class Sheep extends Animal implements  Runnable{
 				}
 			}
 		}
+		xPos = newPos[0];
+		yPos = newPos[1];
 	}
 }
