@@ -25,7 +25,7 @@ public class Main {
 
 
 
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 25.0f, 3.0f);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 30.0f, 2.0f);
 
 
 		Race sheepRace = new Race("Sheep");
@@ -58,6 +58,7 @@ public class Main {
 		dayNightThread.start();
 
 		new Graphics3D();
+		//new Graphics2D();
 	}
 
 
