@@ -70,6 +70,7 @@ public class Graphics3D {
         glMatrixMode(GL_MODELVIEW);
         long lastTime = 0;
         updateLight(GL_LIGHT1, camera.getPosition(), new Vector3f(0.3f, 0.35f, 0.45f));
+		SoundController.playSound("music.wav", 20, 6, 6);
 		while(!Display.isCloseRequested()){
 			processInput();
 			long time = System.currentTimeMillis();
@@ -169,7 +170,6 @@ public class Graphics3D {
 		
 		renderWorldFromCameraPosition(15);
         //Random tree
-		SoundController.playSound("Sheep.wav", -10, 6, 6);
 		renderModel("Tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 		
 		//Render SkyDome
