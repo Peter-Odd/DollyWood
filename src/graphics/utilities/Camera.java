@@ -156,6 +156,13 @@ public class Camera {
 	public Vector3f getPosition() {
 		return new Vector3f(position.x, position.y, position.z);
 	}
+	
+	/**
+	 * @return The current rotation vector of the camera
+	 */
+	public Vector3f getRotation() {
+		return new Vector3f(pitch, yaw, roll);
+	}
 
 	/**
 	 * Sets the position of the camera. Note that the camera won't move unless you call applyTranslations() afterwards
