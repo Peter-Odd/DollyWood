@@ -88,6 +88,10 @@ public class Graphics3D {
 		}
 	}
 
+	/**
+	 * Handles keyboard input related to the main graphic part.
+	 * so, key 'f' to toggle fullscreen, and escape to exit the program
+	 */
 	private void processInput() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
 			try {
@@ -107,6 +111,9 @@ public class Graphics3D {
 		}
 	}
 
+	/**
+	 * adds the startup butterfly animations to the AnimationEventController
+	 */
 	private void setupStarterAnimation() {
 		try {
 			Random random = new Random();			
@@ -142,6 +149,10 @@ public class Graphics3D {
 		animationControllerThread.start();
 	}
 
+	/**
+	 * Main render function.
+	 * This renders animations, setups lights and calls other sub functions to render out everything to the screen.
+	 */
 	private void render() {
         glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
         
@@ -179,6 +190,11 @@ public class Graphics3D {
 
 	}
 	
+	/**
+	 * Renders everything within visionRadius of the camera.
+	 * Note that this is only in xy coordinate space.
+	 * @param visionRadius the radius from the camera to render
+	 */
 	private void renderWorldFromCameraPosition(int visionRadius){
         int[] cameraPos = camera.getArrayPosition(size);
 		int xOffset = (int) (cameraPos[0]/Globals.width*(size*Globals.width));
@@ -243,6 +259,12 @@ public class Graphics3D {
         }
 	}
 
+	/**
+	 * Updates the position and color of a light
+	 * @param light the light to update, this should be GL_LIGHTx, where x=0-9
+	 * @param position a vector that points to the position of the light after movement
+	 * @param color a vector that holds color information of the light
+	 */
 	private void updateLight(int light, Vector3f position, Vector3f color) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -254,6 +276,14 @@ public class Graphics3D {
 		glPopMatrix();
 	}
 
+	/**
+	 * Renders a model that has the key modelName.
+	 * If such a model does not exist, it will try to load one.
+	 * @param modelName The name of the model. there should be an .obj file in res/ that has the name "res/modelName.obj".
+	 * @param position The position of where to render the model
+	 * @param rotation The rotation of the model.
+	 * @param size The scale of the model. Do note that having any part of this vector set to 0 will "implode" the world.
+	 */
 	private void renderModel(String modelName, Vector3f position, Vector3f rotation, Vector3f size) {
 		if(models.containsKey(modelName)){
 			glTranslatef(position.x, position.y, position.z);
@@ -276,6 +306,12 @@ public class Graphics3D {
 		}
 	}
 
+	/**
+	 * Loads a .obj file into a Model object and then converts the Model to a list that is renderable using openGL.
+	 * @param modelName The name of the model. there should be an .obj file in res/ that has the name "res/modelName.obj".
+	 * @return the integer handle to the openGL compiled list
+	 * @see OBJLoader
+	 */
 	private int setupModelList(String modelName) {
         modelDisplayList = glGenLists(1);
         glNewList(modelDisplayList, GL_COMPILE);
@@ -315,6 +351,12 @@ public class Graphics3D {
 		return modelDisplayList;
 	}
 	
+	/**
+	 * Initial setup of all lighting.
+	 * This will setup ambient light.
+	 * start a few light sources and setup their color, position, cutoff and attenuation.
+	 * it will also enable the light sources
+	 */
 	private void setupLighting() {
         ByteBuffer temp = ByteBuffer.allocateDirect(16);
         temp.order(ByteOrder.nativeOrder());
@@ -335,16 +377,26 @@ public class Graphics3D {
         glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	}
 
+	/**
+	 * Sets up global openGL states.
+	 * Mostly stuff like enable GL_DEPTH_TEST
+	 */
 	private void setupStates() {
 		glEnable(GL_DEPTH_TEST);
 		glShadeModel(GL_SMOOTH); //should be set to smooth by default but just in case.
 	}
 
+	/**
+	 * Sets up a camera with perspective.
+	 */
 	private void setupCamera() {
 		camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 70.0f, 0.01f, 1000.0f);
 		camera.applyPerspective();
 	}
 
+	/**
+	 * Opens the window where everything will be contained.
+	 */
 	private void setupDisplay() {
 		try {
 			DisplayMode[] modes = Display.getAvailableDisplayModes();
@@ -370,6 +422,12 @@ public class Graphics3D {
 		}
 	}
 	
+	/**
+	 * loads an icon to be used for the display.
+	 * @param filename The location of the file to load
+	 * @return ByteBuffer of the image
+	 * @throws IOException
+	 */
 	private ByteBuffer loadIcon(String filename) throws IOException {
 	    BufferedImage image = ImageIO.read(new File(filename)); // load image
 	    // convert image to byte array
