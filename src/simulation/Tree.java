@@ -61,11 +61,13 @@ public class Tree extends Animal implements Runnable {
 			int randomSpawnedTree = new Random().nextInt(neighbors.size());
 			int treeXPos = neighbors.get(randomSpawnedTree)[0];
 			int treeYPos = neighbors.get(randomSpawnedTree)[1];
-			Tree tree = new Tree(400, treeXPos, treeYPos, this.race);
-			this.race.setSpeciesAt(treeXPos, treeYPos, tree);
-			Thread treeThread = new Thread(tree);
-			treeThread.start();	
-			this.treeSeed = 0.1f; //reset treeSeed when a tree have spawned a new tree
+			if (race.getSpeciesAt(xPos, yPos) == null) {
+				Tree tree = new Tree(400, treeXPos, treeYPos, this.race);
+				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
+				Thread treeThread = new Thread(tree);
+				treeThread.start();	
+				this.treeSeed = 0.1f; //reset treeSeed when a tree has spawned a new tree
+			}
 		} else {
 			treeSeed += 0.01; //increase the treeSeed
 		}
@@ -85,8 +87,8 @@ public class Tree extends Animal implements Runnable {
 			}
 		}
 		float treeGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
-		
-		if (waterAmmount > 3.0f && treeHealth >= 1.45f) { //TODO: How to decrease health when tree in excess water?
+		System.out.println("WAAATER AMOUNT: " + waterAmmount);
+		if (waterAmmount >= 2.5f && treeHealth >= 1.45f) { //TODO: How to decrease health when tree in excess water?
 			treeHealth -= 0.5f; 	//decrease treeHealth
 			count++;
 		} else {
