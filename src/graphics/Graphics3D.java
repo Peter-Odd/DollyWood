@@ -33,6 +33,7 @@ import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
 import utilities.Globals;
+import utilities.SoundController;
 
 /**
  * <img src="http://www.geekend.fr/wp-content/uploads/2012/02/Lwjgl_logo.jpg" style="width:30%"><br />
@@ -62,6 +63,8 @@ public class Graphics3D {
 		setupLighting();
 		setupStarterAnimation();
 		
+		SoundController.size = size;
+		SoundController.camera = camera;
 
         camera.pitch = -90.0f;
         glMatrixMode(GL_MODELVIEW);
