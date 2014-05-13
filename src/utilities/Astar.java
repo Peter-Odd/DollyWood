@@ -55,15 +55,15 @@ public class Astar {
 	 * @param list
 	 * @return Stack with elements from head in list to just before null
 	 */
-	private static Deque<Node> tracePath(int position) {
+	private static Deque<int[]> tracePath(int position) {
 		System.out.println("GOAL FOUND, EUREKA!");
 		//Stack<Node> resultStack = new Stack<>();
-		Deque<Node> resultStack = new ArrayDeque<>();
+		Deque<int[]> resultStack = new ArrayDeque<>();
 
 		Node cursor = closedList.get(position);
 
 		while (cursor != null) {
-			resultStack.addFirst(cursor);
+			resultStack.addFirst(new int[]{cursor.getX(), cursor.getY()});
 			cursor = cursor.getParent();
 		}
 		return resultStack;
@@ -106,7 +106,7 @@ public class Astar {
 	 * @return Deque with elements representing shortest path from start to goal, null if goal not found.
 	 */
 
-	public static Deque<Node> calculatePath(int startX, int startY, int goalX, int goalY) {
+	public static Deque<int[]> calculatePath(int startX, int startY, int goalX, int goalY) {
 		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
 		openList.add(start);
 		boolean goalFound = false;
