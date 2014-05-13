@@ -47,7 +47,6 @@ public class Tree extends Animal implements Runnable {
 		return treeHealth;
 	}	
 
-
 	public float getSize() {
 		return treeHealth; //this manages the growth/degrowth of the tree
 	}
@@ -57,7 +56,7 @@ public class Tree extends Animal implements Runnable {
 	 */
 	private void spawnTree() {
 		if (treeSeed > 0.99 && treeHealth >= 1.0f) {	//lets spawn a tree
-			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(this.xPos, this.yPos, 1, false);
+			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(this.xPos, this.yPos, 2, false);
 			int randomSpawnedTree = new Random().nextInt(neighbors.size());
 			int treeXPos = neighbors.get(randomSpawnedTree)[0];
 			int treeYPos = neighbors.get(randomSpawnedTree)[1];
@@ -77,11 +76,11 @@ public class Tree extends Animal implements Runnable {
 	 * For each "tickLength" (see doc for constructor) this method will run once
 	 */
 	private void step() {
-		//float randomRun = new Random().nextFloat();
-		//if (randomRun >= 0.80f) {
+//		float randomRun = new Random().nextFloat();
+//		if (randomRun >= 0.50f) {
 
 			spawnTree(); 		//check if a new tree is to be spawned
-			
+
 			float waterAmmount = 0.0f;
 
 			for (int[] neighbor : HexagonUtils.neighborTiles(xPos, yPos, true)) {
@@ -90,14 +89,13 @@ public class Tree extends Animal implements Runnable {
 				}
 			}
 			float treeGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
-			System.out.println("WAAATER AMOUNT: " + waterAmmount);
-//			if (waterAmmount >= 2.5f/* && treeHealth >= 1.45f*/) { //TODO: How to decrease health when tree in excess water?
-//				treeHealth -= 0.5f; 	//decrease treeHealth
-//				count++;
-//			} else {
-//				treeHealth += treeGrowth*0.02f; //increase treeHealth
-//			}
-			
+			//			if (waterAmmount >= 2.5f/* && treeHealth >= 1.45f*/) { //TODO: How to decrease health when tree in excess water?
+			//				treeHealth -= 0.5f; 	//decrease treeHealth
+			//				count++;
+			//			} else {
+			//				treeHealth += treeGrowth*0.02f; //increase treeHealth
+			//			}
+
 			treeHealth += treeGrowth*0.02f; //increase treeHealth
 
 			//		if (treeGrowth > 0.0f) {	//if trees should depend on sunlight
@@ -121,7 +119,7 @@ public class Tree extends Animal implements Runnable {
 				treeHealth -= 0.01; 	//decrease treeHealth
 			}
 
-		//}//end random
+//		}//end random
 
 	} 
 
