@@ -77,8 +77,8 @@ public class Tree extends Animal implements Runnable {
 	 * For each "tickLength" (see doc for constructor) this method will run once
 	 */
 	private void step() {
-		float randomRun = new Random().nextFloat();
-		if (randomRun >= 0.80f) {
+		//float randomRun = new Random().nextFloat();
+		//if (randomRun >= 0.80f) {
 
 			spawnTree(); 		//check if a new tree is to be spawned
 			
@@ -86,17 +86,19 @@ public class Tree extends Animal implements Runnable {
 
 			for (int[] neighbor : HexagonUtils.neighborTiles(xPos, yPos, true)) {
 				for (NeedsControlled nc : NeedsController.getNeed("Water")) {
-					waterAmmount += nc.getNeed(new Needs("Water", 0.5f), neighbor[0], neighbor[1]); //what is a good value 0.5f?
+					waterAmmount += nc.getNeed(new Needs("Water", 1.0f), neighbor[0], neighbor[1]); //what is a good value 0.5f?
 				}
 			}
 			float treeGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
 			System.out.println("WAAATER AMOUNT: " + waterAmmount);
-			if (waterAmmount >= 2.5f && treeHealth >= 1.45f) { //TODO: How to decrease health when tree in excess water?
-				treeHealth -= 0.5f; 	//decrease treeHealth
-				count++;
-			} else {
-				treeHealth += treeGrowth*0.02f; //increase treeHealth
-			}
+//			if (waterAmmount >= 2.5f/* && treeHealth >= 1.45f*/) { //TODO: How to decrease health when tree in excess water?
+//				treeHealth -= 0.5f; 	//decrease treeHealth
+//				count++;
+//			} else {
+//				treeHealth += treeGrowth*0.02f; //increase treeHealth
+//			}
+			
+			treeHealth += treeGrowth*0.02f; //increase treeHealth
 
 			//		if (treeGrowth > 0.0f) {	//if trees should depend on sunlight
 			//			float sunIntensity = 0.0f;
@@ -119,7 +121,7 @@ public class Tree extends Animal implements Runnable {
 				treeHealth -= 0.01; 	//decrease treeHealth
 			}
 
-		}//end random
+		//}//end random
 
 	} 
 
