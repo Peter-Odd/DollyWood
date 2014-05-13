@@ -179,8 +179,6 @@ public class Graphics3D {
 
 
 		renderWorldFromCameraPosition(15);
-		//Random tree
-		renderModel("Tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
 
 		//Render SkyDome
 		float skyDomeScale = 60.0f;
