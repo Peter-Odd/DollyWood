@@ -42,7 +42,7 @@ public class Fractal {
 		return map;
 	}
 	
-	/** Fills the corners of map with a value between (max-min)/2 + randomRande and (max-min)/2 - randomRange.
+	/** Fills the corners of map with a value between (max-min)/2 + randomRange and (max-min)/2 - randomRange.
 	 * 
 	 * @param map The array which will be used.
 	 * @param max Used to calculate the values for the corners.
@@ -54,11 +54,12 @@ public class Fractal {
 	public static float[][] intitateCorners(float[][] map, float max, float min, float randomRange){
 		int largestX = map.length - 1;
 		int largestY = map[0].length - 1;
+		float random = getRandom((max-min)/2, (max-min)/2);
 		
-		map[0][0] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
-		map[largestX][0] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
-		map[largestX][largestY] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
-		map[0][largestY] = getRandom((max-min)/2 + randomRange, (max-min)/2 - randomRange);
+		map[0][0] = random;
+		map[largestX][0] = random;
+		map[largestX][largestY] = random;
+		map[0][largestY] = random;
 
 		return map;
 	}
@@ -144,26 +145,39 @@ public class Fractal {
 		int xHalfSide = xSide/2;
 		int yHalfSide = ySide/2;
 		int count = 0;
-		for(int x=0;x<map.length;x+=xHalfSide){
+		for(int x=0;x<map.length-1;x+=xHalfSide){
 			count++;
-			for(int y=0+(((count)%2)*yHalfSide);y<map[0].length;y+=ySide){
+			for(int y=0+(((count)%2)*yHalfSide);y<map[0].length-1;y+=ySide){
 				if(map[x][y] == 0.0f){
 					elements = 0;
 					value = 0;
+					// All else statements added for some smoothing when many fractals are placed next to each other 
 					if((x - xHalfSide) >= 0){
 						value += map[(x-xHalfSide)][y]; // left of center
+						elements++;
+					}else{
+						value += map[(map.length-1-xHalfSide)][y];
 						elements++;
 					}
 					if((x + xHalfSide) < map.length){
 						value += map[(x+xHalfSide)][y]; // right of center
 						elements++;
+					}else{
+						value += map[(0+xHalfSide)][y]; 
+						elements++;
 					}
 					if((y - yHalfSide) >= 0){
 						value += map[x][(y-yHalfSide)]; // above center
 						elements++;
+					}else{
+						value += map[x][(map[0].length-1-yHalfSide)];
+						elements++;
 					}
 					if((y + yHalfSide) < map[0].length){
 						value += map[x][(y+yHalfSide)]; // below center
+						elements++;
+					}else{
+						value += map[x][(0+yHalfSide)]; 
 						elements++;
 					}
 					
@@ -175,9 +189,16 @@ public class Fractal {
 					
 					if(value < 0.0f)
 						value = 0.001f;
-						
-					if(map[x][y] == 0.0f)
-					map[x][y] = value;
+
+					if(map[x][y] == 0.0f && x == 0){
+						map[x][y] = value;
+						map[map.length-1][y] = value;
+					} else if(map[x][y] == 0.0f && y == 0){
+						map[x][y] = value;
+						map[x][map[0].length-1] = value;
+					} else if(map[x][y] == 0.0f){
+						map[x][y] = value;
+					}
 				}
 			}
 		}
