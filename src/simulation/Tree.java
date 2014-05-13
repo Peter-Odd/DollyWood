@@ -77,44 +77,50 @@ public class Tree extends Animal implements Runnable {
 	 * For each "tickLength" (see doc for constructor) this method will run once
 	 */
 	private void step() {
-		spawnTree(); 		//check if a new tree is to be spawned
+		float randomRun = new Random().nextFloat();
+		if (randomRun >= 0.80f) {
 
-		float waterAmmount = 0.0f;
+			spawnTree(); 		//check if a new tree is to be spawned
+			
+			float waterAmmount = 0.0f;
 
-		for (int[] neighbor : HexagonUtils.neighborTiles(xPos, yPos, true)) {
-			for (NeedsControlled nc : NeedsController.getNeed("Water")) {
-				waterAmmount += nc.getNeed(new Needs("Water", 0.5f), neighbor[0], neighbor[1]); //what is a good value 0.5f?
+			for (int[] neighbor : HexagonUtils.neighborTiles(xPos, yPos, true)) {
+				for (NeedsControlled nc : NeedsController.getNeed("Water")) {
+					waterAmmount += nc.getNeed(new Needs("Water", 0.5f), neighbor[0], neighbor[1]); //what is a good value 0.5f?
+				}
 			}
-		}
-		float treeGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
-		System.out.println("WAAATER AMOUNT: " + waterAmmount);
-		if (waterAmmount >= 2.5f && treeHealth >= 1.45f) { //TODO: How to decrease health when tree in excess water?
-			treeHealth -= 0.5f; 	//decrease treeHealth
-			count++;
-		} else {
-			treeHealth += treeGrowth*0.02f; //increase treeHealth
-		}
+			float treeGrowth = (float) (-(Math.pow(waterAmmount-3.5f, 2))/6.125f+1.0f);
+			System.out.println("WAAATER AMOUNT: " + waterAmmount);
+			if (waterAmmount >= 2.5f && treeHealth >= 1.45f) { //TODO: How to decrease health when tree in excess water?
+				treeHealth -= 0.5f; 	//decrease treeHealth
+				count++;
+			} else {
+				treeHealth += treeGrowth*0.02f; //increase treeHealth
+			}
 
-		//		if (treeGrowth > 0.0f) {	//if trees should depend on sunlight
-		//			float sunIntensity = 0.0f;
-		//			for (NeedsControlled nc : NeedsController.getNeed("SunLight")) {
-		//				sunIntensity += nc.getNeed(new Needs("SunLight", 0.4f), xPos, yPos);
-		//			}
-		//			treeHealth += sunIntensity;
-		//		}
+			//		if (treeGrowth > 0.0f) {	//if trees should depend on sunlight
+			//			float sunIntensity = 0.0f;
+			//			for (NeedsControlled nc : NeedsController.getNeed("SunLight")) {
+			//				sunIntensity += nc.getNeed(new Needs("SunLight", 0.4f), xPos, yPos);
+			//			}
+			//			treeHealth += sunIntensity;
+			//		}
 
-		if (treeHealth > 1.5f)
-			treeHealth = 1.5f;
-		else if (treeHealth < 0.0f)  {
-			treeHealth = 0.0f;
-			count++; 				//increase count (number of times a tree has "died"
-		}
-		
-		if (count >= 3) {			// a tree has "died" 3 times, let's remove it
-			race.getAndRemoveSpeciesAt(xPos, yPos);
-		} else {
-			treeHealth -= 0.01; 	//decrease treeHealth
-		}
+			if (treeHealth > 1.5f)
+				treeHealth = 1.5f;
+			else if (treeHealth < 0.0f)  {
+				treeHealth = 0.0f;
+				count++; 				//increase count (number of times a tree has "died"
+			}
+
+			if (count >= 3) {			// a tree has "died" 3 times, let's remove it
+				race.getAndRemoveSpeciesAt(xPos, yPos);
+			} else {
+				treeHealth -= 0.01; 	//decrease treeHealth
+			}
+
+		}//end random
+
 	} 
 
 
