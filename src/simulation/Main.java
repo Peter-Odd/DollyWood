@@ -36,6 +36,33 @@ public class Main {
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
 
+
+		/* Test environment for tree */
+		float[][] treeArray = new float[Globals.height][Globals.width];
+		Random random;
+		random = new Random();
+
+		for (int x = 0; x < Globals.height; x++) {
+			for (int y = 0; y < Globals.width; y++) {
+				treeArray[x][y] = random.nextFloat();
+			}
+		}
+
+		Race treeRace = new Race("Tree");
+		Globals.races.add(treeRace);
+		
+		for (int x = 0; x < Globals.height; x++) {
+			for  (int y = 0; y < Globals.width; y++) {
+				if (treeArray[x][y] > 0.98) {
+					Tree tree = new Tree(400, x, y, treeRace);	
+					treeRace.setSpeciesAt(x, y, tree);
+					Thread treeThread = new Thread(tree);
+					treeThread.start();
+				}
+			}
+		}
+		
+		
 		new Graphics3D();
 	}
 

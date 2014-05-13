@@ -15,7 +15,10 @@ public class Globals {
 	public static int screenHeight = 1080;
 	
 	public static float[][] heightmap = new float[width][height];
-	public static float worldFractalMax, worldFractalMin, worldFractalRange, worldFractalDiv;
+	public static float worldFractalMax = 200.0f;
+	public static float worldFractalMin = 0.0f;
+	public static float  worldFractalRange = 20.0f;
+	public static float  worldFractalDiv = 2.0f;
 	
 	public static int startingSheep, startingWolves, startingTrees;
 	

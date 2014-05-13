@@ -1,15 +1,30 @@
 package simulation;
 
 
-import utilities.Globals;
 
-public class Race {
+
+import utilities.Globals;
+import utilities.HexagonUtils;
+import utilities.Needs;
+import utilities.NeedsController;
+import utilities.NeedsController.NeedsControlled;
+
+public class Race implements NeedsControlled{
 	private Animal[][] species;
 	private String specName;
 
 	public Race(String specName) {
 		this.specName = specName;
 		species = new Animal[Globals.height][Globals.width];
+
+		if(specName == "Sheep"){
+			NeedsController.registerNeed("Sheep", this);
+			//NeedsController.registerNeed("maleSheep", this);
+		}
+
+		if(specName == "Tree"){
+			NeedsController.registerNeed("Water", this);
+		}
 	}
 
 	public String getSpecies() {
@@ -19,16 +34,17 @@ public class Race {
 	public Animal getSpeciesAt(int x, int y) {
 		return species[x][y];
 	}
-	
+
 	public Animal getAndRemoveSpeciesAt(int x, int y){
 		Animal animal = species[x][y];
 		species[x][y] = null;
 		return animal;
 	}
-	
+
 	public boolean moveSpecies(int currentX, int currentY, int newX, int newY){
-		Animal animal = getAndRemoveSpeciesAt(currentX, currentY);
+
 		if(species[newX][newY] == null){
+			Animal animal = getAndRemoveSpeciesAt(currentX, currentY);
 			species[newX][newY] = animal;
 			return true;
 		} else {
@@ -45,6 +61,35 @@ public class Race {
 			return false;
 		}
 	}
-	
+
+	public boolean containsAnimal(int x, int y){
+		if(species[x][y] != null){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	@Override
+	public float getNeed(Needs need, int x, int y) {
+		if(need.getNeed() == "Meat" && containsAnimal(x, y)){
+			getAndRemoveSpeciesAt(x, y);
+			return 1.0f;
+		} else if (need.getNeed().equals("Water")) {
+			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, true)) {
+				if (containsAnimal(neighbor[0], neighbor[1])) {
+					return -0.2f;
+				}
+			}
+			return 0.0f;
+
+		} else if(containsAnimal(x, y) && species[x][y].getGender() && !species[x][y].getPregnant()){
+			species[x][y].setPregnant(true);
+			System.out.println("Pregnant");
+		}
+		return 0.0f;
+	}
+
 }
 
