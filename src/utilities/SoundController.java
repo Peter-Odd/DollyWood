@@ -41,11 +41,6 @@ public class SoundController {
 						while(clip.isRunning()){
 							int[] cameraPos = camera.getArrayPosition(size);
 							int dist = Math.abs(x-cameraPos[0]) + Math.abs(y-cameraPos[1]);
-	
-							double cameraRoll = Math.toRadians(camera.getRotation().z%360);
-							Math.sin(0);
-							System.out.println(cameraRoll); //TODO fix this to print a value between -1 and 1 in relation to x,y cameraPos and cameraRoll. Will be used to create a 3D sound system
-							
 							
 							FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 							gainControl.setValue(-80+Math.abs(((Globals.height+Globals.width)-dist))+levelBoost);
