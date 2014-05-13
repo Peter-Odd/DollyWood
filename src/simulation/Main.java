@@ -2,6 +2,8 @@ package simulation;
 
 
 
+import java.util.Random;
+
 import utilities.*;
 import graphics.*;
 public class Main {
@@ -44,6 +46,13 @@ public class Main {
 		sheepRace.setSpeciesAt(17, 10, sheep2);
 		Thread sheepThread2 = new Thread(sheep2);
 		sheepThread2.start();
+
+		//for(int[] position : HexagonUtils.neighborTiles(6,6, false)){
+		//	sheep.setSpeciesAt(position[0], position[1], new Sheep());
+		//}
+
+
+
 		
 		Sheep sheep3 = new Sheep(20, 10, sheepRace);
 		sheepRace.setSpeciesAt(20, 10, sheep3);
@@ -60,6 +69,7 @@ public class Main {
 		Thread sheepThread5 = new Thread(sheep5);
 		sheepThread5.start();*/
 		
+
 		Globals.water = new Water(100);
 		Thread waterThread = new Thread(Globals.water);
 		waterThread.start();
@@ -71,6 +81,33 @@ public class Main {
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
 
+
+		/* Test environment for tree */
+		float[][] treeArray = new float[Globals.height][Globals.width];
+		Random random;
+		random = new Random();
+
+		for (int x = 0; x < Globals.height; x++) {
+			for (int y = 0; y < Globals.width; y++) {
+				treeArray[x][y] = random.nextFloat();
+			}
+		}
+
+		Race treeRace = new Race("Tree");
+		Globals.races.add(treeRace);
+		
+		for (int x = 0; x < Globals.height; x++) {
+			for  (int y = 0; y < Globals.width; y++) {
+				if (treeArray[x][y] > 0.98) {
+					Tree tree = new Tree(400, x, y, treeRace);	
+					treeRace.setSpeciesAt(x, y, tree);
+					Thread treeThread = new Thread(tree);
+					treeThread.start();
+				}
+			}
+		}
+		
+		
 		new Graphics3D();
 	}
 

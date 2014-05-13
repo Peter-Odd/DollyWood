@@ -3,8 +3,6 @@ package simulation;
 import java.util.ArrayList;
 import java.util.Random;
 
-
-
 import utilities.HexagonUtils;
 import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
@@ -46,7 +44,7 @@ public class Sheep extends Animal implements  Runnable{
 	public void run(){
 		while(true){
 			try {
-			    Thread.sleep(200);
+			    Thread.sleep(1000);
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}

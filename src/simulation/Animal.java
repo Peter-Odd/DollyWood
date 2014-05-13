@@ -42,6 +42,11 @@ public class Animal{
 		return rotation;
 	}
 	
+
+	public float getSize(){
+		return 1.0f;
+	}
+	
 	public void setPregnant(boolean bool){
 		this.pregnant = bool;
 	}
