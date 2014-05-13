@@ -2,6 +2,8 @@ package simulation;
 
 
 
+import java.util.Random;
+
 import utilities.*;
 import graphics.*;
 public class Main {
@@ -11,54 +13,30 @@ public class Main {
 	}
 
 	public Main() {
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.worldFractalMax, Globals.worldFractalMin, Globals.worldFractalRange, Globals.worldFractalDiv);
 
-		Globals.screenHeight = 1080;
-		Globals.screenWidth = 1920;
-
-
-		// Used to test Fractal.java
-
-		Globals.height = 33;
-		Globals.width = 33;
-		Globals.heightmap = new float[Globals.width][Globals.height];
-
-
-
-
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 30.0f, 2.0f);
-
-
+		Random rng = new Random();
 		Race sheepRace = new Race("Sheep");
 		Globals.races.add(sheepRace);
-		Sheep sheep = new Sheep(15, 15, sheepRace);
-		sheepRace.setSpeciesAt(15, 15, sheep);
-		Thread sheepThread = new Thread(sheep);
-		sheepThread.start();
+		for(int i = 0; i < Globals.startingSheep; i++){
+			Sheep sheep = new Sheep(rng.nextInt(Globals.width), rng.nextInt(Globals.height), sheepRace);
+			sheepRace.setSpeciesAt(sheep.xPos, sheep.yPos, sheep);
+			Thread sheepThread = new Thread(sheep);
+			sheepThread.start();
+		}
 		
-		Sheep sheep1 = new Sheep(16, 20, sheepRace);
-		sheepRace.setSpeciesAt(16, 20, sheep1);
-		Thread sheepThread1 = new Thread(sheep1);
-		sheepThread1.start();
-		
-		Sheep sheep2 = new Sheep(17, 10, sheepRace);
-		sheepRace.setSpeciesAt(17, 10, sheep2);
-		Thread sheepThread2 = new Thread(sheep2);
-		sheepThread2.start();
-		
-		
-		Globals.water = new Water(100);
+		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
 		waterThread.start();
-		Grass grass = new Grass(100);
+		Grass grass = new Grass();
 		Thread grassThread = new Thread(grass);
 		Globals.races.add(grass);
 		grassThread.start();
-		Globals.dayNightCycle = new DayNightCycle(0.1f, 1000);
+		Globals.dayNightCycle = new DayNightCycle(0.1f, Globals.dayNightSleepLength);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		dayNightThread.start();
 
 		new Graphics3D();
-		//new Graphics2D();
 	}
 
 

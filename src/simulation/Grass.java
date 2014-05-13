@@ -24,7 +24,6 @@ import utilities.NeedsController.NeedsControlled;
  */
 public class Grass extends Race implements Runnable, NeedsControlled{
 
-	private int tickLength;
 	private float[][] grassLevel;
 
 	private Grass(String specName) {
@@ -33,11 +32,9 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 
 	/**
 	 * Constructor
-	 * @param tickLength sets the sleep duration of the Thread
 	 */
-	public Grass(int tickLength){
+	public Grass(){
 		this("Grass");
-		this.tickLength = tickLength;
 		grassLevel = new float[Globals.width][Globals.height];
 		NeedsController.registerNeed("Plant", this);
 	}
@@ -87,7 +84,7 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 		while(true){
 			step();
 			try {
-				Thread.sleep(tickLength);
+				Thread.sleep(Globals.grassSleepLength);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
