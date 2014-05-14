@@ -1,8 +1,5 @@
 package simulation;
 
-
-
-
 import utilities.Globals;
 import utilities.Needs;
 import utilities.NeedsController;
@@ -17,8 +14,7 @@ public class Race implements NeedsControlled{
 		species = new Animal[Globals.height][Globals.width];
 		
 		if(specName == "Sheep"){
-			NeedsController.registerNeed("Sheep", this);
-			//NeedsController.registerNeed("maleSheep", this);
+			NeedsController.registerNeed("Meat", this);
 		}
 	}
 
@@ -68,12 +64,9 @@ public class Race implements NeedsControlled{
 
 	@Override
 	public float getNeed(Needs need, int x, int y) {
-		if(need.getNeed() == "Meat" && containsAnimal(x, y)){
+		if(need.getNeed().equals("Meat") && containsAnimal(x, y)){
 			getAndRemoveSpeciesAt(x, y);
 			return 1.0f;
-		} else if(containsAnimal(x, y) && species[x][y].getGender() && !species[x][y].getPregnant()){
-			species[x][y].setPregnant(true);
-			System.out.println("Pregnant");
 		}
 		return 0.0f;
 	}

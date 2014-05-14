@@ -35,12 +35,14 @@ public class Main {
 		Thread sheepThread = new Thread(sheep);
 		sheepThread.start();
 		
-		Sheep sheep1 = new Sheep(16, 20, sheepRace, false);
-		sheepRace.setSpeciesAt(16, 20, sheep1);
+		
+		Sheep sheep1 = new Sheep(17, 15, sheepRace, false);
+		sheepRace.setSpeciesAt(17, 15, sheep1);
 		Thread sheepThread1 = new Thread(sheep1);
 		sheepThread1.start();
 		
-		/*Sheep sheep2 = new Sheep(17, 10, sheepRace);
+		/*
+		Sheep sheep2 = new Sheep(17, 10, sheepRace);
 		sheepRace.setSpeciesAt(17, 10, sheep2);
 		Thread sheepThread2 = new Thread(sheep2);
 		sheepThread2.start();
