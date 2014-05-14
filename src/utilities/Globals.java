@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 
@@ -84,14 +85,14 @@ public class Globals {
 				public void paintComponent(Graphics g){
 					try {
 						BufferedImage image = ImageIO.read(new File("res/ICON.PNG"));
-						g.drawImage(image, 0, 0, 256, 256, null);
+						g.drawImage(image, 0, 0, 512, 512, null);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			};
-			panel.setPreferredSize(new Dimension(256, 256));
+			panel.setPreferredSize(new Dimension(512, 512));
 			
 			tabbPane.add("home", panel);
 		}
@@ -112,8 +113,10 @@ public class Globals {
 			for(int i = 0; i < tabbPane.getTabCount(); i++){
 				if(tabbPane.getTitleAt(i).equals(s.category)){
 					JPanel panel = ((JPanel)(tabbPane.getComponentAt(i)));
-					panel.add(new JLabel(s.name));
-					panel.add(slider);
+					if(panel != null){
+						panel.add(new JLabel(s.name));
+						panel.add(slider);
+					}
 					added = true;
 				}
 			}
@@ -137,7 +140,8 @@ public class Globals {
 		settingsFrame.setLocation(screenSize.width/2-(settingsFrame.getWidth()/2), screenSize.height/2-(settingsFrame.getHeight()/2));
 		settingsFrame.setVisible(true);
 		settingsFrame.setAlwaysOnTop(alwaysOnTop);
-		
+		if(startup)
+			settingsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
 			Robot robot = new Robot();
 			robot.mouseMove(screenSize.width/2, screenSize.height/2);
@@ -157,7 +161,7 @@ public class Globals {
 	}
 	
 	private static ArrayList<Setting> settings = new ArrayList<>();
-	public static void registerSetting(String name, String category, float min, float max, float current){
+	public static synchronized void registerSetting(String name, String category, float min, float max, float current){
 		boolean isRegistered = false;
 		for(Setting s : settings){
 			if(s.name.equals(name) && s.category.equals(category)){
@@ -169,7 +173,7 @@ public class Globals {
 			settings.add(new Setting(name, category, new JSlider((int)(min*1000), (int)(max*1000), (int)(current*1000))));
 	}
 	
-	public static float getSetting(String name, String category){
+	public static synchronized float getSetting(String name, String category){
 		for(Setting s : settings){
 			if(s.name.equals(name) && s.category.equals(category))
 				return s.slider.getValue()/1000.0f;

@@ -85,9 +85,9 @@ public class Graphics3D {
 			glPushAttrib(GL_TRANSFORM_BIT);
 			glPushMatrix();
 			glLoadIdentity();
+			camera.applyPerspective();
 			camera.processInput(lastTime*0.05f);
 			camera.applyTranslations();
-
 			//animationEventController.step();
 			render();
 
@@ -227,7 +227,7 @@ public class Graphics3D {
 		}
 
 
-		renderWorldFromCameraPosition(15);
+		renderWorldFromCameraPosition((int) Globals.getSetting("Render distance", "Graphics"));
 
 		//Render SkyDome
 		float skyDomeScale = 60.0f;

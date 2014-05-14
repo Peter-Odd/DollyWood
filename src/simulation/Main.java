@@ -42,6 +42,7 @@ public class Main {
 			threadsToStart.add(wolfThread);
 		}
 
+		
 		Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
 		for(int i = 0; i < Globals.startingTrees; i++){
@@ -57,7 +58,9 @@ public class Main {
 		Thread grassThread = new Thread(grass);
 		Globals.races.add(grass);
 		threadsToStart.add(grassThread);
-		
+
+		Globals.registerSetting("Field of view", "Graphics", 10, 90, 70);
+		Globals.registerSetting("Render distance", "Graphics", 1, 50, 15);
 		Globals.createSettingsFrame(true, true, false);
 
 		Globals.heightmap = new float[Globals.width][Globals.height];

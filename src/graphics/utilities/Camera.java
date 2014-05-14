@@ -146,7 +146,8 @@ public class Camera {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		//gluPerspective(170.0f, 1.0f, 0.1f, 1.0f);
-		gluPerspective(fov, aspectRatio, clippingPlane.x, clippingPlane.y);
+		gluPerspective(Globals.getSetting("Field of view", "Graphics"), aspectRatio, clippingPlane.x, clippingPlane.y);
+		glMatrixMode(GL_MODELVIEW);
 		//glPopAttrib();
 	}
 

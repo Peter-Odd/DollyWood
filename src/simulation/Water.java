@@ -31,13 +31,16 @@ public class Water implements Runnable, NeedsControlled{
 		Globals.registerSetting("Sleep", "Water", 1, 1000, 100);
 		Globals.registerSetting("Starting water", "Water", 0, 1, 0.5f);
 		Globals.registerSetting("Dissipation strength", "Water", 0, 2, 0.3f);
+		Globals.registerSetting("Flow rate", "Water", 0, 0.5f, 0.04f);
+		Globals.registerSetting("Flow threshold", "Water", 0, 1, 0.1f);
 		Globals.registerSetting("Sleep", "Cloud", 0, 1000, 100);
 		Globals.registerSetting("Wind fractal div factor", "Cloud", 0, 7, 1.5f);
 		Globals.registerSetting("Wind fractal random range", "Cloud", 0, 10, 2);
 		Globals.registerSetting("Min cloud count", "Cloud", 0, 100, 0);
 		Globals.registerSetting("Max cloud count", "Cloud", 0, 100, 10);
-		Globals.registerSetting("Flow rate", "Water", 0, 0.5f, 0.04f);
-		Globals.registerSetting("Flow threshold", "Water", 0, 1, 0.1f);
+		Globals.registerSetting("Evaporation rate", "Cloud", 0, 1, 0.04f);
+		Globals.registerSetting("Downfall rate", "Cloud", 0, 2, 0.4f);
+		Globals.registerSetting("Shadow intensity", "Cloud", 0, 0.5f, 0.1f);
 		NeedsController.registerNeed("Water", this);
 	}
 	
