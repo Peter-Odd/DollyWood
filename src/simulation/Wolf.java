@@ -2,41 +2,35 @@ package simulation;
 
 import java.util.ArrayList;
 
-
 import utilities.HexagonUtils;
 import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
 import utilities.Needs;
 
-
-public class Sheep extends Animal implements  Runnable{
-	
-
+public class Wolf extends Animal implements Runnable{
 	
 	private float timeUntilBirth;
 	
-	
-	public Sheep(int xPos, int yPos, Race sheep){
+	public Wolf(int xPos, int yPos, Race wolf){
 		super();
 		super.xPos = xPos;
 		super.yPos = yPos;
-		super.race = sheep;
-		super.hunger = 0.5f;
-		super.thirst = 0.5f;
-		this.timeUntilBirth = 1.0f;
+		super.race = wolf;
+		super.hunger = 0.4f;
+		super.thirst = 0.4f;
+		this.timeUntilBirth = 0.5f;
 	}
 	
-	public Sheep(int xPos, int yPos, Race sheep, boolean gender){
+	public Wolf(int xPos, int yPos, Race wolf, boolean gender){
 		super(gender);
 		super.xPos = xPos;
 		super.yPos = yPos;
-		super.race = sheep;
-		super.hunger = 0.5f;
-		super.thirst = 0.5f;
-		this.timeUntilBirth = 1.0f;
-	}	
-	
-	
+		super.race = wolf;
+		super.hunger = 0.4f;
+		super.thirst = 0.4f;
+		this.timeUntilBirth = 0.5f;
+	}
+
 	public void run(){
 		while(true){
 			try {
@@ -75,8 +69,7 @@ public class Sheep extends Animal implements  Runnable{
 			}
 			
 			moveRandom();
-			
-			
+				
 		}
 	}
 	
@@ -86,10 +79,10 @@ public class Sheep extends Animal implements  Runnable{
 		for(int[] neighbor : neighbors){
 			if(!race.containsAnimal(neighbor[0], neighbor[1])){
 				System.out.println("Really birth");
-				Sheep lamb = new Sheep(neighbor[0], neighbor[1], race);
-				race.setSpeciesAt(neighbor[0], neighbor[1], lamb);
-				Thread sheepThread = new Thread(lamb);
-				sheepThread.start();
+				Wolf puppy = new Wolf(neighbor[0], neighbor[1], race);
+				race.setSpeciesAt(neighbor[0], neighbor[1], puppy);
+				Thread wolfThread = new Thread(puppy);
+				wolfThread.start();
 				timeUntilBirth = 1.0f;
 				pregnant = false;
 				break;
@@ -98,12 +91,11 @@ public class Sheep extends Animal implements  Runnable{
 	}
 	
 	
-	
 	public void eat(){
 		float food = 0.0f;
 		
-		for(NeedsControlled nc : NeedsController.getNeed("Plant")){
-			   food += nc.getNeed(new Needs("Plant", 0.6f), xPos, yPos);
+		for(NeedsControlled nc : NeedsController.getNeed("Sheep")){
+			   food += nc.getNeed(new Needs("Sheep", 0.6f), xPos, yPos);
 		}
 		
 		hunger += food;
@@ -116,4 +108,5 @@ public class Sheep extends Animal implements  Runnable{
 			}	
 		}
 	}
+	
 }

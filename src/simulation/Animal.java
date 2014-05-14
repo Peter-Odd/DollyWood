@@ -20,7 +20,7 @@ public class Animal{
 	boolean pregnant;
 	protected float hunger;
 	protected float thirst;
-	protected Race sheepRace;
+	protected Race race;
 
 		
 	public Animal(){
@@ -53,7 +53,7 @@ public class Animal{
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 7, false);
 		Animal animal;
 		for(int[] sheeps : neighbor){
-			animal = sheepRace.getSpeciesAt(sheeps[0], sheeps[1]);
+			animal = race.getSpeciesAt(sheeps[0], sheeps[1]);
 			if(animal != null && animal.readyToBreed()){
 				return animal;
 			}
@@ -101,7 +101,7 @@ public class Animal{
 		Random myRandomizer = new Random();
 		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
 		
-		sheepRace.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
+		race.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
 		calcRotation(randomNeighbor);
 	}
 	
@@ -112,11 +112,11 @@ public class Animal{
 				if(animal != null){
 						animal.moveTo(xPos+1, yPos);
 						System.out.println("Busy wainting");
-						while(!sheepRace.containsAnimal(xPos+1, yPos)){
+						while(!race.containsAnimal(xPos+1, yPos)){
 							//Busy waiting
 						}
 						System.out.println("Past busy waiting.");
-						Animal sheep = sheepRace.getSpeciesAt(xPos+1, yPos);
+						Animal sheep = race.getSpeciesAt(xPos+1, yPos);
 						sheep.setPregnant(true);
 					}
 	}
@@ -130,7 +130,7 @@ public class Animal{
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
-			sheepRace.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
+			race.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
 			xPos = nextCord[0];
 			yPos = nextCord[1];
 		}
