@@ -2,6 +2,7 @@ package simulation;
 
 
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import utilities.*;
@@ -13,15 +14,15 @@ public class Main {
 	}
 
 	public Main() {
-		Globals.heightmap = new float[Globals.width][Globals.height];
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.worldFractalMax, Globals.worldFractalMin, Globals.worldFractalRange, Globals.worldFractalDiv);
+		ArrayList<Thread> threadsToStart = new ArrayList<>();
+		
 
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
-		waterThread.start();
+		threadsToStart.add(waterThread);
 		Globals.dayNightCycle = new DayNightCycle(0.1f, Globals.dayNightSleepLength);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
-		dayNightThread.start();
+		threadsToStart.add(dayNightThread);
 		
 		Random rng = new Random();
 		Race sheepRace = new Race("Sheep");
@@ -30,7 +31,7 @@ public class Main {
 			Sheep sheep = new Sheep(rng.nextInt(Globals.width), rng.nextInt(Globals.height), sheepRace);
 			sheepRace.setSpeciesAt(sheep.xPos, sheep.yPos, sheep);
 			Thread sheepThread = new Thread(sheep);
-			sheepThread.start();
+			threadsToStart.add(sheepThread);
 		}
 
 		Race treeRace = new Race("Tree");
@@ -41,14 +42,20 @@ public class Main {
 			Tree tree = new Tree(Globals.treeSleepLength, x, y, treeRace);	
 			treeRace.setSpeciesAt(x, y, tree);
 			Thread treeThread = new Thread(tree);
-			treeThread.start();
+			threadsToStart.add(treeThread);
 		}
 		
 		Grass grass = new Grass();
 		Thread grassThread = new Thread(grass);
 		Globals.races.add(grass);
-		grassThread.start();
+		threadsToStart.add(grassThread);
+		
+		Globals.createSettingsFrame(true, true, false);
 
+		Globals.heightmap = new float[Globals.width][Globals.height];
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.worldFractalMax, Globals.worldFractalMin, Globals.worldFractalRange, Globals.worldFractalDiv);
+		for(Thread t : threadsToStart)
+			t.start();
 		new Graphics3D();
 	}
 

@@ -22,16 +22,21 @@ public class Water implements Runnable, NeedsControlled{
 	
 	private ArrayList<Cloud> clouds = new ArrayList<>();
 	
-	private float[][] fractalMap;
 	
 	/**
 	 * Constructor
 	 * @param tickLength sets the sleep duration of the Thread
 	 */
 	public Water(){
-		groundWaterLevel = new float[Globals.width][Globals.height];		
-		fractalMap = new float[Globals.width][Globals.height];
-		Fractal.generateFractal(fractalMap, 6.0f, 0.0f, 3.0f, 1.5f);
+		Globals.registerSetting("Sleep", "Water", 1, 1000, 100);
+		Globals.registerSetting("StartingWater", "Water", 0, 1, 0.5f);
+		Globals.registerSetting("DissipationStrength", "Water", 0, 2, 0.3f);
+		Globals.registerSetting("WindFractalDivFactor", "Cloud", 0, 7, 1.5f);
+		Globals.registerSetting("WindFractalRandomRange", "Cloud", 0, 10, 2);
+		Globals.registerSetting("MinCloudCount", "Cloud", 0, 100, 0);
+		Globals.registerSetting("MaxCloudCount", "Cloud", 0, 100, 10);
+		Globals.registerSetting("FlowRate", "Water", 0, 0.5f, 0.04f);
+		Globals.registerSetting("FlowThreshold", "Water", 0, 1, 0.1f);
 		NeedsController.registerNeed("Water", this);
 	}
 	
@@ -40,16 +45,23 @@ public class Water implements Runnable, NeedsControlled{
 	 * The clouds will be created here and the simulation will start here.
 	 */
 	public void run() {
+		groundWaterLevel = new float[Globals.width][Globals.height];
+		float startingWater = Globals.getSetting("StartingWater", "Water");
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
-				groundWaterLevel[x][y] = Globals.startingWaterAmmount;
+				groundWaterLevel[x][y] = startingWater;
 		
 		Random random = new Random();
 		float[][] xCurrent = new float[Globals.width][Globals.height];
 		float[][] yCurrent = new float[Globals.width][Globals.height];
-		Fractal.generateFractal(xCurrent, 1.0f, 0.0f, 2.0f, 1.5f);
-		Fractal.generateFractal(yCurrent, 1.0f, 0.0f, 2.0f, 1.5f);
-		for(int i = 0; i < (int)(random.nextInt(5))+10; i++){
+		float randomRange = Globals.getSetting("WindFractalRandomRange", "Cloud");
+		float divFactor = Globals.getSetting("WindFractalDivFactor", "Cloud");
+		Fractal.generateFractal(xCurrent, 1.0f, 0.0f, randomRange, divFactor);
+		Fractal.generateFractal(yCurrent, 1.0f, 0.0f, randomRange, divFactor);
+		int minCloudCount = (int)Globals.getSetting("MinCloudCount", "Cloud");
+		int maxCloudCount = (int)Globals.getSetting("MaxCloudCount", "Cloud");
+		int cloudCount = (int)(random.nextInt(maxCloudCount-minCloudCount))+minCloudCount;
+		for(int i = 0; i < cloudCount; i++){
 			Cloud cloud = new Cloud(100, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height, random.nextFloat()*3.0f, xCurrent, yCurrent);
 			Thread cloudThread = new Thread(cloud);
 			cloudThread.start();
@@ -58,7 +70,7 @@ public class Water implements Runnable, NeedsControlled{
 		while(true){
 			step();
 			try{
-				Thread.sleep(Globals.waterSleepLength);
+				Thread.sleep((long) Globals.getSetting("Sleep", "Water"));
 			}
 			catch(InterruptedException e){
 				
@@ -120,7 +132,7 @@ public class Water implements Runnable, NeedsControlled{
 	 * The amount moved is dependent on the difference in ground water amount.
 	 */
 	private void dissipate() {
-		float flowRate = 0.3f;
+		float flowRate = Globals.getSetting("DissipationStrength", "Water");
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
 				if(groundWaterLevel[x][y] >= flowRate){
@@ -141,8 +153,8 @@ public class Water implements Runnable, NeedsControlled{
 	 * Note that it will only flow down if the lower position has a waterLevel of < 1.0
 	 */
 	private void waterFlow() {
-		float flowRate = 0.04f;
-		float flowThreshold = 0.1f;
+		float flowRate = Globals.getSetting("FlowRate", "Water");//0.04f;
+		float flowThreshold = Globals.getSetting("FlowThreshold", "Water");//0.1f;
 		for(int x = 1; x < Globals.width-1; x++){
 			for(int y = 1; y < Globals.height-1; y++){
 				if(groundWaterLevel[x][y] >= flowRate){
