@@ -16,31 +16,45 @@ public class Animal{
 	private Random random;
 	private float rotation;
 	private boolean gender; // true = female, false = male
-	public float age; // 1.0f = adult;
-	boolean pregnant;
+	protected float age; // 1.0f = adult;
+	protected float size;
+	protected boolean pregnant;
 	protected float hunger;
 	protected float thirst;
-	protected Race sheepRace;
+	protected Race race;
+	protected boolean readyToBreed;
 
 		
 	public Animal(){
 		random = new Random();
 		rotation = random.nextInt(360);
 		age = 0.3f;
+		size = 0.3f;
 		this.pregnant = false;
 		if(random.nextInt(100) >= 50){
 			this.gender = true;
+			this.readyToBreed = true;
+			size = 0.7f;
 		} else {
 			this.gender = false;
+			this.readyToBreed = false;
+			size = 1.5f;
 		}
 	}
 	
 	public Animal(boolean gender){
 		random = new Random();
 		rotation = random.nextInt(360);
-		age = 0.3f;
+		age = 0.4f;
 		this.pregnant = false;
 		this.gender = gender;
+		if(gender){
+			size = 0.7f;
+			readyToBreed = true;
+		}else{
+			size = 1.5f;
+			readyToBreed = false;
+		}
 	}
 	
 	/** Returns an animal which is ready to breed within the radius of 7 from position (xPos, yPos). Else 
@@ -53,8 +67,9 @@ public class Animal{
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 7, false);
 		Animal animal;
 		for(int[] sheeps : neighbor){
-			animal = sheepRace.getSpeciesAt(sheeps[0], sheeps[1]);
-			if(animal != null && animal.readyToBreed()){
+			animal = race.getSpeciesAt(sheeps[0], sheeps[1]);
+			if(animal != null && animal.getReadyToBreed()){
+				animal.setReadyToBreed(false);
 				return animal;
 			}
 		}
@@ -67,7 +82,7 @@ public class Animal{
 	 * @return True if the sheep is ready to breed, else false.
 	 */
 	
-	protected boolean readyToBreed(){
+	/**protected boolean readyToBreed(){
 		if(age > 0.3f && thirst > 0.5f && hunger > 0.5f && !getPregnant()){
 			System.out.println("Ready to breed.");
 			return true;
@@ -75,8 +90,7 @@ public class Animal{
 			return false;
 		}
 	}
-	
-
+	*/
 	
 	protected void drink(){
 		float water = 0.0f;
@@ -84,7 +98,6 @@ public class Animal{
 		for(NeedsControlled nc : NeedsController.getNeed("Water")){
 			   water += nc.getNeed(new Needs("Water", 0.6f), xPos, yPos);
 		}
-		
 		thirst += water;
 		
 		if(thirst > 0.4f){
@@ -101,44 +114,43 @@ public class Animal{
 		Random myRandomizer = new Random();
 		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
 		
-		sheepRace.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
-		calcRotation(randomNeighbor);
+		race.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
 	}
 	
 	protected void propagate(){
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
+		Random myRandomizer = new Random();
+		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
 		
 		Animal animal = findReadyToBreedAnimal();
-			System.out.println("Propagate");
 				if(animal != null){
-						animal.moveTo(xPos+1, yPos);
-						System.out.println("Busy wainting");
-						while(!sheepRace.containsAnimal(xPos+1, yPos)){
-							//Busy waiting
+						boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1]); // waiting for the female
+						if(goalReached == true){
+							animal.setPregnant(true);
 						}
-						System.out.println("Past busy waiting.");
-						Animal sheep = sheepRace.getSpeciesAt(xPos+1, yPos);
-						sheep.setPregnant(true);
 					}
 	}
 	
-	protected void moveTo(int x, int y){
+	/** The animal moves to position x, y. And when destination is reached, the current animal notifies animal.
+	 * 
+	 * @param x coordinate to move to.
+	 * @param y coordinate to move to.
+	 */
+	
+	protected boolean moveTo(int x, int y){
 		Deque<int[]> path = Astar.calculatePath(xPos, yPos, x, y);
-		System.out.println("Move");
 		for(int [] nextCord : path){
 			try {
 			    Thread.sleep(500);
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
-			sheepRace.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
-			xPos = nextCord[0];
-			yPos = nextCord[1];
+			boolean moved = race.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
+			if(!moved){
+				this.moveTo(x, y);
+			}
 		}
-		try {
-		    Thread.sleep(2000);
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		}
+		return true;
 	}
 	
 	/** Calculates the correct rotation for a sheep when moved.
@@ -146,17 +158,17 @@ public class Animal{
 	 * @param newPos The position which the sheep will be moved to.
 	 */
 	
-	protected void calcRotation(int[] newPos){
+	public void calcRotation(int x, int y){
 		
-		
-		if(xPos == newPos[0]){			// middle
-			if(yPos < newPos[1]){		// top
+
+		if(xPos == x){			// middle
+			if(yPos < y){		// top
 				setRotation(180);
 			}else{
 				setRotation(0); 		// bottom
 			}
-		}else if(xPos < newPos[0]){  	//left
-			if(yPos == newPos[1]){		
+		}else if(xPos < x){  	//left
+			if(yPos == y){		
 				if((xPos%2) == 0){		//bottom left
 					setRotation(120);
 				} else{					// top left
@@ -170,7 +182,7 @@ public class Animal{
 				}
 			}
 		}else{							// right
-			if(yPos == newPos[1]){		
+			if(yPos == y){		
 				if((xPos%2) == 0){		
 					setRotation(240);
 				} else{					
@@ -184,8 +196,6 @@ public class Animal{
 				}
 			}
 		}
-		xPos = newPos[0];
-		yPos = newPos[1];
 	}
 	
 	public boolean getGender(){
@@ -227,4 +237,16 @@ public class Animal{
 		this.thirst = thirst;
 	}
 	
+	public boolean getReadyToBreed(){
+		return readyToBreed;
+	}
+	
+	public void setReadyToBreed(boolean breed){
+		readyToBreed = breed;
+	}
+	
+	public void setXandYPos(int x, int y){
+		this.xPos = x;
+		this.yPos = y;
+	}
 }
