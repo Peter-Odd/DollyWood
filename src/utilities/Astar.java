@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 
+
 /**
  * Path finding algorithm A*
  * @author OSM Group 5 - DollyWood project
@@ -13,8 +14,6 @@ import java.util.LinkedList;
  */
 
 public class Astar {
-	static LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, possibly sort after TotalCost
-	static ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
 	final static int VERYHIGHVALUE = 999999;
 
 
@@ -35,7 +34,7 @@ public class Astar {
 	 * @param list List containing nodes with heuristic values added by calculatePath
 	 * @return Node with lowest heuristic value from list
 	 */
-	private static Node findLowestTotalCost(LinkedList<Node> list) {
+	private static Node findLowestTotalCost(LinkedList<Node> list, ArrayList<Node> closedList) {
 		int heuristicPrev = VERYHIGHVALUE; 
 		Node returnMe = null;
 
@@ -54,8 +53,7 @@ public class Astar {
 	 * @param list
 	 * @return Stack with elements from head in list to just before null
 	 */
-	private static Deque<int[]> tracePath(int position) {
-		System.out.println("GOAL FOUND, EUREKA!");
+	private static Deque<int[]> tracePath(int position, ArrayList<Node> closedList) {
 		//Stack<Node> resultStack = new Stack<>();
 		Deque<int[]> resultStack = new ArrayDeque<>();
 
@@ -65,6 +63,8 @@ public class Astar {
 			resultStack.addFirst(new int[]{cursor.getX(), cursor.getY()});
 			cursor = cursor.getParent();
 		}
+		
+		
 		return resultStack;
 	}	
 
@@ -106,6 +106,8 @@ public class Astar {
 	 */
 
 	public static Deque<int[]> calculatePath(int startX, int startY, int goalX, int goalY) {
+		LinkedList<Node> openList = new LinkedList<>(); //contains nodes to visit, possibly sort after TotalCost
+		ArrayList<Node> closedList = new ArrayList<>(); //contains visited nodes
 		Node start = new Node(startX, startY, calculateDistanceToGoal(startX, startY, goalX, goalY), 0, null);
 		openList.add(start);
 		boolean goalFound = false;
@@ -114,7 +116,7 @@ public class Astar {
 		//		long time = System.currentTimeMillis();
 
 		do {
-			Node currentNode = findLowestTotalCost(openList);
+			Node currentNode = findLowestTotalCost(openList, closedList);
 			openList.remove(currentNode);
 
 			if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
@@ -168,6 +170,6 @@ public class Astar {
 		//		System.out.println("TIME TAKEN: " + (System.currentTimeMillis() - time));
 		//		System.out.println("OPEN LIST SIZE: " + openList.size() + ", ClosedList size: " + closedList.size());
 
-		return tracePath(closedList.size() - 1);
+		return tracePath(closedList.size() - 1, closedList);
 	}
 }

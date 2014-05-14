@@ -16,7 +16,6 @@ public class Main {
 	public Main() {
 		ArrayList<Thread> threadsToStart = new ArrayList<>();
 		
-
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
 		threadsToStart.add(waterThread);
@@ -34,6 +33,15 @@ public class Main {
 			threadsToStart.add(sheepThread);
 		}
 
+		Race wolfRace = new Race("Wolf");
+		Globals.races.add(wolfRace);
+		for(int i = 0; i < Globals.startingWolves; i++){
+			Wolf wolf = new Wolf(rng.nextInt(Globals.width), rng.nextInt(Globals.height), wolfRace);
+			wolfRace.setSpeciesAt(wolf.xPos, wolf.yPos, wolf);
+			Thread wolfThread = new Thread(wolf);
+			threadsToStart.add(wolfThread);
+		}
+
 		Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
 		for(int i = 0; i < Globals.startingTrees; i++){
@@ -44,7 +52,7 @@ public class Main {
 			Thread treeThread = new Thread(tree);
 			threadsToStart.add(treeThread);
 		}
-		
+
 		Grass grass = new Grass();
 		Thread grassThread = new Thread(grass);
 		Globals.races.add(grass);
@@ -59,6 +67,4 @@ public class Main {
 		new Graphics3D();
 	}
 
-
 }
-
