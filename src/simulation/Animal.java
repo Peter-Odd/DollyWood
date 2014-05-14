@@ -200,6 +200,11 @@ public class Animal{
 		return rotation;
 	}
 	
+
+	public float getSize(){
+		return 1.0f;
+	}
+	
 	public void setPregnant(boolean bool){
 		hunger = 0.3f;
 		thirst = 0.3f;

@@ -18,7 +18,6 @@ import utilities.NeedsController.NeedsControlled;
  * @version 1.1
  */
 public class Water implements Runnable, NeedsControlled{
-	int tickLength;
 	private float[][] groundWaterLevel;
 	
 	private ArrayList<Cloud> clouds = new ArrayList<>();
@@ -29,8 +28,7 @@ public class Water implements Runnable, NeedsControlled{
 	 * Constructor
 	 * @param tickLength sets the sleep duration of the Thread
 	 */
-	public Water(int tickLength){
-		this.tickLength = tickLength;
+	public Water(){
 		groundWaterLevel = new float[Globals.width][Globals.height];		
 		fractalMap = new float[Globals.width][Globals.height];
 		Fractal.generateFractal(fractalMap, 6.0f, 0.0f, 3.0f, 1.5f);
@@ -44,7 +42,7 @@ public class Water implements Runnable, NeedsControlled{
 	public void run() {
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
-				groundWaterLevel[x][y] = 0.5f;
+				groundWaterLevel[x][y] = Globals.startingWaterAmmount;
 		
 		Random random = new Random();
 		float[][] xCurrent = new float[Globals.width][Globals.height];
@@ -60,7 +58,7 @@ public class Water implements Runnable, NeedsControlled{
 		while(true){
 			step();
 			try{
-				Thread.sleep(tickLength);
+				Thread.sleep(Globals.waterSleepLength);
 			}
 			catch(InterruptedException e){
 				

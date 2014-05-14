@@ -189,7 +189,7 @@ public class Fractal {
 					
 					if(value < 0.0f)
 						value = 0.001f;
-						
+
 					if(map[x][y] == 0.0f && x == 0){
 						map[x][y] = value;
 						map[map.length-1][y] = value;

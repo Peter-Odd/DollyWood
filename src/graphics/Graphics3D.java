@@ -47,7 +47,7 @@ public class Graphics3D {
 	private int modelDisplayList;
 	private HashMap<String, Integer> models = new HashMap<String, Integer>();
 	private float size = 3.5f;
-	
+
 	private AnimationEventController animationEventController = new AnimationEventController(40); //24 FPS
 	/**
 	 * This is all that is needed.<br />
@@ -62,31 +62,31 @@ public class Graphics3D {
 		setupStates();
 		setupLighting();
 		setupStarterAnimation();
-		
+
 		SoundController.size = size;
 		SoundController.camera = camera;
 
-        camera.pitch = -90.0f;
-        glMatrixMode(GL_MODELVIEW);
-        long lastTime = 0;
-        updateLight(GL_LIGHT1, camera.getPosition(), new Vector3f(0.3f, 0.35f, 0.45f));
+		camera.pitch = -90.0f;
+		glMatrixMode(GL_MODELVIEW);
+		long lastTime = 0;
+		updateLight(GL_LIGHT1, camera.getPosition(), new Vector3f(0.3f, 0.35f, 0.45f));
 		while(!Display.isCloseRequested()){
 			processInput();
 			long time = System.currentTimeMillis();
-	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	        glPushAttrib(GL_TRANSFORM_BIT);
-	        glPushMatrix();
-	        glLoadIdentity();
-	        camera.processInput(lastTime*0.05f);
-	        camera.applyTranslations();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glPushAttrib(GL_TRANSFORM_BIT);
+			glPushMatrix();
+			glLoadIdentity();
+			camera.processInput(lastTime*0.05f);
+			camera.applyTranslations();
 
-	        //animationEventController.step();
-	        render();
-	        
-	        glPopAttrib();
-	        
-	        lastTime = System.currentTimeMillis() - time;
-	        glPopMatrix();
+			//animationEventController.step();
+			render();
+
+			glPopAttrib();
+
+			lastTime = System.currentTimeMillis() - time;
+			glPopMatrix();
 			Display.update();
 		}
 	}
@@ -107,7 +107,7 @@ public class Graphics3D {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }
+		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 			Display.destroy();
 			System.exit(0);
@@ -139,11 +139,11 @@ public class Graphics3D {
 				animationEventController.setRandomAnimationSpeed("Butterfly"+i, 0.02f, 0.06f);
 				animationEventController.setRandomModelSpeed("Butterfly"+i, 0.2f, 0.4f);
 			}
-			
+
 			//animationEventController.loadEvent("res/ButterflyAnimation.ani", "ButterflyTest", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 			//Vector3f position = new Vector3f(Globals.width/2*size+(random.nextFloat()*6.0f-3.0f), Globals.height/2*size-2.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*6.0f-3.0f));
 			//animationEventController.addAnimationState(new AnimationState(position, rotation, new Vector3f(1.0f, 1.0f, 1.0f), 0.03f), "ButterflyTest");
-			
+
 			animationEventController.loadEvent("res/startupAnimation.ani", "StartupAnimation", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -157,18 +157,18 @@ public class Graphics3D {
 	 * This renders animations, setups lights and calls other sub functions to render out everything to the screen.
 	 */
 	private void render() {
-        glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
-        
-        float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
-        Vector3f sunPosition = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f);
-        Vector3f.add(sunPosition, (Vector3f)camera.getPosition().negate(), sunPosition);
-        updateLight(GL_LIGHT0, sunPosition, new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
+		glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
 
-        //A* Testing ground
-//        for(Node n : Astar.calculatePath(3, 3, 24, 12)){
-//        	renderModel("Sheep", new Vector3f(n.getX()*size, n.getY()*size, -90.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-//        }
-        
+		float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
+		Vector3f sunPosition = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f);
+		Vector3f.add(sunPosition, (Vector3f)camera.getPosition().negate(), sunPosition);
+		updateLight(GL_LIGHT0, sunPosition, new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
+
+		//A* Testing ground
+		//        for(Node n : Astar.calculatePath(3, 3, 24, 12)){
+		//        	renderModel("Sheep", new Vector3f(n.getX()*size, n.getY()*size, -90.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+		//        }
+
 		for(AnimationEvent animEvent : animationEventController.getEvents()){
 			AnimationState currentState = animEvent.getStateSum();
 			if(currentState != null){
@@ -177,11 +177,9 @@ public class Graphics3D {
 			}
 		}
 
-		
+
 		renderWorldFromCameraPosition(15);
-        //Random tree
-		renderModel("Tree", new Vector3f(6*size,6*size+((6%2)*(size/2)),Globals.heightmap[6][6]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		
+
 		//Render SkyDome
 		float skyDomeScale = 60.0f;
 		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
@@ -192,17 +190,17 @@ public class Graphics3D {
 		renderModel("sphereInvNorm", new Vector3f(skyDomePosition), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(skyDomeScale, skyDomeScale, skyDomeScale));
 
 	}
-	
+
 	/**
 	 * Renders everything within visionRadius of the camera.
 	 * Note that this is only in xy coordinate space.
 	 * @param visionRadius the radius from the camera to render
 	 */
 	private void renderWorldFromCameraPosition(int visionRadius){
-        int[] cameraPos = camera.getArrayPosition(size);
+		int[] cameraPos = camera.getArrayPosition(size);
 		int xOffset = (int) (cameraPos[0]/Globals.width*(size*Globals.width));
 		int yOffset = (int) (cameraPos[1]/Globals.height*(size*Globals.height));
-		
+
 		//Render cloud system
 		for(Cloud c : Globals.water.getClouds()){
 			if(c.getSize() > 0.01f){
@@ -212,54 +210,56 @@ public class Graphics3D {
 					glColor3f(0.0f, 1.2f, 2.0f);
 					Random random = new Random();
 					glBegin(GL_POINTS);
-						for(int i = 0; i < 150; i++){
-							Vector3f vertex = new Vector3f(c.getxPos()*size+xOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+yOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
-							glVertex3f(vertex.x, vertex.y, vertex.z);
-						}
+					for(int i = 0; i < 150; i++){
+						Vector3f vertex = new Vector3f(c.getxPos()*size+xOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), c.getyPos()*size+yOffset+(random.nextFloat()*3.0f-1.0f)*c.getSize(), -75.0f-(random.nextFloat()*30.0f));
+						glVertex3f(vertex.x, vertex.y, vertex.z);
+					}
 					glEnd();
 				}
 			}
 		}
-		
-        for(int xX = -visionRadius; xX <= visionRadius; xX++){
-        	for(int yY = -visionRadius; yY <= visionRadius; yY++){
-        		int x = cameraPos[0] + xX;
-        		int y = cameraPos[1] + yY;
-        		xOffset = (int) (x/Globals.width*(size*Globals.width));
-        		yOffset = (int) (y/Globals.height*(size*Globals.height));
-        		//TODO fix negative world scrolling
-        		//System.out.println(xOffset + ":" + yOffset + "\t" + x + ":" + y);
-        		if(x < 0){
-            		//xOffset = (int) ((-(x+Globals.width))/Globals.width*(size*Globals.width)); 
-        			x = Globals.width - x-2;
-        		}
-        		if(y < 0){
-            		//yOffset = (int) ((-(y+Globals.height))/Globals.height*(size*Globals.height));
-        			y = Globals.height - y-2;
-        		}
-        		x %= Globals.width;
-        		y %= Globals.height;
-        		
-        		//Render ground tiles
-        		renderModel("tile", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-        		
-        		//Render Water
-            	if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
-        			renderModel("Water", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
-            	
-        		//Render races
-        		for(Race r:Globals.races){
-        			Animal animal = r.getSpeciesAt(x, y);
-        			//Render animal
-        			if(animal != null)
-        				renderModel(r.getSpecies(), new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(1.0f, 1.0f, 1.0f));
-        			//Special case for plants
-        			if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
-                		renderModel("grass", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
-        			}
-        		}
-        	}
-        }
+
+		for(int xX = -visionRadius; xX <= visionRadius; xX++){
+			for(int yY = -visionRadius; yY <= visionRadius; yY++){
+				int x = cameraPos[0] + xX;
+				int y = cameraPos[1] + yY;
+				xOffset = (int) (x/Globals.width*(size*Globals.width));
+				yOffset = (int) (y/Globals.height*(size*Globals.height));
+				//TODO fix negative world scrolling
+				//System.out.println(xOffset + ":" + yOffset + "\t" + x + ":" + y);
+				if(x < 0){
+					//xOffset = (int) ((-(x+Globals.width))/Globals.width*(size*Globals.width)); 
+					x = Globals.width - x-2;
+				}
+				if(y < 0){
+					//yOffset = (int) ((-(y+Globals.height))/Globals.height*(size*Globals.height));
+					y = Globals.height - y-2;
+				}
+				x %= Globals.width;
+				y %= Globals.height;
+
+				//Render ground tiles
+				renderModel("tile", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+
+				//Render Water
+				if(Globals.water.getGroundWaterLevel(x, y) > 0.7f)
+					renderModel("Water", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, Globals.water.getGroundWaterLevel(x, y)));
+
+				//Render races
+				for(Race r:Globals.races){
+					Animal animal = r.getSpeciesAt(x, y);
+					//Render animal
+					if(animal != null)
+
+						renderModel(r.getSpecies(), new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, animal.getRotation()), new Vector3f(animal.getSize(), animal.getSize(), animal.getSize()));
+
+					//Special case for plants
+					if(r.getSpecies().equals("Grass") && ((Grass)r).getGrassAt(x,y) > 0.1f){
+						renderModel("grass", new Vector3f(x*size+xOffset,y*size+yOffset+((x%2)*(size/2)),Globals.heightmap[x][y]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, ((Grass)r).getGrassAt(x,y)));		
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -272,10 +272,10 @@ public class Graphics3D {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		//glTranslatef(-position.x+20, -position.y+20, -position.z+50);
-        ByteBuffer temp = ByteBuffer.allocateDirect(16);
-        temp.order(ByteOrder.nativeOrder());
-        glLight(light, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
-        glLight(light, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{color.x, color.y, color.z, 1.0f}).flip());
+		ByteBuffer temp = ByteBuffer.allocateDirect(16);
+		temp.order(ByteOrder.nativeOrder());
+		glLight(light, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
+		glLight(light, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{color.x, color.y, color.z, 1.0f}).flip());
 		glPopMatrix();
 	}
 
@@ -316,9 +316,9 @@ public class Graphics3D {
 	 * @see OBJLoader
 	 */
 	private int setupModelList(String modelName) {
-        modelDisplayList = glGenLists(1);
-        glNewList(modelDisplayList, GL_COMPILE);
-        {
+		modelDisplayList = glGenLists(1);
+		glNewList(modelDisplayList, GL_COMPILE);
+		{
 			try {
 				Model m;
 				m = OBJLoader.loadModel(new File(modelName));
@@ -326,34 +326,34 @@ public class Graphics3D {
 					Vector3f color = modelPart.getColor();
 					glColor3f(color.x, color.y, color.z);
 					glBegin(GL_TRIANGLES);
-		            for (Face face : modelPart.getFaces()) {
-		                Vector3f n1 = m.getNormals().get((int)(face.getNormals().x - 1));
-		                glNormal3f(n1.x, n1.y, n1.z);
-		                Vector3f v1 = m.getVerticies().get((int)(face.getVerticies().x - 1));
-		                glVertex3f(v1.x, v1.y, v1.z);
-		                
-		                Vector3f n2 = m.getNormals().get((int)(face.getNormals().y - 1));
-		                glNormal3f(n2.x, n2.y, n2.z);
-		                Vector3f v2 = m.getVerticies().get((int)(face.getVerticies().y - 1));
-		                glVertex3f(v2.x, v2.y, v2.z);
-		                
-		                Vector3f n3 = m.getNormals().get((int)(face.getNormals().z - 1));
-		                glNormal3f(n3.x, n3.y, n3.z);
-		                Vector3f v3 = m.getVerticies().get((int)(face.getVerticies().z - 1));
-		                glVertex3f(v3.x, v3.y, v3.z);
-		            }
-		            glEnd();
+					for (Face face : modelPart.getFaces()) {
+						Vector3f n1 = m.getNormals().get((int)(face.getNormals().x - 1));
+						glNormal3f(n1.x, n1.y, n1.z);
+						Vector3f v1 = m.getVerticies().get((int)(face.getVerticies().x - 1));
+						glVertex3f(v1.x, v1.y, v1.z);
+
+						Vector3f n2 = m.getNormals().get((int)(face.getNormals().y - 1));
+						glNormal3f(n2.x, n2.y, n2.z);
+						Vector3f v2 = m.getVerticies().get((int)(face.getVerticies().y - 1));
+						glVertex3f(v2.x, v2.y, v2.z);
+
+						Vector3f n3 = m.getNormals().get((int)(face.getNormals().z - 1));
+						glNormal3f(n3.x, n3.y, n3.z);
+						Vector3f v3 = m.getVerticies().get((int)(face.getVerticies().z - 1));
+						glVertex3f(v3.x, v3.y, v3.z);
+					}
+					glEnd();
 				}
 			} 
 			catch (FileNotFoundException e) {
 				e.printStackTrace();
 				System.exit(0);
 			}
-        }
-        glEndList();
+		}
+		glEndList();
 		return modelDisplayList;
 	}
-	
+
 	/**
 	 * Initial setup of all lighting.
 	 * This will setup ambient light.
@@ -361,23 +361,23 @@ public class Graphics3D {
 	 * it will also enable the light sources
 	 */
 	private void setupLighting() {
-        ByteBuffer temp = ByteBuffer.allocateDirect(16);
-        temp.order(ByteOrder.nativeOrder());
-        glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
-        //glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{75.0f, 75.0f, 75.0f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
-        //glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
-        glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
-        glLight(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0001f, 0.0001f, 0.0001f, 1.0f}).flip());
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_FRONT);
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-        glEnable(GL_LIGHT1);
-        glEnable(GL_COLOR_MATERIAL);
-        glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		ByteBuffer temp = ByteBuffer.allocateDirect(16);
+		temp.order(ByteOrder.nativeOrder());
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
+		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
+		//glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{75.0f, 75.0f, 75.0f, 1.0f}).flip());
+		glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+		//glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
+		glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
+		glLight(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0001f, 0.0001f, 0.0001f, 1.0f}).flip());
+		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_FRONT);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHT1);
+		glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	}
 
 	/**
@@ -409,12 +409,12 @@ public class Graphics3D {
 			}
 			//Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
 			Display.setTitle("DOLLYWOOD");
-			
+
 			ByteBuffer[] iconList = new ByteBuffer[2];
 			iconList[0] = loadIcon("res/ICON16.png");
 			iconList[1] = loadIcon("res/ICON32.png");
 			Display.setIcon(iconList);
-			
+
 			Display.create();
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
@@ -424,7 +424,7 @@ public class Graphics3D {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * loads an icon to be used for the display.
 	 * @param filename The location of the file to load
@@ -432,9 +432,9 @@ public class Graphics3D {
 	 * @throws IOException
 	 */
 	private ByteBuffer loadIcon(String filename) throws IOException {
-	    BufferedImage image = ImageIO.read(new File(filename)); // load image
-	    // convert image to byte array
-	    byte[] buffer = new byte[image.getWidth() * image.getHeight() * 4];
+		BufferedImage image = ImageIO.read(new File(filename)); // load image
+		// convert image to byte array
+		byte[] buffer = new byte[image.getWidth() * image.getHeight() * 4];
 		int counter = 0;
 		for (int x = 0; x < image.getHeight(); x++)
 			for (int y = 0; y < image.getWidth(); y++)

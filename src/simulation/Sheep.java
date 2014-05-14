@@ -97,8 +97,9 @@ public class Sheep extends Animal implements  Runnable{
 		}
 	}
 	
-	private void eat(){
-		
+	
+	
+	public void eat(){
 		float food = 0.0f;
 		
 		for(NeedsControlled nc : NeedsController.getNeed("Plant")){

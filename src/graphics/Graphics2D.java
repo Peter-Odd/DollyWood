@@ -9,9 +9,7 @@ import javax.swing.JPanel;
 import org.lwjgl.util.vector.Vector3f;
 
 import simulation.Race;
-import utilities.Astar;
 import utilities.Globals;
-import utilities.Node;
 
 public class Graphics2D extends JPanel{
 	/**
@@ -48,11 +46,6 @@ public class Graphics2D extends JPanel{
 				g.fillRect(x*size, y*size, size, size);
 			}
 		}
-		//A* Testing ground
-		g.setColor(Color.green);
-        for(Node n : Astar.calculatePath(/*new int[Globals.width][Globals.height], */3, 3, 3, 5)){
-        	g.fillRect(n.getX()*size, n.getY()*size, size, size);
-        }
 		try{
 			Thread.sleep(1000);
 		}
