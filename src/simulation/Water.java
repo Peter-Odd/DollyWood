@@ -36,8 +36,7 @@ public class Water implements Runnable, NeedsControlled{
 		Globals.registerSetting("Sleep", "Cloud", 0, 1000, 100);
 		Globals.registerSetting("Wind fractal div factor", "Cloud", 0, 7, 1.5f);
 		Globals.registerSetting("Wind fractal random range", "Cloud", 0, 10, 2);
-		Globals.registerSetting("Min cloud count", "Cloud", 0, 100, 0);
-		Globals.registerSetting("Max cloud count", "Cloud", 0, 100, 10);
+		Globals.registerSetting("Cloud count", "Cloud", 0, 100, 10);
 		Globals.registerSetting("Evaporation rate", "Cloud", 0, 1, 0.04f);
 		Globals.registerSetting("Downfall rate", "Cloud", 0, 2, 0.4f);
 		Globals.registerSetting("Shadow intensity", "Cloud", 0, 0.5f, 0.1f);
@@ -62,9 +61,7 @@ public class Water implements Runnable, NeedsControlled{
 		float divFactor = Globals.getSetting("Wind fractal div factor", "Cloud");
 		Fractal.generateFractal(xCurrent, 1.0f, 0.0f, randomRange, divFactor);
 		Fractal.generateFractal(yCurrent, 1.0f, 0.0f, randomRange, divFactor);
-		int minCloudCount = (int)Globals.getSetting("Min cloud count", "Cloud");
-		int maxCloudCount = (int)Globals.getSetting("Max cloud count", "Cloud");
-		int cloudCount = (int)(random.nextInt(maxCloudCount-minCloudCount))+minCloudCount;
+		int cloudCount = (int)Globals.getSetting("Cloud count", "Cloud");
 		int cloudSleep = (int)Globals.getSetting("Sleep", "Cloud");
 		for(int i = 0; i < cloudCount; i++){
 			Cloud cloud = new Cloud(cloudSleep, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height, random.nextFloat()*3.0f, xCurrent, yCurrent);
@@ -140,10 +137,10 @@ public class Water implements Runnable, NeedsControlled{
 		float flowRate = Globals.getSetting("Dissipation strength", "Water");
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
-				if(groundWaterLevel[x][y] >= flowRate){
-					for(int[] neighbor : HexagonUtils.neighborTiles(x, y, false)){
-						if(groundWaterLevel[neighbor[0]][neighbor[1]] < groundWaterLevel[x][y]){
-							float flow = (groundWaterLevel[x][y]-groundWaterLevel[neighbor[0]][neighbor[1]])*flowRate;
+				for(int[] neighbor : HexagonUtils.neighborTiles(x, y, false)){
+					if(groundWaterLevel[neighbor[0]][neighbor[1]] < groundWaterLevel[x][y]){
+						float flow = (groundWaterLevel[x][y]-groundWaterLevel[neighbor[0]][neighbor[1]])*flowRate;
+						if(groundWaterLevel[x][y] >= flow){
 							groundWaterLevel[x][y] -= flow;
 							groundWaterLevel[neighbor[0]][neighbor[1]] += flow;
 						}
