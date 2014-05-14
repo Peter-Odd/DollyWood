@@ -29,14 +29,15 @@ public class Water implements Runnable, NeedsControlled{
 	 */
 	public Water(){
 		Globals.registerSetting("Sleep", "Water", 1, 1000, 100);
-		Globals.registerSetting("StartingWater", "Water", 0, 1, 0.5f);
-		Globals.registerSetting("DissipationStrength", "Water", 0, 2, 0.3f);
-		Globals.registerSetting("WindFractalDivFactor", "Cloud", 0, 7, 1.5f);
-		Globals.registerSetting("WindFractalRandomRange", "Cloud", 0, 10, 2);
-		Globals.registerSetting("MinCloudCount", "Cloud", 0, 100, 0);
-		Globals.registerSetting("MaxCloudCount", "Cloud", 0, 100, 10);
-		Globals.registerSetting("FlowRate", "Water", 0, 0.5f, 0.04f);
-		Globals.registerSetting("FlowThreshold", "Water", 0, 1, 0.1f);
+		Globals.registerSetting("Starting water", "Water", 0, 1, 0.5f);
+		Globals.registerSetting("Dissipation strength", "Water", 0, 2, 0.3f);
+		Globals.registerSetting("Sleep", "Cloud", 0, 1000, 100);
+		Globals.registerSetting("Wind fractal div factor", "Cloud", 0, 7, 1.5f);
+		Globals.registerSetting("Wind fractal random range", "Cloud", 0, 10, 2);
+		Globals.registerSetting("Min cloud count", "Cloud", 0, 100, 0);
+		Globals.registerSetting("Max cloud count", "Cloud", 0, 100, 10);
+		Globals.registerSetting("Flow rate", "Water", 0, 0.5f, 0.04f);
+		Globals.registerSetting("Flow threshold", "Water", 0, 1, 0.1f);
 		NeedsController.registerNeed("Water", this);
 	}
 	
@@ -46,7 +47,7 @@ public class Water implements Runnable, NeedsControlled{
 	 */
 	public void run() {
 		groundWaterLevel = new float[Globals.width][Globals.height];
-		float startingWater = Globals.getSetting("StartingWater", "Water");
+		float startingWater = Globals.getSetting("Starting water", "Water");
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
 				groundWaterLevel[x][y] = startingWater;
@@ -54,15 +55,16 @@ public class Water implements Runnable, NeedsControlled{
 		Random random = new Random();
 		float[][] xCurrent = new float[Globals.width][Globals.height];
 		float[][] yCurrent = new float[Globals.width][Globals.height];
-		float randomRange = Globals.getSetting("WindFractalRandomRange", "Cloud");
-		float divFactor = Globals.getSetting("WindFractalDivFactor", "Cloud");
+		float randomRange = Globals.getSetting("Wind fractal random range", "Cloud");
+		float divFactor = Globals.getSetting("Wind fractal div factor", "Cloud");
 		Fractal.generateFractal(xCurrent, 1.0f, 0.0f, randomRange, divFactor);
 		Fractal.generateFractal(yCurrent, 1.0f, 0.0f, randomRange, divFactor);
-		int minCloudCount = (int)Globals.getSetting("MinCloudCount", "Cloud");
-		int maxCloudCount = (int)Globals.getSetting("MaxCloudCount", "Cloud");
+		int minCloudCount = (int)Globals.getSetting("Min cloud count", "Cloud");
+		int maxCloudCount = (int)Globals.getSetting("Max cloud count", "Cloud");
 		int cloudCount = (int)(random.nextInt(maxCloudCount-minCloudCount))+minCloudCount;
+		int cloudSleep = (int)Globals.getSetting("Sleep", "Cloud");
 		for(int i = 0; i < cloudCount; i++){
-			Cloud cloud = new Cloud(100, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height, random.nextFloat()*3.0f, xCurrent, yCurrent);
+			Cloud cloud = new Cloud(cloudSleep, random.nextFloat()*Globals.width, random.nextFloat()*Globals.height, random.nextFloat()*3.0f, xCurrent, yCurrent);
 			Thread cloudThread = new Thread(cloud);
 			cloudThread.start();
 			clouds.add(cloud);
@@ -132,7 +134,7 @@ public class Water implements Runnable, NeedsControlled{
 	 * The amount moved is dependent on the difference in ground water amount.
 	 */
 	private void dissipate() {
-		float flowRate = Globals.getSetting("DissipationStrength", "Water");
+		float flowRate = Globals.getSetting("Dissipation strength", "Water");
 		for(int x = 0; x < Globals.width; x++){
 			for(int y = 0; y < Globals.height; y++){
 				if(groundWaterLevel[x][y] >= flowRate){
@@ -153,8 +155,8 @@ public class Water implements Runnable, NeedsControlled{
 	 * Note that it will only flow down if the lower position has a waterLevel of < 1.0
 	 */
 	private void waterFlow() {
-		float flowRate = Globals.getSetting("FlowRate", "Water");//0.04f;
-		float flowThreshold = Globals.getSetting("FlowThreshold", "Water");//0.1f;
+		float flowRate = Globals.getSetting("Flow rate", "Water");//0.04f;
+		float flowThreshold = Globals.getSetting("Flow threshold", "Water");//0.1f;
 		for(int x = 1; x < Globals.width-1; x++){
 			for(int y = 1; y < Globals.height-1; y++){
 				if(groundWaterLevel[x][y] >= flowRate){

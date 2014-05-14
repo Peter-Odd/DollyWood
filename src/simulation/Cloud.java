@@ -51,9 +51,12 @@ public class Cloud implements Runnable, NeedsControlled{
 	 * This will check if it should rain or not. It will also step the cloud once during each loop
 	 */
 	public void run() {
+		Globals.registerSetting("Tics between downfall", "Cloud", 0, 3000, 300);
+		Globals.registerSetting("Evaporation rate", "Cloud", 0, 1, 0.04f);
+		Globals.registerSetting("Downfall rate", "Cloud", 0, 2, 0.4f);
 		while(true){
 			ticks++;
-			if(ticks > 300){
+			if(ticks > Globals.getSetting("Tics betweem downfall", "Cloud")){
 				downfall = true;
 				ticks = 0;
 			}

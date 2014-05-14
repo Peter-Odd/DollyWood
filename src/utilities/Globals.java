@@ -158,7 +158,15 @@ public class Globals {
 	
 	private static ArrayList<Setting> settings = new ArrayList<>();
 	public static void registerSetting(String name, String category, float min, float max, float current){
-		settings.add(new Setting(name, category, new JSlider((int)(min*1000), (int)(max*1000), (int)(current*1000))));
+		boolean isRegistered = false;
+		for(Setting s : settings){
+			if(s.name.equals(name) && s.category.equals(category)){
+				isRegistered = true;
+				break;
+			}
+		}
+		if(!isRegistered)
+			settings.add(new Setting(name, category, new JSlider((int)(min*1000), (int)(max*1000), (int)(current*1000))));
 	}
 	
 	public static float getSetting(String name, String category){
