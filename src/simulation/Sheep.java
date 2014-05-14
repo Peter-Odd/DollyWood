@@ -3,6 +3,8 @@ package simulation;
 import java.util.ArrayList;
 
 
+
+import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
@@ -11,10 +13,7 @@ import utilities.Needs;
 
 public class Sheep extends Animal implements  Runnable{
 	
-
-	
 	private float timeUntilBirth;
-	
 	
 	public Sheep(int xPos, int yPos, Race sheep){
 		super();
@@ -31,16 +30,17 @@ public class Sheep extends Animal implements  Runnable{
 		super.xPos = xPos;
 		super.yPos = yPos;
 		super.race = sheep;
-		super.hunger = 0.5f;
-		super.thirst = 0.5f;
 		this.timeUntilBirth = 1.0f;
 	}	
 	
 	
 	public void run(){
+		super.hunger = Globals.getSetting("Sheep hunger", "Sheep");
+		super.hunger = Globals.getSetting("Sheep thirst", "Sheep");
+		
 		while(true){
 			try {
-			    Thread.sleep(500);
+			    Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}

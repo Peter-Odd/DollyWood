@@ -4,6 +4,7 @@ package simulation;
 import java.util.ArrayList;
 import java.util.Random;
 
+import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.Needs;
 import utilities.NeedsController;
@@ -16,7 +17,6 @@ import utilities.NeedsController.NeedsControlled;
  */
 public class Tree extends Animal implements Runnable {
 
-	private int tickLength;		//ms between each step (loop)
 	private float treeHealth;	//a trees health
 	private float treeSeed;		//a trees seed amount
 	private int xPos;			//a trees x-position
@@ -26,13 +26,11 @@ public class Tree extends Animal implements Runnable {
 
 	/**
 	 * 
-	 * @param tickLength Time (in ms) thread should sleep between "work"
 	 * @param xPos a trees x-coordinate
 	 * @param yPos a trees y-coordinate
 	 * @param race a tree belongs to race
 	 */
-	public Tree(int tickLength, int xPos, int yPos, Race race) {
-		this.tickLength = tickLength;
+	public Tree(int xPos, int yPos, Race race) {
 		treeHealth = new Random().nextFloat(); 				//initial health value of random between 0.0f and 0.99..f
 		this.xPos = xPos;									//a trees x position
 		this.yPos = yPos;									//a trees y position
@@ -61,7 +59,7 @@ public class Tree extends Animal implements Runnable {
 			int treeXPos = neighbors.get(randomSpawnedTree)[0];
 			int treeYPos = neighbors.get(randomSpawnedTree)[1];
 			if (race.getSpeciesAt(xPos, yPos) == null) {
-				Tree tree = new Tree(400, treeXPos, treeYPos, this.race);
+				Tree tree = new Tree(treeXPos, treeYPos, this.race);
 				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
 				Thread treeThread = new Thread(tree);
 				treeThread.start();	
@@ -132,7 +130,7 @@ public class Tree extends Animal implements Runnable {
 		while(true) {
 			step();
 			try {
-				Thread.sleep(tickLength);
+				Thread.sleep((int)Globals.getSetting("Tree sleep", "Tree"));
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}

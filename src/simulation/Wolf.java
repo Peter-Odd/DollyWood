@@ -2,6 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 
+import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
@@ -16,8 +17,6 @@ public class Wolf extends Animal implements Runnable{
 		super.xPos = xPos;
 		super.yPos = yPos;
 		super.race = wolf;
-		super.hunger = 1.0f;
-		super.thirst = 0.5f;
 		this.timeUntilBirth = 0.5f;
 	}
 
@@ -26,15 +25,16 @@ public class Wolf extends Animal implements Runnable{
 		super.xPos = xPos;
 		super.yPos = yPos;
 		super.race = wolf;
-		super.hunger = 1.0f;
-		super.thirst = 0.5f;
 		this.timeUntilBirth = 0.5f;
 	}
 
 	public void run(){
+		super.hunger = Globals.getSetting("Wolves hunger", "Wolf");
+		super.thirst = Globals.getSetting("Wolves thirst", "Wolf");
+		
 		while(true){
 			try {
-				Thread.sleep(500);
+				Thread.sleep((int)Globals.getSetting("Wolves sleep", "Wolf"));
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
