@@ -5,13 +5,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -24,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 
 import simulation.DayNightCycle;
 import simulation.Race;
@@ -84,14 +91,34 @@ public class Globals {
 				private static final long serialVersionUID = 1L;
 				public void paintComponent(Graphics g){
 					try {
-						BufferedImage image = ImageIO.read(new File("res/ICON.PNG"));
-						g.drawImage(image, 0, 0, 512, 512, null);
+						BufferedImage image = ImageIO.read(new File("res/BANNER.PNG"));
+						g.drawImage(image, 0, 0, 512, 256, null);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			};
+			panel.setLayout(new GridLayout(2,2));
+			panel.add(new JLabel());
+			JTextArea aboutText = new JTextArea();
+			try {
+				BufferedReader inStream = new BufferedReader(new FileReader(new File("res/about.txt")));
+				String line;
+				while((line = inStream.readLine()) != null){
+					aboutText.append(line);
+				}
+				inStream.close();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			aboutText.setLineWrap(true);
+			aboutText.setEditable(false);
+			panel.add(aboutText);
 			panel.setPreferredSize(new Dimension(512, 512));
 			
 			tabbPane.add("home", panel);

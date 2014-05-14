@@ -24,7 +24,7 @@ public class DayNightCycle implements Runnable, NeedsControlled{
 	public DayNightCycle(float stepSize) {
 		this.stepSize = stepSize;
 		NeedsController.registerNeed("SunLight", this);
-		Globals.registerSetting("Sleep", "Day/Night", 1, 1000, 100);
+		Globals.registerSetting("Sleep", "Day/Night", 1, 1000, 500);
 	}
 
 	/**

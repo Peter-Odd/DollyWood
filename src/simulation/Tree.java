@@ -58,7 +58,12 @@ public class Tree extends Animal implements Runnable {
 			int randomSpawnedTree = new Random().nextInt(neighbors.size());
 			int treeXPos = neighbors.get(randomSpawnedTree)[0];
 			int treeYPos = neighbors.get(randomSpawnedTree)[1];
-			if (race.getSpeciesAt(xPos, yPos) == null) {
+			
+			float treeProximity = 0.0f;
+			for(NeedsControlled nc : NeedsController.getNeed("Tree"))
+				treeProximity += nc.getNeed(new Needs("Tree", 1.0f), treeXPos, treeYPos);
+			
+			if (race.getSpeciesAt(treeXPos, treeYPos) == null && treeProximity < 1) {
 				Tree tree = new Tree(treeXPos, treeYPos, this.race);
 				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
 				Thread treeThread = new Thread(tree);
@@ -111,11 +116,7 @@ public class Tree extends Animal implements Runnable {
 				count++; 				//increase count (number of times a tree has "died"
 			}
 
-			if (count >= 3) {			// a tree has "died" 3 times, let's remove it
-				race.getAndRemoveSpeciesAt(xPos, yPos);
-			} else {
-				treeHealth -= 0.01; 	//decrease treeHealth
-			}
+			treeHealth -= 0.01; 	//decrease treeHealth
 
 //		}//end random
 
@@ -127,7 +128,7 @@ public class Tree extends Animal implements Runnable {
 	 * The entire tree simulation will run here.
 	 */
 	public void run() {
-		while(true) {
+		while(count <= 3) {
 			step();
 			try {
 				Thread.sleep((int)Globals.getSetting("Tree sleep", "Tree"));
@@ -135,6 +136,7 @@ public class Tree extends Animal implements Runnable {
 				Thread.currentThread().interrupt();
 			}
 		}
+		race.getAndRemoveSpeciesAt(xPos, yPos);
 	}
 
 }

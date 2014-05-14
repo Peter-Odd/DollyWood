@@ -29,6 +29,7 @@ public class Race implements NeedsControlled{
 			NeedsController.registerNeed("Meat", this);
 		}else if(specName == "Tree"){
 			NeedsController.registerNeed("Water", this);
+			NeedsController.registerNeed("Tree", this);
 		}
 	}
 
@@ -146,6 +147,13 @@ public class Race implements NeedsControlled{
 			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, true)) {
 				if (containsAnimal(neighbor[0], neighbor[1])) {
 					return -0.2f;
+				}
+			}
+			return 0.0f;
+		} else if (need.getNeed().equals("Tree")) {
+			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, 2, true)) {
+				if (containsAnimal(neighbor[0], neighbor[1])) {
+					return 1.0f;
 				}
 			}
 			return 0.0f;

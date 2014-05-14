@@ -31,7 +31,10 @@ public class NeedsController {
 	
 	@SuppressWarnings("unchecked")
 	public static ArrayList<NeedsControlled> getNeed(String need){
-		return (ArrayList<NeedsControlled>) needs.get(need).clone();
+		if(needs.containsKey(need))
+			return (ArrayList<NeedsControlled>) needs.get(need).clone();
+		else
+			return new ArrayList<NeedsControlled>();
 	}
 	
 	//TODO implement this class!
