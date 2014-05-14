@@ -54,7 +54,7 @@ public class Cloud implements Runnable, NeedsControlled{
 		Globals.registerSetting("Tics between downfall", "Cloud", 0, 3000, 300);
 		while(true){
 			ticks++;
-			if(ticks > Globals.getSetting("Tics betweem downfall", "Cloud")){
+			if(ticks > Globals.getSetting("Tics between downfall", "Cloud")){
 				downfall = true;
 				ticks = 0;
 			}
