@@ -16,8 +16,8 @@ public class Wolf extends Animal implements Runnable{
 		super.xPos = xPos;
 		super.yPos = yPos;
 		super.race = wolf;
-		super.hunger = 0.4f;
-		super.thirst = 0.4f;
+		super.hunger = 1.0f;
+		super.thirst = 0.5f;
 		this.timeUntilBirth = 0.5f;
 	}
 
@@ -26,8 +26,8 @@ public class Wolf extends Animal implements Runnable{
 		super.xPos = xPos;
 		super.yPos = yPos;
 		super.race = wolf;
-		super.hunger = 0.4f;
-		super.thirst = 0.4f;
+		super.hunger = 1.0f;
+		super.thirst = 0.5f;
 		this.timeUntilBirth = 0.5f;
 	}
 
@@ -44,7 +44,7 @@ public class Wolf extends Animal implements Runnable{
 				hunger -= 0.05f;
 				thirst -= 0.05f;
 				timeUntilBirth -= 0.02;
-				System.out.println("Pregnant");
+				System.out.println("Wolf: Pregnant");
 			} else {
 				age += 0.02;
 				hunger -= 0.02f;
@@ -74,10 +74,10 @@ public class Wolf extends Animal implements Runnable{
 
 	private void giveBirth(){
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
-		System.out.println("Birth");
+		System.out.println("Wolf: Birth");
 		for(int[] neighbor : neighbors){
 			if(!race.containsAnimal(neighbor[0], neighbor[1])){
-				System.out.println("Really birth");
+				System.out.println("Wolf: Really birth");
 				Wolf puppy = new Wolf(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], puppy);
 				Thread wolfThread = new Thread(puppy);
@@ -93,8 +93,8 @@ public class Wolf extends Animal implements Runnable{
 	public void eat(){
 		float food = 0.0f;
 
-		for(NeedsControlled nc : NeedsController.getNeed("Sheep")){
-			food += nc.getNeed(new Needs("Sheep", 0.6f), xPos, yPos);
+		for(NeedsControlled nc : NeedsController.getNeed("Meat")){
+			food += nc.getNeed(new Needs("Meat", 0.6f), xPos, yPos);
 		}
 
 		hunger += food;
