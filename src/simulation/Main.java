@@ -21,7 +21,7 @@ public class Main {
 
 		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 20.0f, 2.0f);
 
-/*
+
 		Race sheepRace = new Race("Sheep");
 		Globals.races.add(sheepRace);
 		Sheep sheep = new Sheep(15, 15, sheepRace, true);
@@ -35,7 +35,7 @@ public class Main {
 		Thread sheepThread1 = new Thread(sheep1);
 		sheepThread1.start();
 		
-
+/*
 		Sheep sheep2 = new Sheep(17, 10, sheepRace);
 		sheepRace.setSpeciesAt(17, 10, sheep2);
 		Thread sheepThread2 = new Thread(sheep2);
@@ -64,14 +64,14 @@ public class Main {
 		dayNightThread.start();
 		
 		Random rng = new Random();
-		Race sheepRace = new Race("Sheep");
+		/*Race sheepRace = new Race("Sheep");
 		Globals.races.add(sheepRace);
 		for(int i = 0; i < Globals.startingSheep; i++){
 			Sheep sheep = new Sheep(rng.nextInt(Globals.width), rng.nextInt(Globals.height), sheepRace);
 			sheepRace.setSpeciesAt(sheep.xPos, sheep.yPos, sheep);
 			Thread sheepThread = new Thread(sheep);
 			sheepThread.start();
-		}
+		}*/
 
 		Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
