@@ -1,5 +1,9 @@
 package graphics;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +15,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 import graphics.utilities.AnimationEvent;
 import graphics.utilities.AnimationState;
@@ -57,6 +64,7 @@ public class Graphics3D {
 	 * Note: Only use escape to exit!
 	 */
 	public Graphics3D(){
+		splashScreen(1000);
 		setupDisplay();
 		setupCamera();
 		setupStates();
@@ -77,9 +85,9 @@ public class Graphics3D {
 			glPushAttrib(GL_TRANSFORM_BIT);
 			glPushMatrix();
 			glLoadIdentity();
+			camera.applyPerspective();
 			camera.processInput(lastTime*0.05f);
 			camera.applyTranslations();
-
 			//animationEventController.step();
 			render();
 
@@ -89,6 +97,44 @@ public class Graphics3D {
 			glPopMatrix();
 			Display.update();
 		}
+	}
+
+	private void splashScreen(int delay) {
+		JFrame frame = new JFrame();
+		frame.setLayout(new BorderLayout());
+		JPanel panel = new JPanel(){
+			private static final long serialVersionUID = 1L;
+			public void paintComponent(Graphics g){
+				try {
+					BufferedImage image = ImageIO.read(new File("res/ICON.PNG"));
+					g.drawImage(image, 0, 0, 512, 512, null);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		panel.setPreferredSize(new Dimension(512, 512));
+		frame.add(panel, BorderLayout.CENTER);
+		JProgressBar progressBar = new JProgressBar(0, delay);
+		frame.add(progressBar, BorderLayout.SOUTH);
+
+		frame.setUndecorated(true);
+		frame.pack();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setLocation(screenSize.width/2-(frame.getWidth()/2), screenSize.height/2-(frame.getHeight()/2));
+		
+		frame.setVisible(true);
+		for(int i = 0; i < delay; i++){
+			progressBar.setValue(i);
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		frame.setVisible(false);
 	}
 
 	/**
@@ -111,6 +157,9 @@ public class Graphics3D {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
 			Display.destroy();
 			System.exit(0);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && !Globals.visibleSettingsFrame()){
+			Globals.createSettingsFrame(false, false, true);
 		}
 	}
 
@@ -178,10 +227,10 @@ public class Graphics3D {
 		}
 
 
-		renderWorldFromCameraPosition(15);
+		renderWorldFromCameraPosition((int) Globals.getSetting("Render distance", "Graphics"));
 
 		//Render SkyDome
-		float skyDomeScale = 60.0f;
+		float skyDomeScale = Globals.getSetting("Render distance", "Graphics")*4.0f;
 		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 		Vector3f skyDomePosition = (Vector3f) camera.getPosition().negate();
 		skyDomePosition.x += skyDomeScale;

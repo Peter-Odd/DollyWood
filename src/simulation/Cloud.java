@@ -51,9 +51,10 @@ public class Cloud implements Runnable, NeedsControlled{
 	 * This will check if it should rain or not. It will also step the cloud once during each loop
 	 */
 	public void run() {
+		Globals.registerSetting("Tics between downfall", "Cloud", 0, 3000, 300);
 		while(true){
 			ticks++;
-			if(ticks > 300){
+			if(ticks > Globals.getSetting("Tics betweem downfall", "Cloud")){
 				downfall = true;
 				ticks = 0;
 			}
@@ -81,8 +82,8 @@ public class Cloud implements Runnable, NeedsControlled{
 	 */
 	private void step() {
 		float windStrength = Math.abs((6.0f-this.size)*0.01f); //Dirty trick to solve the -1 arrayindex problem
-		float drawSize = 0.04f;
-		float fallSize = 0.4f;
+		float drawSize = Globals.getSetting("Evaporation rate", "Cloud");
+		float fallSize = Globals.getSetting("Downfall rate", "Cloud");
 		float sunIntensity = 0.0f;
 		for(NeedsControlled nc : NeedsController.getNeed("SunLight")){
 			sunIntensity += nc.getNeed(new Needs("SunLight", 1.0f), (int)this.xPos, (int)this.yPos);
@@ -136,7 +137,7 @@ public class Cloud implements Runnable, NeedsControlled{
 	public float getNeed(Needs need, int x, int y) {
 		for(int[] neighbors : HexagonUtils.neighborTiles((int)this.xPos, (int)this.yPos, true)){
 			if(neighbors[0] == x && neighbors[1] == y)
-				return -0.1f;
+				return -Globals.getSetting("Shadow intensity", "Cloud");
 		}
 		return 0;
 	}

@@ -52,7 +52,6 @@ public class Sheep extends Animal implements  Runnable{
 				hunger -= 0.05f;
 				thirst -= 0.05f;
 				timeUntilBirth -= 0.1;
-				System.out.println("Pregnant");
 			} else {
 				if(age <= 1.2f){
 					age += 0.02;
@@ -95,7 +94,7 @@ public class Sheep extends Animal implements  Runnable{
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
 		
 		for(int[] neighbor : neighbors){
-			if(!race.containsAnimal(neighbor[0], neighbor[1])){
+			if(race.containsAnimal(neighbor[0], neighbor[1])){
 				Sheep lamb = new Sheep(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], lamb);
 				Thread sheepThread = new Thread(lamb);

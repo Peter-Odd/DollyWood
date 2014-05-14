@@ -24,6 +24,7 @@ public class Animal{
 	protected Race race;
 	protected boolean readyToBreed;
 
+
 		
 	public Animal(){
 		random = new Random();
@@ -68,6 +69,7 @@ public class Animal{
 		Animal animal;
 		for(int[] sheeps : neighbor){
 			animal = race.getSpeciesAt(sheeps[0], sheeps[1]);
+
 			if(animal != null && animal.getReadyToBreed()){
 				animal.setReadyToBreed(false);
 				return animal;
@@ -113,7 +115,6 @@ public class Animal{
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 		Random myRandomizer = new Random();
 		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
-		
 		race.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
 	}
 	
@@ -128,7 +129,7 @@ public class Animal{
 						if(goalReached == true){
 							animal.setPregnant(true);
 						}
-					}
+				}
 	}
 	
 	/** The animal moves to position x, y. And when destination is reached, the current animal notifies animal.
@@ -145,6 +146,7 @@ public class Animal{
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
+			
 			boolean moved = race.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
 			if(!moved){
 				this.moveTo(x, y);
