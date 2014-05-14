@@ -230,7 +230,7 @@ public class Graphics3D {
 		renderWorldFromCameraPosition((int) Globals.getSetting("Render distance", "Graphics"));
 
 		//Render SkyDome
-		float skyDomeScale = 60.0f;
+		float skyDomeScale = Globals.getSetting("Render distance", "Graphics")*4.0f;
 		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 		Vector3f skyDomePosition = (Vector3f) camera.getPosition().negate();
 		skyDomePosition.x += skyDomeScale;

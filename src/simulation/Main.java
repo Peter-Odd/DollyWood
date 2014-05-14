@@ -19,7 +19,7 @@ public class Main {
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
 		threadsToStart.add(waterThread);
-		Globals.dayNightCycle = new DayNightCycle(0.1f, Globals.dayNightSleepLength);
+		Globals.dayNightCycle = new DayNightCycle(0.1f);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		threadsToStart.add(dayNightThread);
 		
