@@ -1,5 +1,6 @@
 package simulation;
 
+import utilities.Globals;
 import utilities.Needs;
 import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
@@ -14,17 +15,16 @@ import utilities.NeedsController.NeedsControlled;
 public class DayNightCycle implements Runnable, NeedsControlled{
 	private float time;
 	private float stepSize;
-	private int tickLength;
 	
 	/**
 	 * Constructor
 	 * @param stepSize Indicates how far the simulation should "jump" at each tick.
 	 * @param tickLength Sleep duration for the Thread
 	 */
-	public DayNightCycle(float stepSize, int tickLength) {
+	public DayNightCycle(float stepSize) {
 		this.stepSize = stepSize;
-		this.tickLength = tickLength;
 		NeedsController.registerNeed("SunLight", this);
+		Globals.registerSetting("Sleep", "Day/Night", 1, 1000, 100);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class DayNightCycle implements Runnable, NeedsControlled{
 		while(true){
 			time = (time+stepSize)%24;
 			try{
-				Thread.sleep(tickLength);
+				Thread.sleep((long)(Globals.getSetting("Sleep", "Day/Night")));
 			}
 			catch(InterruptedException e){
 				System.out.println("Could not sleep DayNightCycle, stopping thread\n");

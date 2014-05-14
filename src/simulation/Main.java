@@ -14,7 +14,18 @@ public class Main {
 	}
 
 	public Main() {
+
+		Globals.heightmap = new float[Globals.width][Globals.height];
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.worldFractalMax, Globals.worldFractalMin, Globals.worldFractalRange, Globals.worldFractalDiv);
+
+
+
+
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 20.0f, 2.0f);
+
+
 		ArrayList<Thread> threadsToStart = new ArrayList<>();
+
 		
 		/* Register settings below */
 		Globals.registerSetting("Number of trees", "Tree", 0, 50, 20);
@@ -35,15 +46,18 @@ public class Main {
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
 		threadsToStart.add(waterThread);
-		Globals.dayNightCycle = new DayNightCycle(0.1f, Globals.dayNightSleepLength);
+		Globals.dayNightCycle = new DayNightCycle(0.1f);
 		Thread dayNightThread = new Thread(Globals.dayNightCycle);
 		threadsToStart.add(dayNightThread);
+		
 
 		Grass grass = new Grass();
 		Thread grassThread = new Thread(grass);
 		Globals.races.add(grass);
 		threadsToStart.add(grassThread);
-		
+
+		Globals.registerSetting("Field of view", "Graphics", 10, 90, 70);
+		Globals.registerSetting("Render distance", "Graphics", 1, 50, 15);
 		Globals.createSettingsFrame(true, true, false);
 
 		Random rng = new Random();

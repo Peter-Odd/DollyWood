@@ -46,27 +46,37 @@ public class Sheep extends Animal implements  Runnable{
 			}
 			
 			if(pregnant){
-				age += 0.02;
+				if(age <= 1.2f){
+					age += 0.02;
+				}
 				hunger -= 0.05f;
 				thirst -= 0.05f;
-				timeUntilBirth -= 0.02;
-				System.out.println("Pregnant");
+				timeUntilBirth -= 0.1;
 			} else {
-				age += 0.02;
+				if(age <= 1.2f){
+					age += 0.02;
+				}
 				hunger -= 0.02f;
 				thirst -= 0.02f;
 			}
+
 			if(timeUntilBirth <= 0.0f){
 				giveBirth();
 			}else if(thirst < 0.4f){
 				drink();
 			}else if(hunger < 0.4f){
 				eat();
-			}else if(hunger > 0.5f && thirst > 0.5f && !this.getGender()){
+			}else if(hunger > 0.5f && thirst > 0.5f && !this.getGender() && age > 0.4f){
 				propagate();
 				hunger = 0.3f;
 				thirst = 0.3f;
-			}			
+			}else if(this.getGender()){
+				if(age > 0.4f && !pregnant){
+					setReadyToBreed(true);
+				}else{
+					setReadyToBreed(false);
+				}
+			}
 			if(hunger < 0.0f){
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
@@ -82,10 +92,9 @@ public class Sheep extends Animal implements  Runnable{
 	
 	private void giveBirth(){
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
-		System.out.println("Birth");
+		
 		for(int[] neighbor : neighbors){
-			if(!race.containsAnimal(neighbor[0], neighbor[1])){
-				System.out.println("Really birth");
+			if(race.containsAnimal(neighbor[0], neighbor[1])){
 				Sheep lamb = new Sheep(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], lamb);
 				Thread sheepThread = new Thread(lamb);
@@ -96,8 +105,6 @@ public class Sheep extends Animal implements  Runnable{
 			}
 		}
 	}
-	
-	
 	
 	public void eat(){
 		float food = 0.0f;
@@ -115,5 +122,11 @@ public class Sheep extends Animal implements  Runnable{
 			    Thread.currentThread().interrupt();
 			}	
 		}
+	}
+	
+	public float getSize(){
+		//System.out.println("Age " + age);
+		//System.out.println("Size " + size);
+		return age;
 	}
 }
