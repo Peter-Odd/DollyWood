@@ -8,9 +8,9 @@ import utilities.NeedsController.NeedsControlled;
 import utilities.Needs;
 
 public class Wolf extends Animal implements Runnable{
-	
+
 	private float timeUntilBirth;
-	
+
 	public Wolf(int xPos, int yPos, Race wolf){
 		super();
 		super.xPos = xPos;
@@ -20,7 +20,7 @@ public class Wolf extends Animal implements Runnable{
 		super.thirst = 0.4f;
 		this.timeUntilBirth = 0.5f;
 	}
-	
+
 	public Wolf(int xPos, int yPos, Race wolf, boolean gender){
 		super(gender);
 		super.xPos = xPos;
@@ -34,11 +34,11 @@ public class Wolf extends Animal implements Runnable{
 	public void run(){
 		while(true){
 			try {
-			    Thread.sleep(500);
+				Thread.sleep(500);
 			} catch(InterruptedException ex) {
-			    Thread.currentThread().interrupt();
+				Thread.currentThread().interrupt();
 			}
-			
+
 			if(pregnant){
 				age += 0.02;
 				hunger -= 0.05f;
@@ -67,12 +67,11 @@ public class Wolf extends Animal implements Runnable{
 			if(thirst < 0.0f){
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
-			
+
 			moveRandom();
-				
 		}
 	}
-	
+
 	private void giveBirth(){
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
 		System.out.println("Birth");
@@ -89,24 +88,24 @@ public class Wolf extends Animal implements Runnable{
 			}
 		}
 	}
-	
-	
+
+
 	public void eat(){
 		float food = 0.0f;
-		
+
 		for(NeedsControlled nc : NeedsController.getNeed("Sheep")){
-			   food += nc.getNeed(new Needs("Sheep", 0.6f), xPos, yPos);
+			food += nc.getNeed(new Needs("Sheep", 0.6f), xPos, yPos);
 		}
-		
+
 		hunger += food;
-		
+
 		if(hunger > 0.4f){
 			try {
-			    Thread.sleep(2000);
+				Thread.sleep(2000);
 			} catch(InterruptedException ex) {
-			    Thread.currentThread().interrupt();
+				Thread.currentThread().interrupt();
 			}	
 		}
 	}
-	
+
 }
