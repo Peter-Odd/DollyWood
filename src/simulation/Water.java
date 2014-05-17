@@ -173,7 +173,7 @@ public class Water implements Runnable, NeedsControlled{
 	}
 
 	public float getNeed(Needs need, int x, int y) {
-		if(groundWaterLevel[x][y] >= need.getAmmount()){
+		if(groundWaterLevel != null && groundWaterLevel[x][y] >= need.getAmmount()){
 			//groundWaterLevel[x][y] -= need.getAmmount();
 			return need.getAmmount();
 		}
