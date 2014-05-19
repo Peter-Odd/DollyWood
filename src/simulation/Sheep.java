@@ -45,19 +45,20 @@ public class Sheep extends Animal implements  Runnable{
 			    Thread.currentThread().interrupt();
 			}
 			
+			
 			if(pregnant){
-				if(age <= 1.2f){
-					age += 0.02;
-				}
-				hunger -= 0.05f;
-				thirst -= 0.05f;
-				timeUntilBirth -= 0.1;
-			} else {
 				if(age <= 1.2f){
 					age += 0.02;
 				}
 				hunger -= 0.02f;
 				thirst -= 0.02f;
+				timeUntilBirth -= 0.2;
+			} else {
+				if(age <= 1.2f){
+					age += 0.02;
+				}
+				hunger -= 0.01f;
+				thirst -= 0.01f;
 			}
 
 			if(timeUntilBirth <= 0.0f){
@@ -94,7 +95,7 @@ public class Sheep extends Animal implements  Runnable{
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
 		
 		for(int[] neighbor : neighbors){
-			if(race.containsAnimal(neighbor[0], neighbor[1])){
+			if(!race.containsAnimal(neighbor[0], neighbor[1])){
 				Sheep lamb = new Sheep(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], lamb);
 				Thread sheepThread = new Thread(lamb);
@@ -128,5 +129,11 @@ public class Sheep extends Animal implements  Runnable{
 		//System.out.println("Age " + age);
 		//System.out.println("Size " + size);
 		return age;
+		/*
+		if(super.gender){
+			return 0.7f;
+		}else{
+			return 1.5f;
+		}*/
 	}
 }

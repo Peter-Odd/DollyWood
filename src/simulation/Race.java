@@ -71,6 +71,7 @@ public class Race implements NeedsControlled{
 	public boolean moveSpecies(int currentX, int currentY, int newX, int newY){
 		
 		if(newX == currentX && newY == currentY){
+			System.out.println("newCord == currentCord");
 			return true;
 		}
 		

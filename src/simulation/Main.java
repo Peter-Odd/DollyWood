@@ -71,7 +71,18 @@ public class Main {
 			threadsToStart.add(sheepThread);
 		}
 		
-		Race wolfRace = new Race("Wolf");
+		/*Sheep sheep = new Sheep(15, 18, sheepRace, true);
+		sheepRace.setSpeciesAt(15, 18, sheep);
+		Thread sheepThread = new Thread(sheep);
+		threadsToStart.add(sheepThread);
+		
+		Sheep sheep2 = new Sheep(20, 20, sheepRace, false);
+		sheepRace.setSpeciesAt(20, 20, sheep2);
+		Thread sheepThread2 = new Thread(sheep2);
+		threadsToStart.add(sheepThread2);
+		*/
+		
+		/*Race wolfRace = new Race("Wolf");
 		Globals.races.add(wolfRace);
 		for(int i = 0; i < (int)Globals.getSetting("Number of wolves", "Wolf"); i++){
 			Wolf wolf = new Wolf(rng.nextInt(Globals.width), rng.nextInt(Globals.height), wolfRace);
@@ -79,7 +90,7 @@ public class Main {
 			Thread wolfThread = new Thread(wolf);
 			threadsToStart.add(wolfThread);
 		}
-		
+		*/
 		Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
 		for(int i = 0; i < Globals.getSetting("Number of trees", "Tree"); i++){

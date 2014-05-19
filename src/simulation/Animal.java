@@ -15,7 +15,7 @@ public class Animal{
 	protected int yPos;
 	private Random random;
 	private float rotation;
-	private boolean gender; // true = female, false = male
+	protected boolean gender; // true = female, false = male
 	protected float age; // 1.0f = adult;
 	protected float size;
 	protected boolean pregnant;
@@ -113,43 +113,52 @@ public class Animal{
 	
 	protected void moveRandom(){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
-		Random myRandomizer = new Random();
-		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
-		race.moveSpecies(xPos, yPos, randomNeighbor[0], randomNeighbor[1]);
+		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
+		if(!moveTo(randomNeighbor[0], randomNeighbor[1], 0)){
+			this.moveRandom();
+		}
 	}
 	
 	protected void propagate(){
+	
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
-		Random myRandomizer = new Random();
-		int[] randomNeighbor = neighbor.get(myRandomizer.nextInt(neighbor.size()));
+		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
 		
 		Animal animal = findReadyToBreedAnimal();
 				if(animal != null){
-						boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1]); // waiting for the female
+						boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0); // waiting for the female
 						if(goalReached == true){
 							animal.setPregnant(true);
 						}
 				}
 	}
 	
-	/** The animal moves to position x, y. And when destination is reached, the current animal notifies animal.
+	/** The animal moves to position x, y. And when destination is reached, return true.
 	 * 
 	 * @param x coordinate to move to.
 	 * @param y coordinate to move to.
+	 * @return true is destination is reached, else false.
 	 */
 	
-	protected boolean moveTo(int x, int y){
+	protected boolean moveTo(int x, int y, int blocked){
 		Deque<int[]> path = Astar.calculatePath(xPos, yPos, x, y);
+		path.removeFirst(); // removes the current location
 		for(int [] nextCord : path){
 			try {
 			    Thread.sleep(500);
 			} catch(InterruptedException ex) {
+				System.out.println("Thread interrupt");
 			    Thread.currentThread().interrupt();
 			}
 			
 			boolean moved = race.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
-			if(!moved){
-				this.moveTo(x, y);
+			if(!moved && blocked < 4){
+				blocked++;
+				this.moveTo(x, y, blocked);
+			}else if(!moved && blocked > 3){
+				return false;
+			}else{
+				return true;
 			}
 		}
 		return true;
