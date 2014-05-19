@@ -225,10 +225,20 @@ public class Animal{
 		return 1.0f;
 	}
 	
+	/** Sets pregnant to bool. If bool == true and pregnant == false, then the hunger and thirst of this animal is set
+	 *  to 0.3.
+	 * 
+	 * @param bool Pregnant will be set to this.
+	 */
+	
 	public void setPregnant(boolean bool){
-		hunger = 0.3f;
-		thirst = 0.3f;
-		this.pregnant = bool;
+		if(!pregnant && bool){
+			hunger = 0.3f;
+			thirst = 0.3f;
+			this.pregnant = bool;
+		}else{
+			this.pregnant = bool;
+		}
 	}
 	
 	public boolean getPregnant(){
