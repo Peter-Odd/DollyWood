@@ -2,6 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 import utilities.Fractal;
 import utilities.Globals;
@@ -53,6 +54,12 @@ public class Water implements Runnable, NeedsControlled{
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
 				groundWaterLevel[x][y] = startingWater;
+		
+		Globals.registerGraph("Ground water level", "Water", new Callable<Float>() {
+			public Float call() throws Exception {
+				return getAverageGroundWater();
+			}
+		}, 500);
 		
 		Random random = new Random();
 		float[][] xCurrent = new float[Globals.width][Globals.height];
@@ -127,6 +134,14 @@ public class Water implements Runnable, NeedsControlled{
 		waterFlow();
 		dissipate();
 	}
+
+	private float getAverageGroundWater(){
+		float f = 0.0f;
+		for(int x = 0; x < Globals.width; x++)
+			for(int y = 0; y < Globals.height; y++)
+				f += getGroundWaterLevel(x, y);
+		return f/(Globals.width*Globals.height);
+	}
 	
 	/**
 	 * Dissipate the water.
@@ -177,10 +192,12 @@ public class Water implements Runnable, NeedsControlled{
 			//groundWaterLevel[x][y] -= need.getAmmount();
 			return need.getAmmount();
 		}
-		else{
+		else if(groundWaterLevel != null){
 			float tmp = groundWaterLevel[x][y];
 			//groundWaterLevel[x][y] = 0.0f;
 			return tmp;
 		}
+		else
+			return 0.0f;
 	}
 }
