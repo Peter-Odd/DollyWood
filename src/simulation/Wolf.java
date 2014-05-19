@@ -44,7 +44,6 @@ public class Wolf extends Animal implements Runnable{
 				hunger -= 0.05f;
 				thirst -= 0.05f;
 				timeUntilBirth -= 0.02;
-				System.out.println("Wolf: Pregnant");
 			} else {
 				age += 0.02;
 				hunger -= 0.02f;
@@ -67,17 +66,15 @@ public class Wolf extends Animal implements Runnable{
 			if(thirst < 0.0f){
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
-				moveRandom();
-			
+			moveRandom();
+
 		}
 	}
 
 	private void giveBirth(){
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
-		System.out.println("Wolf: Birth");
 		for(int[] neighbor : neighbors){
 			if(!race.containsAnimal(neighbor[0], neighbor[1])){
-				System.out.println("Wolf: Really birth");
 				Wolf puppy = new Wolf(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], puppy);
 				Thread wolfThread = new Thread(puppy);
