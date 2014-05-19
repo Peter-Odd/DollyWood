@@ -3,6 +3,7 @@ package simulation;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import utilities.Astar;
 import utilities.HexagonUtils;
@@ -23,6 +24,7 @@ public class Animal{
 	protected float thirst;
 	protected Race race;
 	protected boolean readyToBreed;
+	protected Semaphore busy = new Semaphore(1);
 
 
 		
@@ -122,10 +124,12 @@ public class Animal{
 		
 		Animal animal = findReadyToBreedAnimal();
 				if(animal != null){
-						boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0); // waiting for the female
-						if(goalReached == true){
-							animal.setPregnant(true);
-						}
+					animal.lock();
+					boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0); // waiting for the female
+					if(goalReached == true){
+						animal.setPregnant(true);
+					}
+					animal.unlock();
 				}
 	}
 	
@@ -217,15 +221,24 @@ public class Animal{
 		return rotation;
 	}
 	
-
 	public float getSize(){
 		return 1.0f;
 	}
 	
+	/** Sets pregnant to bool. If bool == true and pregnant == false, then the hunger and thirst of this animal is set
+	 *  to 0.3.
+	 * 
+	 * @param bool Pregnant will be set to this.
+	 */
+	
 	public void setPregnant(boolean bool){
-		hunger = 0.3f;
-		thirst = 0.3f;
-		this.pregnant = bool;
+		if(!pregnant && bool){
+			hunger = 0.3f;
+			thirst = 0.3f;
+			this.pregnant = bool;
+		}else{
+			this.pregnant = bool;
+		}
 	}
 	
 	public boolean getPregnant(){
@@ -255,5 +268,17 @@ public class Animal{
 	public void setXandYPos(int x, int y){
 		this.xPos = x;
 		this.yPos = y;
+	}
+	
+	public void lock(){
+		try {
+			busy.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unlock(){
+		busy.release();
 	}
 }

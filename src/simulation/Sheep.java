@@ -25,7 +25,7 @@ public class Sheep extends Animal implements  Runnable{
 		super.hunger = 0.5f;
 		super.thirst = 0.5f;
 		this.timeUntilBirth = 1.0f;
-		this.race.numberOfInstances++;
+		sheep.numberOfInstances++;
 	}
 
 	public Sheep(int xPos, int yPos, Race sheep, boolean gender){
@@ -34,7 +34,7 @@ public class Sheep extends Animal implements  Runnable{
 		super.yPos = yPos;
 		super.race = sheep;
 		this.timeUntilBirth = 1.0f;
-		this.race.numberOfInstances++;
+		sheep.numberOfInstances++;
 	}	
 
 	private float getNumberOfSheep() {
@@ -57,8 +57,13 @@ public class Sheep extends Animal implements  Runnable{
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
-
-
+			
+			try {
+				super.busy.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
 			if(pregnant){
 				if(age <= 1.2f){
 					age += 0.02;
@@ -101,7 +106,8 @@ public class Sheep extends Animal implements  Runnable{
 			}
 
 			moveRandom();
-
+			
+			super.busy.release();
 
 		}
 	}
@@ -142,11 +148,5 @@ public class Sheep extends Animal implements  Runnable{
 
 	public float getSize(){
 		return age;
-		/*
-		if(super.gender){
-			return 0.7f;
-		}else{
-			return 1.5f;
-		}*/
 	}
 }
