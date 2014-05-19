@@ -50,15 +50,15 @@ public class Sheep extends Animal implements  Runnable{
 				if(age <= 1.2f){
 					age += 0.02;
 				}
-				hunger -= 0.02f;
-				thirst -= 0.02f;
-				timeUntilBirth -= 0.2;
+				hunger -= 0.03f;
+				thirst -= 0.03f;
+				timeUntilBirth -= 0.02;
 			} else {
 				if(age <= 1.2f){
 					age += 0.02;
 				}
-				hunger -= 0.01f;
-				thirst -= 0.01f;
+				hunger -= 0.02f;
+				thirst -= 0.02f;
 			}
 
 			if(timeUntilBirth <= 0.0f){
@@ -126,8 +126,6 @@ public class Sheep extends Animal implements  Runnable{
 	}
 	
 	public float getSize(){
-		//System.out.println("Age " + age);
-		//System.out.println("Size " + size);
 		return age;
 		/*
 		if(super.gender){

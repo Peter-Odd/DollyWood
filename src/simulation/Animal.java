@@ -79,20 +79,9 @@ public class Animal{
 		
 	}
 	
-	/** Returns true if a sheep is ready to breed, else false.
-	 * 
-	 * @return True if the sheep is ready to breed, else false.
+	/** Locates and collects water which is close by, if any is found it sleeps for 2000ms and
+	 *  adds the amount found to this.thirst.
 	 */
-	
-	/**protected boolean readyToBreed(){
-		if(age > 0.3f && thirst > 0.5f && hunger > 0.5f && !getPregnant()){
-			System.out.println("Ready to breed.");
-			return true;
-		}else{
-			return false;
-		}
-	}
-	*/
 	
 	protected void drink(){
 		float water = 0.0f;
@@ -111,6 +100,9 @@ public class Animal{
 		}
 	}
 	
+	/** Moves to a random neighbor tile.
+	 */
+	
 	protected void moveRandom(){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
@@ -118,6 +110,10 @@ public class Animal{
 			this.moveRandom();
 		}
 	}
+	
+	/** Finds a female sheep which is ready to breed, and tells her to walk to a random tile
+	 *  next to this sheep.
+	 */
 	
 	protected void propagate(){
 	
