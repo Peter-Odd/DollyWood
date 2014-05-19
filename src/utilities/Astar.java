@@ -112,6 +112,7 @@ public class Astar {
 		openList.add(start);
 		boolean goalFound = false;
 
+
 		//		USE BELOW TO TIME THE PATHFINDER
 		//		long time = System.currentTimeMillis();
 

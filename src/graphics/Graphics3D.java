@@ -64,7 +64,7 @@ public class Graphics3D {
 	 * Note: Only use escape to exit!
 	 */
 	public Graphics3D(){
-		splashScreen(5000);
+		splashScreen(200);
 		setupDisplay();
 		setupCamera();
 		setupStates();
