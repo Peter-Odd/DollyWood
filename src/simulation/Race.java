@@ -12,6 +12,7 @@ public class Race implements NeedsControlled{
 	private Animal[][] species;
 	private AtomicInteger[][] lockArray;
 	private String specName;
+	protected int numberOfInstances;
 
 	public Race(String specName) {
 		this.specName = specName;

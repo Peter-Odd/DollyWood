@@ -20,10 +20,10 @@ import utilities.NeedsController.NeedsControlled;
  */
 public class Water implements Runnable, NeedsControlled{
 	private float[][] groundWaterLevel;
-	
+
 	private ArrayList<Cloud> clouds = new ArrayList<>();
-	
-	
+
+
 	/**
 	 * Constructor
 	 * @param tickLength sets the sleep duration of the Thread
@@ -43,7 +43,7 @@ public class Water implements Runnable, NeedsControlled{
 		Globals.registerSetting("Shadow intensity", "Cloud", 0, 0.5f, 0.1f);
 		NeedsController.registerNeed("Water", this);
 	}
-	
+
 	/**
 	 * Starter point for the thread.
 	 * The clouds will be created here and the simulation will start here.
@@ -54,13 +54,13 @@ public class Water implements Runnable, NeedsControlled{
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
 				groundWaterLevel[x][y] = startingWater;
-		
+
 		Globals.registerGraph("Ground water level", "Water", new Callable<Float>() {
 			public Float call() throws Exception {
 				return getAverageGroundWater();
 			}
 		}, 500);
-		
+
 		Random random = new Random();
 		float[][] xCurrent = new float[Globals.width][Globals.height];
 		float[][] yCurrent = new float[Globals.width][Globals.height];
@@ -82,7 +82,7 @@ public class Water implements Runnable, NeedsControlled{
 				Thread.sleep((long) Globals.getSetting("Sleep", "Water"));
 			}
 			catch(InterruptedException e){
-				
+
 			}
 		}
 	}
@@ -120,11 +120,11 @@ public class Water implements Runnable, NeedsControlled{
 		else
 			return false;
 	}
-	
+
 	public ArrayList<Cloud> getClouds(){
 		return clouds;
 	}
-	
+
 	/**
 	 * Steps the simulation one step forward.
 	 * It will at this point only flow the water and dissipate it.
@@ -142,7 +142,7 @@ public class Water implements Runnable, NeedsControlled{
 				f += getGroundWaterLevel(x, y);
 		return f/(Globals.width*Globals.height);
 	}
-	
+
 	/**
 	 * Dissipate the water.
 	 * This moves water from a wet/moist position to a dry position.
@@ -164,7 +164,7 @@ public class Water implements Runnable, NeedsControlled{
 			}
 		}
 	}
-	
+
 	/**
 	 * Flows the water from a high position to a low position.
 	 * Note that it will only flow down if the lower position has a waterLevel of < 1.0
