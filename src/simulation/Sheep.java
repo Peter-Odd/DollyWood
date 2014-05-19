@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 
 
+
 import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.NeedsController;
@@ -45,6 +46,11 @@ public class Sheep extends Animal implements  Runnable{
 			    Thread.currentThread().interrupt();
 			}
 			
+			try {
+				super.busy.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
 			if(pregnant){
 				if(age <= 1.2f){
@@ -87,7 +93,7 @@ public class Sheep extends Animal implements  Runnable{
 			
 			moveRandom();
 			
-			
+			super.busy.release();
 		}
 	}
 	
@@ -127,11 +133,5 @@ public class Sheep extends Animal implements  Runnable{
 	
 	public float getSize(){
 		return age;
-		/*
-		if(super.gender){
-			return 0.7f;
-		}else{
-			return 1.5f;
-		}*/
 	}
 }
