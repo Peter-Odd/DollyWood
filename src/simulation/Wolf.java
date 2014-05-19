@@ -31,7 +31,7 @@ public class Wolf extends Animal implements Runnable{
 	public void run(){
 		super.hunger = Globals.getSetting("Wolves hunger", "Wolf");
 		super.thirst = Globals.getSetting("Wolves thirst", "Wolf");
-		
+
 		while(true){
 			try {
 				Thread.sleep((int)Globals.getSetting("Wolves sleep", "Wolf"));
@@ -67,8 +67,8 @@ public class Wolf extends Animal implements Runnable{
 			if(thirst < 0.0f){
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
-
-			moveRandom();
+				moveRandom();
+			
 		}
 	}
 
@@ -92,7 +92,8 @@ public class Wolf extends Animal implements Runnable{
 
 	public void eat(){
 		float food = 0.0f;
-
+		//int[] targetTile = findSheep();
+		//race.moveSpecies(xPos, yPos, targetTile[0], targetTile[1]);
 		for(NeedsControlled nc : NeedsController.getNeed("Meat")){
 			food += nc.getNeed(new Needs("Meat", 0.6f), xPos, yPos);
 		}
@@ -107,5 +108,21 @@ public class Wolf extends Animal implements Runnable{
 			}	
 		}
 	}
+
+	private int[] findSheep() {
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 3, false);
+		Animal animal;
+		for (int[] sheep : neighbor) {
+			animal = race.getSpeciesAt(sheep[0], sheep[1]);
+			if  (animal.race.getSpecies() ==  "Sheep") {
+
+				return sheep;
+			}
+
+		}
+		return null;
+
+	}
+
 
 }
