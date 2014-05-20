@@ -72,16 +72,12 @@ public class Sheep extends Animal implements  Runnable{
 			}
 			
 			if(pregnant){
-				if(age <= 1.2f){
-					age += 0.02;
-				}
+				age += 0.02;
 				hunger -= 0.03f;
 				thirst -= 0.03f;
 				timeUntilBirth -= 0.02;
 			} else {
-				if(age <= 1.2f){
-					age += 0.02;
-				}
+				age += 0.02;
 				hunger -= 0.02f;
 				thirst -= 0.02f;
 			}
@@ -107,8 +103,11 @@ public class Sheep extends Animal implements  Runnable{
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}
-			else if (thirst < 0.0f){
+			}else if (thirst < 0.0f){
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
+				race.getAndRemoveSpeciesAt(xPos, yPos);
+			}else if(age > 2.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
@@ -157,6 +156,9 @@ public class Sheep extends Animal implements  Runnable{
 	}
 
 	public float getSize(){
-		return age;
+		if(age >1.2f)
+			return 1.2f;
+		else
+			return age;
 	}
 }
