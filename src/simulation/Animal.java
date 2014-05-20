@@ -82,6 +82,39 @@ public class Animal{
 		
 	}
 	
+	public float calculateLocalPositionValue(ArrayList<Needs> needList, int x, int y){
+		float value = 0.0f;
+		for(int[] neighbor : HexagonUtils.neighborTiles(x, y, true)){
+			for(Needs n : needList){
+				float need = 0.0f;
+				for(NeedsControlled nc : NeedsController.getNeed(n.getNeed())){
+					need += nc.peekNeed(new Needs(n.getNeed(), 1.0f), neighbor[0], neighbor[1]);
+				}
+				value += need*n.getAmmount();
+			}
+		}
+		return value;
+	}
+	
+	public int[] calculatePositionValue(ArrayList<Needs> needList, int x, int y){
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(x, y, 6, false);
+		float[][] randomTiles = new float[12][2];
+		for(int i = 0; i < randomTiles.length; i++){
+			randomTiles[i][0] = random.nextInt(neighbor.size());
+			int[] tile = neighbor.get((int)(randomTiles[i][0]));
+			randomTiles[i][1] = calculateLocalPositionValue(needList, tile[0], tile[1]);
+		}
+		float max = 0.0f;
+		int index = 0;
+		for(float[] positionValue : randomTiles){
+			if(positionValue[1] > max){
+				max = positionValue[1];
+				index = (int)(positionValue[0]);
+			}
+		}
+		return neighbor.get((int)(index));
+	}
+	
 	/** Locates and collects water which is close by, if any is found it sleeps for 2000ms and
 	 *  adds the amount found to this.thirst.
 	 */
