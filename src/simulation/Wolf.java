@@ -112,9 +112,9 @@ public class Wolf extends Animal implements Runnable{
 	}
 
 	private Animal findSheep() {
-		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 3, false);
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 5, false);
 		Race sheep = null;
-		Animal targetSheep = null;
+		Animal tempSheep = null;
 
 		for(Race race: Globals.races){
 			if  (race.getSpecName().equals("Sheep")) {
@@ -124,10 +124,13 @@ public class Wolf extends Animal implements Runnable{
 
 		for (int[] food : neighbor) {
 			if(sheep.containsAnimal(food[0], food[1])){
-				targetSheep = sheep.getSpeciesAt(food[0], food[1]);
-				return targetSheep;
+				Animal targetSheep = sheep.getSpeciesAt(food[0], food[1]);
+				if(targetSheep.hunter == null){
+					targetSheep.setHunter(this);
+					return targetSheep;
+				}
 			}
 		}
-		return targetSheep;
+		return tempSheep;
 	}
 }

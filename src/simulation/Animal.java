@@ -25,6 +25,7 @@ public class Animal{
 	protected Race race;
 	protected boolean readyToBreed;
 	protected Semaphore busy = new Semaphore(1);
+	protected Animal hunter = null;
 
 
 		
@@ -293,5 +294,9 @@ public class Animal{
 	
 	public void unlock(){
 		busy.release();
+	}
+	
+	public void setHunter(Animal animal){
+		this.hunter = animal;
 	}
 }
