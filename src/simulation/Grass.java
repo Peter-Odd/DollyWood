@@ -119,4 +119,14 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 			return tmp;
 		}
 	}
+	
+	public float peekNeed(Needs need, int x, int y) {
+		if(grassLevel[x][y] >= need.getAmmount()){
+			return need.getAmmount();
+		}
+		else{
+			float tmp = grassLevel[x][y];
+			return tmp;
+		}
+	}
 }
