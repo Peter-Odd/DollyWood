@@ -41,7 +41,7 @@ public class Tree extends Animal implements Runnable {
 		this.race = race;									//the race a tree belongs to
 		setRotation(new Random().nextFloat() * 360); 		//Rotate tree randomized between 0 & 360 degrees, just to create some variation
 		this.count++;
-		race.numberOfInstances++;
+		race.numberOfInstances.incrementAndGet();
 	}
 
 	public float getTreeHealth() {
@@ -71,7 +71,7 @@ public class Tree extends Animal implements Runnable {
 				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
 				Thread treeThread = new Thread(tree);
 				treeThread.start();	
-				race.numberOfInstances++;
+				race.numberOfInstances.incrementAndGet();
 				this.treeSeed = 0.1f; //reset treeSeed when a tree has spawned a new tree
 			}
 		} else {
@@ -127,7 +127,7 @@ public class Tree extends Animal implements Runnable {
 	} 
 	
 	private float getNumberofTrees(){
-		return (float)race.numberOfInstances;
+		return (float)race.numberOfInstances.get();
 	}
 
 //	private float getAverageHeight() {
@@ -165,7 +165,7 @@ public class Tree extends Animal implements Runnable {
 			}
 		}
 		race.getAndRemoveSpeciesAt(xPos, yPos);
-		race.numberOfInstances--;
+		race.numberOfInstances.decrementAndGet();
 	}
 
 }

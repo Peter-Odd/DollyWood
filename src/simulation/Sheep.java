@@ -16,6 +16,8 @@ import utilities.Needs;
 public class Sheep extends Animal implements  Runnable{
 
 	private float timeUntilBirth;
+	private boolean alive = true;
+	private Race race;
 
 	public Sheep(int xPos, int yPos, Race sheep){
 		super();
@@ -25,7 +27,9 @@ public class Sheep extends Animal implements  Runnable{
 		super.hunger = 0.5f;
 		super.thirst = 0.5f;
 		this.timeUntilBirth = 1.0f;
-		sheep.numberOfInstances++;
+		
+		this.race = sheep;
+		race.numberOfInstances.incrementAndGet();
 	}
 
 	public Sheep(int xPos, int yPos, Race sheep, boolean gender){
@@ -34,11 +38,13 @@ public class Sheep extends Animal implements  Runnable{
 		super.yPos = yPos;
 		super.race = sheep;
 		this.timeUntilBirth = 1.0f;
-		sheep.numberOfInstances++;
+		
+		this.race = sheep;
+		race.numberOfInstances.incrementAndGet();
 	}	
 
 	private float getNumberOfSheep() {
-		return (float)this.race.numberOfInstances;
+		return (float)race.numberOfInstances.get();
 	}
 
 	public void run(){
@@ -51,7 +57,7 @@ public class Sheep extends Animal implements  Runnable{
 			}
 		}, 500);
 
-		while(true){
+		while(alive){
 			try {
 				Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
 			} catch(InterruptedException ex) {
@@ -97,11 +103,13 @@ public class Sheep extends Animal implements  Runnable{
 				}
 			}
 			if(hunger < 0.0f){
-				this.race.numberOfInstances--;
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
-			if(thirst < 0.0f){
-				this.race.numberOfInstances--;
+			else if (thirst < 0.0f){
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
 
