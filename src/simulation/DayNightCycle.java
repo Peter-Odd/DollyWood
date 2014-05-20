@@ -55,4 +55,8 @@ public class DayNightCycle implements Runnable, NeedsControlled{
 	public float getNeed(Needs need, int x, int y) {
 		return ((time+12.0f)%24.0f)/24.0f;//TODO Fix this. it is abit off. Needs to be an exponential curve, peeking at 1.0 in time:12.0f, and 0.0 at the edges
 	}
+	
+	public float peekNeed(Needs need, int x, int y){
+		return getNeed(need, x, y);
+	}
 }

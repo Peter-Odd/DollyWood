@@ -102,15 +102,13 @@ public class Animal{
 		}
 	}
 	
-	/** Moves to a random neighbor tile.
+	/** Moves to a random neighbor tile if possible.
 	 */
 	
 	protected void moveRandom(){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
-		if(!moveTo(randomNeighbor[0], randomNeighbor[1], 0)){
-			this.moveRandom();
-		}
+		moveTo(randomNeighbor[0], randomNeighbor[1], 0);
 	}
 	
 	/** Finds a female sheep which is ready to breed, and tells her to walk to a random tile
@@ -164,6 +162,12 @@ public class Animal{
 		return true;
 	}
 	
+	public int[] calcPositionToMove(ArrayList<String> needs){
+		
+		
+		return null;
+	}
+	
 	/** Calculates the correct rotation for a sheep when moved.
 	 * 
 	 * @param newPos The position which the sheep will be moved to.
@@ -207,6 +211,15 @@ public class Animal{
 				}
 			}
 		}
+	}
+	
+
+	public float peekNeed(Needs need){
+		return 0.0f;
+	}
+	
+	public float getNeed(Needs need){
+		return 0.0f;
 	}
 	
 	public boolean getGender(){

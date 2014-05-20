@@ -39,6 +39,7 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 		this("Grass");
 		grassLevel = new float[Globals.width][Globals.height];
 		NeedsController.registerNeed("Plant", this);
+		Globals.registerSetting("Sleep", "Grass", 1, 1000, 100);
 	}
 
 	public float getGrassAt(int x, int y){
@@ -99,7 +100,7 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 		while(true){
 			step();
 			try {
-				Thread.sleep(Globals.grassSleepLength);
+				Thread.sleep((long) Globals.getSetting("Sleep", "Grass"));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -115,6 +116,16 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 		else{
 			float tmp = grassLevel[x][y];
 			grassLevel[x][y] = 0.0f;
+			return tmp;
+		}
+	}
+	
+	public float peekNeed(Needs need, int x, int y) {
+		if(grassLevel[x][y] >= need.getAmmount()){
+			return need.getAmmount();
+		}
+		else{
+			float tmp = grassLevel[x][y];
 			return tmp;
 		}
 	}

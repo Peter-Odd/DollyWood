@@ -12,7 +12,7 @@ public class Race implements NeedsControlled{
 	private Animal[][] species;
 	private AtomicInteger[][] lockArray;
 	private String specName;
-	protected int numberOfInstances;
+	protected AtomicInteger numberOfInstances = new AtomicInteger();
 
 	public Race(String specName) {
 		this.specName = specName;
@@ -53,7 +53,7 @@ public class Race implements NeedsControlled{
 		if(compareAndSet(x, y)){
 			Animal animal = species[x][y];
 			species[x][y] = null;
-			lock(x, y);
+			unlock(x, y);
 			return animal;
 		}
 		return null;
@@ -97,7 +97,7 @@ public class Race implements NeedsControlled{
 						return true;
 					}
 				} else {
-					lock(newX, newY);
+					unlock(newX, newY);
 					return false;
 				}
 			}
@@ -117,11 +117,11 @@ public class Race implements NeedsControlled{
 		if(compareAndSet(x,y)){
 			if (species[x][y] == null) {
 				species[x][y] = animal;
-				lock(x,y);
+				unlock(x,y);
 				return true;
 			} 
 			else {
-				lock(x,y);
+				unlock(x,y);
 				return false;
 			}
 		}
@@ -138,10 +138,10 @@ public class Race implements NeedsControlled{
 	public boolean containsAnimal(int x, int y){
 		if(compareAndSet(x,y)){
 			if(species[x][y] != null){
-				lock(x,y);
+				unlock(x,y);
 				return true;
 			} else {
-				lock(x,y);
+				unlock(x,y);
 				return false;
 			}
 		}
@@ -151,24 +151,17 @@ public class Race implements NeedsControlled{
 
 	@Override
 	public float getNeed(Needs need, int x, int y) {
-		if(need.getNeed().equals("Meat") && containsAnimal(x, y)){
-			getAndRemoveSpeciesAt(x, y);
-			return 1.0f;
-		} else if (need.getNeed().equals("Water")) {
-			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, true)) {
-				if (containsAnimal(neighbor[0], neighbor[1])) {
-					return -0.2f;
-				}
-			}
-			return 0.0f;
-		} else if (need.getNeed().equals("Tree")) {
-			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, 2, true)) {
-				if (containsAnimal(neighbor[0], neighbor[1])) {
-					return 1.0f;
-				}
-			}
-			return 0.0f;
+		if(containsAnimal(x, y)){
+			return species[x][y].getNeed(need);
 		} 
+		return 0.0f;
+	}
+	
+	//@Override
+	public float peekNeed(Needs need, int x, int y){
+		if(containsAnimal(x, y)){
+			return species[x][y].peekNeed(need);
+		}
 		return 0.0f;
 	}
 	
@@ -180,7 +173,7 @@ public class Race implements NeedsControlled{
 		return lockArray[x][y].compareAndSet(1, 0);
 	}
 	
-	public void lock(int x, int y){
+	public void unlock(int x, int y){
 		lockArray[x][y].incrementAndGet();
 	}
 

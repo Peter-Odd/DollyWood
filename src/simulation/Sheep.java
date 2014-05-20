@@ -16,6 +16,8 @@ import utilities.Needs;
 public class Sheep extends Animal implements  Runnable{
 
 	private float timeUntilBirth;
+	private boolean alive = true;
+	private Race race;
 
 	public Sheep(int xPos, int yPos, Race sheep){
 		super();
@@ -25,7 +27,9 @@ public class Sheep extends Animal implements  Runnable{
 		super.hunger = 0.5f;
 		super.thirst = 0.5f;
 		this.timeUntilBirth = 1.0f;
-		sheep.numberOfInstances++;
+		
+		this.race = sheep;
+		race.numberOfInstances.incrementAndGet();
 	}
 
 	public Sheep(int xPos, int yPos, Race sheep, boolean gender){
@@ -34,11 +38,13 @@ public class Sheep extends Animal implements  Runnable{
 		super.yPos = yPos;
 		super.race = sheep;
 		this.timeUntilBirth = 1.0f;
-		sheep.numberOfInstances++;
+		
+		this.race = sheep;
+		race.numberOfInstances.incrementAndGet();
 	}	
 
 	private float getNumberOfSheep() {
-		return (float)this.race.numberOfInstances;
+		return (float)race.numberOfInstances.get();
 	}
 
 	public void run(){
@@ -51,13 +57,14 @@ public class Sheep extends Animal implements  Runnable{
 			}
 		}, 500);
 
-		while(true){
+		while(alive){
 			try {
 				Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
 			
+			//locks sheep
 			try {
 				super.busy.acquire();
 			} catch (InterruptedException e) {
@@ -65,16 +72,12 @@ public class Sheep extends Animal implements  Runnable{
 			}
 			
 			if(pregnant){
-				if(age <= 1.2f){
-					age += 0.02;
-				}
+				age += 0.02;
 				hunger -= 0.03f;
 				thirst -= 0.03f;
 				timeUntilBirth -= 0.02;
 			} else {
-				if(age <= 1.2f){
-					age += 0.02;
-				}
+				age += 0.02;
 				hunger -= 0.02f;
 				thirst -= 0.02f;
 			}
@@ -97,16 +100,22 @@ public class Sheep extends Animal implements  Runnable{
 				}
 			}
 			if(hunger < 0.0f){
-				this.race.numberOfInstances--;
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}
-			if(thirst < 0.0f){
-				this.race.numberOfInstances--;
+			}else if (thirst < 0.0f){
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
+				race.getAndRemoveSpeciesAt(xPos, yPos);
+			}else if(age > 2.0f){
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
 
 			moveRandom();
 			
+			//unlocks sheep
 			super.busy.release();
 
 		}
@@ -147,6 +156,21 @@ public class Sheep extends Animal implements  Runnable{
 	}
 
 	public float getSize(){
-		return age;
+		if(age >1.2f)
+			return 1.2f;
+		else
+			return age;
+	}
+	
+	
+	public float getNeed(Needs need){
+		race.numberOfInstances.decrementAndGet();
+		this.alive = false;
+		race.getAndRemoveSpeciesAt(xPos, yPos);
+		return 1.0f;
+	}
+	
+	public float peekNeed(Needs need){
+		return 1.0f;
 	}
 }
