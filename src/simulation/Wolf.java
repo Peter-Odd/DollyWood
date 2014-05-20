@@ -111,6 +111,7 @@ public class Wolf extends Animal implements Runnable{
 
 	private int[] findSheep() {
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 3, false);
+		
 		Animal animal;
 		for (int[] sheep : neighbor) {
 			animal = race.getSpeciesAt(sheep[0], sheep[1]);
