@@ -80,7 +80,7 @@ public class Graph extends JPanel implements Runnable{
         FontMetrics fm = g.getFontMetrics();
         Rectangle2D rect = fm.getStringBounds(topString, g);
 		int textXPos = 8;
-		int textYPos = centerLine-7;
+		int textYPos = centerLine+14;
 		
 		g.setColor(Color.BLACK);
 		g.fillRect(textXPos, textYPos-fm.getAscent(), (int)rect.getWidth(), (int)rect.getHeight());

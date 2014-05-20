@@ -12,7 +12,7 @@ public class Race implements NeedsControlled{
 	private Animal[][] species;
 	private AtomicInteger[][] lockArray;
 	private String specName;
-	protected int numberOfInstances;
+	protected AtomicInteger numberOfInstances = new AtomicInteger();
 
 	public Race(String specName) {
 		this.specName = specName;
@@ -53,7 +53,7 @@ public class Race implements NeedsControlled{
 		if(compareAndSet(x, y)){
 			Animal animal = species[x][y];
 			species[x][y] = null;
-			lock(x, y);
+			unlock(x, y);
 			return animal;
 		}
 		return null;
@@ -97,7 +97,7 @@ public class Race implements NeedsControlled{
 						return true;
 					}
 				} else {
-					lock(newX, newY);
+					unlock(newX, newY);
 					return false;
 				}
 			}
@@ -117,11 +117,11 @@ public class Race implements NeedsControlled{
 		if(compareAndSet(x,y)){
 			if (species[x][y] == null) {
 				species[x][y] = animal;
-				lock(x,y);
+				unlock(x,y);
 				return true;
 			} 
 			else {
-				lock(x,y);
+				unlock(x,y);
 				return false;
 			}
 		}
@@ -138,10 +138,10 @@ public class Race implements NeedsControlled{
 	public boolean containsAnimal(int x, int y){
 		if(compareAndSet(x,y)){
 			if(species[x][y] != null){
-				lock(x,y);
+				unlock(x,y);
 				return true;
 			} else {
-				lock(x,y);
+				unlock(x,y);
 				return false;
 			}
 		}
@@ -180,7 +180,7 @@ public class Race implements NeedsControlled{
 		return lockArray[x][y].compareAndSet(1, 0);
 	}
 	
-	public void lock(int x, int y){
+	public void unlock(int x, int y){
 		lockArray[x][y].incrementAndGet();
 	}
 

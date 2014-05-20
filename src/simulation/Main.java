@@ -57,7 +57,7 @@ public class Main {
 		threadsToStart.add(grassThread);
 
 		Globals.registerSetting("Field of view", "Graphics", 10, 90, 70);
-		Globals.registerSetting("Render distance", "Graphics", 1, 50, 15);
+		Globals.registerSetting("Render distance", "Graphics", 1, 50, 25);
 		Globals.createSettingsFrame(true, true, false);
 
 		Random rng = new Random();
