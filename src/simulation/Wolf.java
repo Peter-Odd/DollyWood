@@ -89,17 +89,19 @@ public class Wolf extends Animal implements Runnable{
 
 	public void eat(){
 		float food = 0.0f;
-		
-			//findSheep();
+
+		Animal sheep = findSheep();
+
+		while(sheep != null && food == 0.0f){
+			this.moveTo(sheep.xPos, sheep.yPos, 0);
+
 			for (NeedsControlled nc : NeedsController.getNeed("Meat")){
-			
-			food += nc.getNeed(new Needs("Meat", 0.6f), xPos, yPos);
-
+				food += nc.getNeed(new Needs("Meat", 0.6f), xPos, yPos);
+			}	
 			hunger += food;
+		}
 
-
-		}	
-		if(hunger > 0.4f){
+		if(hunger > 6.0f){
 			try {
 				Thread.sleep(2000);
 			} catch(InterruptedException ex) {
@@ -109,21 +111,23 @@ public class Wolf extends Animal implements Runnable{
 
 	}
 
-	private int[] findSheep() {
+	private Animal findSheep() {
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 3, false);
-		
-		Animal animal;
-		for (int[] sheep : neighbor) {
-			animal = race.getSpeciesAt(sheep[0], sheep[1]);
-			if  (animal.race.getSpecies() ==  "Sheep") {
-				animal.moveTo(sheep[0], sheep[1], 0);
-				return sheep;
+		Race sheep = null;
+		Animal targetSheep = null;
+
+		for(Race race: Globals.races){
+			if  (race.getSpecName().equals("Sheep")) {
+				sheep = race;
 			}
-
 		}
-		return null;
 
+		for (int[] food : neighbor) {
+			if(sheep.containsAnimal(food[0], food[1])){
+				targetSheep = sheep.getSpeciesAt(food[0], food[1]);
+				return targetSheep;
+			}
+		}
+		return targetSheep;
 	}
-
-
 }
