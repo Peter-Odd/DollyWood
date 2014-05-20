@@ -1,128 +1,113 @@
 package utilities;
 
-
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JPanel;
-/**
- * A graph will plot the values coming from a provided function in a graph with time going along the x-axis.
- * @author OSM Group 5 - DollyWood project
- * @version 1.0
- *
- */
-public class Graph extends JPanel{
+
+public class Graph extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
 	
-	private BoundFloatBuffer buffer;
+	private LinkedList<Float> history;
+	private Semaphore historyLock;
+	private long collectTime;
+	private Callable<Float> collectFunction;
+	private Float maxVal = 0.0f;
+	private String name;
+	private String category;
 	
-	private Color backgroundColor = new Color(0,0,0);
-	private Color gridColor = new Color(100,100,100);
-	private int gridSpace = 40;
-
-	private Color graphLineColor = new Color(255,255,255);
-	
-	public Graph(int bufferLength){
-		buffer = new BoundFloatBuffer(bufferLength);
-	}
-
-	public Graph(Dimension preferredSize, int bufferLength){
-		this(bufferLength);
+	public Graph(Dimension preferredSize, int historyLength, long collectTime, Callable<Float> collectFunction, String name, String category){
+		history = new LinkedList<>();
+		this.historyLock = new Semaphore(1);
+		for(int i = 0; i < historyLength; i++)
+			history.addFirst(new Float(0.0f));
+		this.collectFunction = collectFunction;
+		this.collectTime = collectTime;
 		this.setPreferredSize(preferredSize);
+		this.name = name;
+		this.category = category;
+		Thread t = new Thread(this);
+		t.start();
 	}
 	
-	/**
-	 * Adds a new value to the graph
-	 * @param value
-	 */
-	public void addPoint(float value){
-		buffer.addPoint(value);
+	public String getName(){
+		return name;
+	}
+	
+	public String getCategory(){
+		return category;
 	}
 	
 	public void paintComponent(Graphics g){
-		int width = this.getWidth();
-		int height = this.getHeight();
-		this.setBackground(backgroundColor);
+		super.paintComponent(g);
+		this.setBackground(Color.BLACK);
+		g.setColor(Color.ORANGE);
+		g.drawRect(0, 0, super.getWidth(), super.getHeight());//Draw bound-box
+		int centerLine = super.getHeight()/2;
+		g.setColor(Color.GREEN);
+		g.drawLine(0, centerLine, super.getWidth(), centerLine);//Draw mid-line
 		
-		//Grids
-		g.setColor(gridColor);
-		//Vertical grids
-		for(int i = 0; i < width; i+=gridSpace){
-			g.drawLine(i, 0, i, height);
+		g.setColor(Color.CYAN);
+		int xSpace = super.getWidth()/(history.size()-1);
+		int ySpace = (int)(centerLine/maxVal);
+		int count = 0;
+		try {
+			historyLock.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		//Horizontal grids
-		for(int i = 0; i < height; i+=gridSpace){
-			g.drawLine(0, i, width, i);
+		Iterator<Float> it = history.iterator();
+		if(it.hasNext()){
+			Float prev = (Float) it.next();
+			while(it.hasNext()){
+				Float current = (Float) it.next();
+				g.drawLine(super.getWidth()-(count*xSpace), (int)(centerLine-(prev*ySpace)), super.getWidth()-((count+1)*xSpace), (int)(centerLine-(current*ySpace)));
+				prev = current;
+				count++;
+			}
 		}
+		historyLock.release();
+		String topString = name + ": " + (char)(177) + String.format("%.2g%n", maxVal) + "  Currently: " + String.format("%.2g%n", history.getFirst());
+
+        FontMetrics fm = g.getFontMetrics();
+        Rectangle2D rect = fm.getStringBounds(topString, g);
+		int textXPos = 8;
+		int textYPos = centerLine-7;
 		
-		//Draw line-graph
-		float yScale = 1.0f;
-		g.setColor(graphLineColor);
-		float prevValue = buffer.getValue();
-		int xPos = 0;
-		while(!buffer.readIsFirst()){
-			float currentValue = buffer.getValue();
-			g.drawLine(xPos, (int)(prevValue*yScale)+(height/2), (xPos+=gridSpace), (int)(currentValue*yScale)+(height/2));
-		}
+		g.setColor(Color.BLACK);
+		g.fillRect(textXPos, textYPos-fm.getAscent(), (int)rect.getWidth(), (int)rect.getHeight());
+		g.setColor(Color.DARK_GRAY);
+		g.drawRect(textXPos, textYPos-fm.getAscent(), (int)rect.getWidth(), (int)rect.getHeight());
+		g.setColor(Color.LIGHT_GRAY);
+		g.drawChars(topString.toCharArray(), 0, topString.length(), textXPos, textYPos);
 	}
-	
-	private class BoundFloatBuffer{
-		private Node readNode;
-		private Node writeNode;
-		public BoundFloatBuffer(int bufferLength){
-			Node newNode = new Node(null, null, 0.0f);
-			Node first = newNode;
-			for(int i = 1; i < bufferLength; i++){
-				newNode.setNext(new Node(null, newNode, 0.0f));
-				newNode = newNode.getNext();
+
+	public void run() {
+		while(true){
+			try {
+				historyLock.acquire();
+				history.addFirst(collectFunction.call());
+				history.removeLast();
+				if(Math.abs(history.getFirst()) > Math.abs(maxVal))
+					maxVal = Math.abs(history.getFirst());
+				historyLock.release();
+				this.repaint();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
-			newNode.setNext(first);
-			writeNode = first;
-			readNode = first;
-		}
-		
-		private void addPoint(float value){
-			writeNode.setValue(value);
-			writeNode = writeNode.getNext();
-		}
-		
-		public boolean readIsFirst(){
-			return writeNode.equals(readNode);
-		}
-		
-		public float getValue(){
-			float returnVal = readNode.getValue();
-			readNode = readNode.getPrev();
-			return returnVal;
-		}
-		
-		private class Node{
-			private float value;
-			private Node next;
-			private Node prev;
-			public Node(Node next, Node prev, float value) {
-				this.setNext(next);
-				this.setPrev(prev);
-				this.setValue(value);
-			}
-			public Node getNext() {
-				return next;
-			}
-			public void setNext(Node next) {
-				this.next = next;
-			}
-			public float getValue() {
-				return value;
-			}
-			public void setValue(float value) {
-				this.value = value;
-			}
-			public Node getPrev() {
-				return prev;
-			}
-			public void setPrev(Node prev) {
-				this.prev = prev;
+			
+			try {
+				Thread.sleep(collectTime);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}

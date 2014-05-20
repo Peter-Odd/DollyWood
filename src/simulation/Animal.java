@@ -3,6 +3,7 @@ package simulation;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import utilities.Astar;
 import utilities.HexagonUtils;
@@ -23,6 +24,7 @@ public class Animal{
 	protected float thirst;
 	protected Race race;
 	protected boolean readyToBreed;
+	protected Semaphore busy = new Semaphore(1);
 
 
 		
@@ -79,20 +81,9 @@ public class Animal{
 		
 	}
 	
-	/** Returns true if a sheep is ready to breed, else false.
-	 * 
-	 * @return True if the sheep is ready to breed, else false.
+	/** Locates and collects water which is close by, if any is found it sleeps for 2000ms and
+	 *  adds the amount found to this.thirst.
 	 */
-	
-	/**protected boolean readyToBreed(){
-		if(age > 0.3f && thirst > 0.5f && hunger > 0.5f && !getPregnant()){
-			System.out.println("Ready to breed.");
-			return true;
-		}else{
-			return false;
-		}
-	}
-	*/
 	
 	protected void drink(){
 		float water = 0.0f;
@@ -111,6 +102,9 @@ public class Animal{
 		}
 	}
 	
+	/** Moves to a random neighbor tile.
+	 */
+	
 	protected void moveRandom(){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
@@ -119,6 +113,10 @@ public class Animal{
 		}
 	}
 	
+	/** Finds a female sheep which is ready to breed, and tells her to walk to a random tile
+	 *  next to this sheep.
+	 */
+	
 	protected void propagate(){
 	
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
@@ -126,10 +124,12 @@ public class Animal{
 		
 		Animal animal = findReadyToBreedAnimal();
 				if(animal != null){
-						boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0); // waiting for the female
-						if(goalReached == true){
-							animal.setPregnant(true);
-						}
+					animal.lock();
+					boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0); // waiting for the female
+					if(goalReached == true){
+						animal.setPregnant(true);
+					}
+					animal.unlock();
 				}
 	}
 	
@@ -221,15 +221,24 @@ public class Animal{
 		return rotation;
 	}
 	
-
 	public float getSize(){
 		return 1.0f;
 	}
 	
+	/** Sets pregnant to bool. If bool == true and pregnant == false, then the hunger and thirst of this animal is set
+	 *  to 0.3.
+	 * 
+	 * @param bool Pregnant will be set to this.
+	 */
+	
 	public void setPregnant(boolean bool){
-		hunger = 0.3f;
-		thirst = 0.3f;
-		this.pregnant = bool;
+		if(!pregnant && bool){
+			hunger = 0.3f;
+			thirst = 0.3f;
+			this.pregnant = bool;
+		}else{
+			this.pregnant = bool;
+		}
 	}
 	
 	public boolean getPregnant(){
@@ -259,5 +268,17 @@ public class Animal{
 	public void setXandYPos(int x, int y){
 		this.xPos = x;
 		this.yPos = y;
+	}
+	
+	public void lock(){
+		try {
+			busy.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unlock(){
+		busy.release();
 	}
 }

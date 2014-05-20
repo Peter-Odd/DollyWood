@@ -12,6 +12,7 @@ public class Race implements NeedsControlled{
 	private Animal[][] species;
 	private AtomicInteger[][] lockArray;
 	private String specName;
+	protected int numberOfInstances;
 
 	public Race(String specName) {
 		this.specName = specName;
@@ -49,10 +50,10 @@ public class Race implements NeedsControlled{
 	 */
 
 	public Animal getAndRemoveSpeciesAt(int x, int y){
-		if(lockArray[x][y].compareAndSet(1, 0)){
+		if(compareAndSet(x, y)){
 			Animal animal = species[x][y];
 			species[x][y] = null;
-			lockArray[x][y].incrementAndGet();
+			lock(x, y);
 			return animal;
 		}
 		return null;
@@ -70,26 +71,35 @@ public class Race implements NeedsControlled{
 
 	public boolean moveSpecies(int currentX, int currentY, int newX, int newY){
 		
+		Race tree = null;
+		
 		if(newX == currentX && newY == currentY){
-			System.out.println("newCord == currentCord");
 			return true;
 		}
+		// Find the Tree race.
+		for(Race race: Globals.races){
+			if(race.getSpecName().equals("Tree")){
+				tree = race;
+			}
+		}
 		
-		if(lockArray[newX][newY].compareAndSet(1, 0)){
-			if(species[newX][newY] == null){
-				Animal animal = getAndRemoveSpeciesAt(currentX, currentY);
-				if(animal == null){
+		if(!tree.containsAnimal(newX, newY)){
+			if(compareAndSet(newX, newY)){
+				if(species[newX][newY] == null){
+					Animal animal = getAndRemoveSpeciesAt(currentX, currentY);
+					if(animal == null){
+						return false;
+					}else{
+						species[newX][newY] = animal;
+						animal.calcRotation(newX, newY);
+						animal.setXandYPos(newX, newY);
+						lockArray[newX][newY].incrementAndGet();
+						return true;
+					}
+				} else {
+					lock(newX, newY);
 					return false;
-				}else{
-					species[newX][newY] = animal;
-					animal.calcRotation(newX, newY);
-					animal.setXandYPos(newX, newY);
-					lockArray[newX][newY].incrementAndGet();
-					return true;
 				}
-			} else {
-				lockArray[newX][newY].incrementAndGet();
-				return false;
 			}
 		}
 		return false;
@@ -104,14 +114,14 @@ public class Race implements NeedsControlled{
 	 */
 	
 	public boolean setSpeciesAt(int x, int y, Animal animal) {
-		if(lockArray[x][y].compareAndSet(1, 0)){
+		if(compareAndSet(x,y)){
 			if (species[x][y] == null) {
 				species[x][y] = animal;
-				lockArray[x][y].incrementAndGet();
+				lock(x,y);
 				return true;
 			} 
 			else {
-				lockArray[x][y].incrementAndGet();
+				lock(x,y);
 				return false;
 			}
 		}
@@ -126,12 +136,12 @@ public class Race implements NeedsControlled{
 	 */
 
 	public boolean containsAnimal(int x, int y){
-		if(lockArray[x][y].compareAndSet(1, 0)){
+		if(compareAndSet(x,y)){
 			if(species[x][y] != null){
-				lockArray[x][y].incrementAndGet();
+				lock(x,y);
 				return true;
 			} else {
-				lockArray[x][y].incrementAndGet();
+				lock(x,y);
 				return false;
 			}
 		}
@@ -160,6 +170,18 @@ public class Race implements NeedsControlled{
 			return 0.0f;
 		} 
 		return 0.0f;
+	}
+	
+	public String getSpecName(){
+		return specName;
+	}
+	
+	public boolean compareAndSet(int x, int y){
+		return lockArray[x][y].compareAndSet(1, 0);
+	}
+	
+	public void lock(int x, int y){
+		lockArray[x][y].incrementAndGet();
 	}
 
 }

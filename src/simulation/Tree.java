@@ -3,6 +3,7 @@ package simulation;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 import utilities.Globals;
 import utilities.HexagonUtils;
@@ -24,6 +25,7 @@ public class Tree extends Animal implements Runnable {
 	private int count;			//number of times a tree has "died"
 	private Race race;			//the race a tree belongs to
 
+	
 	/**
 	 * 
 	 * @param xPos a trees x-coordinate
@@ -39,6 +41,7 @@ public class Tree extends Animal implements Runnable {
 		this.race = race;									//the race a tree belongs to
 		setRotation(new Random().nextFloat() * 360); 		//Rotate tree randomized between 0 & 360 degrees, just to create some variation
 		this.count++;
+		race.numberOfInstances++;
 	}
 
 	public float getTreeHealth() {
@@ -68,6 +71,7 @@ public class Tree extends Animal implements Runnable {
 				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
 				Thread treeThread = new Thread(tree);
 				treeThread.start();	
+				race.numberOfInstances++;
 				this.treeSeed = 0.1f; //reset treeSeed when a tree has spawned a new tree
 			}
 		} else {
@@ -121,13 +125,37 @@ public class Tree extends Animal implements Runnable {
 //		}//end random
 
 	} 
+	
+	private float getNumberofTrees(){
+		return (float)race.numberOfInstances;
+	}
 
+//	private float getAverageHeight() {
+//		float f = 0.0f;
+//		for (int x = 0; x < Globals.width; x++)
+//			for (int y = 0; y < Globals.height; y++)
+//				f += treeHealth/(Globals.height*Globals.width);
+//		return f;
+//	}
 
 	/**
 	 * Starter point for the thread.
 	 * The entire tree simulation will run here.
 	 */
 	public void run() {
+		Globals.registerGraph("Number of trees", "Tree", new Callable<Float>() {
+			public Float call() throws Exception {
+				return getNumberofTrees();
+			}
+		}, 3000);
+		
+//		Globals.registerGraph("Average tree height", "Tree", new Callable<Float>() {
+//			public Float call() throws Exception {
+//				return getAverageHeight();
+//			}
+//		}, 500);
+		
+		
 		while(count <= 3) {
 			step();
 			try {
@@ -137,6 +165,7 @@ public class Tree extends Animal implements Runnable {
 			}
 		}
 		race.getAndRemoveSpeciesAt(xPos, yPos);
+		race.numberOfInstances--;
 	}
 
 }

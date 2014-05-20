@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
+import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -123,6 +125,30 @@ public class Globals {
 			
 			tabbPane.add("home", panel);
 		}
+		//Statistics
+		if(!startup){
+			JTabbedPane statisticsTabPane = new JTabbedPane();
+			for(Graph g : graphList){
+				boolean added = false;
+				for(int i = 0; i < statisticsTabPane.getTabCount(); i++){
+					if(statisticsTabPane.getTitleAt(i).equals(g.getCategory())){
+						JPanel panel = ((JPanel)(statisticsTabPane.getComponentAt(i)));
+						if(panel != null){
+							panel.add(g);
+						}
+						added = true;
+					}
+				}
+				if(!added){
+					JPanel panel = new JPanel();
+					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+					statisticsTabPane.add(panel);
+					statisticsTabPane.setTitleAt(statisticsTabPane.getTabCount()-1, g.getCategory());
+					panel.add(g);
+				}
+			}
+			tabbPane.add("Statistics", statisticsTabPane);
+		}
 		
 		for(Setting s : settings){
 			boolean added = false;
@@ -186,8 +212,24 @@ public class Globals {
 			}
 		}
 	}
-	
+
 	private static ArrayList<Setting> settings = new ArrayList<>();
+	private static ArrayList<Graph> graphList = new ArrayList<>();
+	
+	public static synchronized void registerGraph(String name, String category, Callable<Float> callFunction, long collectTime){
+		boolean isRegistered = false;
+		for(Graph g : graphList){
+			if(g.getName().equals(name) && g.getCategory().equals(category)){
+				isRegistered = true;
+				break;
+			}
+		}
+		if(!isRegistered){
+			Graph g = new Graph(new Dimension(100,100), 25, collectTime, callFunction, name, category);
+			graphList.add(g);
+		}
+	}
+	
 	public static synchronized void registerSetting(String name, String category, float min, float max, float current){
 		boolean isRegistered = false;
 		for(Setting s : settings){

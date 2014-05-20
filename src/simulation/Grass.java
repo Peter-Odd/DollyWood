@@ -1,5 +1,7 @@
 package simulation;
 
+import java.util.concurrent.Callable;
+
 import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.NeedsController;
@@ -42,6 +44,14 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 	public float getGrassAt(int x, int y){
 		return grassLevel[x][y];
 	}
+
+	public float getAverageGrass(){
+		float f = 0.0f;
+		for(int x = 0; x < Globals.width; x++)
+			for(int y = 0; y < Globals.height; y++)
+				f += getGrassAt(x, y);
+		return f/(Globals.width*Globals.height);
+	}
 	
 	public void decrementGrassLevel(int x, int y, float value){
 		grassLevel[x][y] -= value;
@@ -81,6 +91,11 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 	 * The entire grass simulation will run here
 	 */
 	public void run() {
+		Globals.registerGraph("Average grass level", "Grass", new Callable<Float>() {
+			public Float call() throws Exception {
+				return getAverageGrass();
+			}
+		}, 1000);
 		while(true){
 			step();
 			try {
