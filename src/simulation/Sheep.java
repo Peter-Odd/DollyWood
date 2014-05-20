@@ -113,14 +113,22 @@ public class Sheep extends Animal implements  Runnable{
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
 
-			moveRandom();
-			
+			//moveRandom();
+			move();
 			//unlocks sheep
 			super.busy.release();
 
 		}
 	}
 
+	private void move(){
+		ArrayList<Needs> needList = new ArrayList<>();
+		needList.add(new Needs("Water", 0.0f));
+		needList.add(new Needs("Meat", 1.0f));
+		int[] requestedPosition = super.calculatePositionValue(needList, super.xPos, super.yPos);
+		super.moveTo(requestedPosition[0], requestedPosition[1], 0);
+	}
+	
 	private void giveBirth(){
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
 
