@@ -46,6 +46,7 @@ public class Sheep extends Animal implements  Runnable{
 			    Thread.currentThread().interrupt();
 			}
 			
+			//locks sheep
 			try {
 				super.busy.acquire();
 			} catch (InterruptedException e) {
@@ -93,6 +94,7 @@ public class Sheep extends Animal implements  Runnable{
 			
 			moveRandom();
 			
+			//unlocks sheep
 			super.busy.release();
 		}
 	}
