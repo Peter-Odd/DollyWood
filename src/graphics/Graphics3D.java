@@ -206,7 +206,8 @@ public class Graphics3D {
 	 * This renders animations, setups lights and calls other sub functions to render out everything to the screen.
 	 */
 	private void render() {
-		glTranslatef(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f)); //Moves the world to keep the worldCenter at center point
+		Vector3f center = new Vector3f(-Globals.width/2*size, -Globals.height/2*size, -(Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f));
+		glTranslatef(center.x, center.y, center.z); //Moves the world to keep the worldCenter at center point
 
 		float worldSunIntensity = Math.abs(Globals.dayNightCycle.getTime()/12.0f-1.0f);
 		Vector3f sunPosition = new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-150.0f);
@@ -230,13 +231,14 @@ public class Graphics3D {
 		renderWorldFromCameraPosition((int) Globals.getSetting("Render distance", "Graphics"));
 
 		//Render SkyDome
-		float skyDomeScale = Globals.getSetting("Render distance", "Graphics")*4.0f;
+		float skyDomeScale = Globals.getSetting("Render distance", "Graphics")*8.0f;
 		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
+		glTranslatef(-center.x, -center.y, -center.z);
 		Vector3f skyDomePosition = (Vector3f) camera.getPosition().negate();
-		skyDomePosition.x += skyDomeScale;
-		skyDomePosition.y += skyDomeScale;
-		skyDomePosition.z -= skyDomeScale;
-		renderModel("sphereInvNorm", new Vector3f(skyDomePosition), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(skyDomeScale, skyDomeScale, skyDomeScale));
+		//skyDomePosition.x += skyDomeScale;
+		//skyDomePosition.y += skyDomeScale;
+		//skyDomePosition.z -= skyDomeScale;
+		renderModel("SphereInvNorm", new Vector3f(skyDomePosition), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(skyDomeScale, skyDomeScale, skyDomeScale));
 
 	}
 
