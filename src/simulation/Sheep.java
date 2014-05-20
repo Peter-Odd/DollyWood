@@ -161,4 +161,16 @@ public class Sheep extends Animal implements  Runnable{
 		else
 			return age;
 	}
+	
+	
+	public float getNeed(Needs need){
+		race.numberOfInstances.decrementAndGet();
+		this.alive = false;
+		race.getAndRemoveSpeciesAt(xPos, yPos);
+		return 1.0f;
+	}
+	
+	public float peekNeed(Needs need){
+		return 1.0f;
+	}
 }

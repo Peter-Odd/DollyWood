@@ -213,6 +213,15 @@ public class Animal{
 		}
 	}
 	
+
+	public float peekNeed(Needs need){
+		return 0.0f;
+	}
+	
+	public float getNeed(Needs need){
+		return 0.0f;
+	}
+	
 	public boolean getGender(){
 		return gender;
 	}

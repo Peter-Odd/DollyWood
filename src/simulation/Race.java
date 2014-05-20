@@ -151,24 +151,17 @@ public class Race implements NeedsControlled{
 
 	@Override
 	public float getNeed(Needs need, int x, int y) {
-		if(need.getNeed().equals("Meat") && containsAnimal(x, y)){
-			getAndRemoveSpeciesAt(x, y);
-			return 1.0f;
-		} else if (need.getNeed().equals("Water")) {
-			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, true)) {
-				if (containsAnimal(neighbor[0], neighbor[1])) {
-					return -0.2f;
-				}
-			}
-			return 0.0f;
-		} else if (need.getNeed().equals("Tree")) {
-			for (int[] neighbor : HexagonUtils.neighborTiles(x, y, 2, true)) {
-				if (containsAnimal(neighbor[0], neighbor[1])) {
-					return 1.0f;
-				}
-			}
-			return 0.0f;
+		if(containsAnimal(x, y)){
+			return species[x][y].getNeed(need);
 		} 
+		return 0.0f;
+	}
+	
+	//@Override
+	public float peekNeed(Needs need, int x, int y){
+		if(containsAnimal(x, y)){
+			return species[x][y].peekNeed(need);
+		}
 		return 0.0f;
 	}
 	
