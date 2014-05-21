@@ -25,13 +25,6 @@ public class Race implements NeedsControlled{
 				lockArray[x][y] = new AtomicInteger(1);
 			}
 		}
-
-		if(specName == "Sheep"){
-			NeedsController.registerNeed("Meat", this);
-		}else if(specName == "Tree"){
-			NeedsController.registerNeed("Water", this);
-			NeedsController.registerNeed("Tree", this);
-		}
 	}
 
 	public String getSpecies() {

@@ -25,14 +25,11 @@ public class Main {
 		Globals.registerSetting("Tree sleep", "Tree", 0, 1500, 400);
 		
 		Globals.registerSetting("Number of sheep", "Sheep", 2, 40, 5);
-		Globals.registerSetting("Sheep sleep", "Sheep", 0, 1500, 500);
-		Globals.registerSetting("Sheep thirst", "Sheep", 0.1f, 1, 0.5f);
-		Globals.registerSetting("Sheep hunger", "Sheep", 0.1f, 1, 0.5f);
 		
 		Globals.registerSetting("Number of wolves", "Wolf", 2, 40, 5);
 		Globals.registerSetting("Wolves sleep", "Wolf", 0, 1500, 500);
 		Globals.registerSetting("Wolves thirst", "Wolf", 0.1f, 1, 0.5f);
-		Globals.registerSetting("Wolves hunger", "Wolf", 0.1f, 1, 1.0f);
+		Globals.registerSetting("Wolves hunger", "Wolf", 0.1f, 1, 0.5f);
 
 		
 		
@@ -68,6 +65,17 @@ public class Main {
 			Thread sheepThread = new Thread(sheep);
 			threadsToStart.add(sheepThread);
 		}
+		NeedsController.registerNeed("Meat", sheepRace);
+		
+		Race wolfRace = new Race("Wolf");
+		Globals.races.add(wolfRace);
+		for(int i = 0; i < (int)Globals.getSetting("Number of wolves", "Wolf"); i++){
+			Wolf wolf = new Wolf(rng.nextInt(Globals.width), rng.nextInt(Globals.height), wolfRace);
+			wolfRace.setSpeciesAt(wolf.xPos, wolf.yPos, wolf);
+			Thread wolfThread = new Thread(wolf);
+			threadsToStart.add(wolfThread);
+		}
+		NeedsController.registerNeed("Predator", wolfRace);
 		
 		Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
@@ -79,6 +87,8 @@ public class Main {
 			Thread treeThread = new Thread(tree);
 			threadsToStart.add(treeThread);
 		}
+		NeedsController.registerNeed("Water", treeRace);
+		NeedsController.registerNeed("Tree", treeRace);
 		
 
 		

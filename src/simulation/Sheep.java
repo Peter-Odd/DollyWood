@@ -27,35 +27,39 @@ public class Sheep extends Animal implements  Runnable{
 		super.hunger = 0.5f;
 		super.thirst = 0.5f;
 		this.timeUntilBirth = 1.0f;
-		
 		this.race = sheep;
 		race.numberOfInstances.incrementAndGet();
+		
+		Globals.registerSetting("Herd priority", "Sheep", 0, 2, 0.4f);
+		Globals.registerSetting("Hunger priority", "Sheep", 0, 2, 1);
+		Globals.registerSetting("Thirst priority", "Sheep", 0, 2, 1);
+		
+		Globals.registerSetting("Sheep sleep", "Sheep", 0, 1500, 500);
+		Globals.registerSetting("Sheep thirst", "Sheep", 0.1f, 1, 0.5f);
+		Globals.registerSetting("Sheep hunger", "Sheep", 0.1f, 1, 0.5f);
 	}
 
-	public Sheep(int xPos, int yPos, Race sheep, boolean gender){
-		super(gender);
-		super.xPos = xPos;
-		super.yPos = yPos;
-		super.race = sheep;
-		this.timeUntilBirth = 1.0f;
-		
-		this.race = sheep;
-		race.numberOfInstances.incrementAndGet();
-	}	
 	
 	/**
 	 * Makes it available for the sheep to eat, drink, propagate, age, die, get pregnant, get hungry, get thirsty.
 	 */
 
 	public void run(){
-		super.hunger = Globals.getSetting("Sheep hunger", "Sheep");
-		super.hunger = Globals.getSetting("Sheep thirst", "Sheep");
+		super.hunger = Globals.getSetting("Hunger", "Sheep");
+		super.thirst = Globals.getSetting("Thirst", "Sheep");
 
 		Globals.registerGraph("Number of sheep", "Sheep", new Callable<Float>() {
 			public Float call() throws Exception {
 				return getNumberOfSheep();
 			}
 		}, 500);
+		
+		// Just to let the world load.
+		try {
+			Thread.sleep(5000);
+		} catch(InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
 
 		while(alive){
 			try {
@@ -94,11 +98,11 @@ public class Sheep extends Animal implements  Runnable{
 
 			if(timeUntilBirth <= 0.0f){
 				giveBirth();
-			}else if(thirst > 0.6f){
-				drink();
-			}else if(hunger > 0.6f){
+			}else if(hunger > 0.8f){
 				eat();
-			}else if(hunger < 0.5f && thirst < 0.5f && !this.getGender() && age > 0.4f){
+			}else if(thirst > 0.5f){
+				drink();
+			}else if(hunger < 0.6f && thirst < 0.6f && !this.getGender() && age > 0.4f){
 				propagate();
 				hunger = 0.7f;
 				thirst = 0.7f;
@@ -122,7 +126,7 @@ public class Sheep extends Animal implements  Runnable{
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}else if(age > 2.0f){
+			}else if(age > 3.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
@@ -143,9 +147,10 @@ public class Sheep extends Animal implements  Runnable{
 
 	private void move(){
 		ArrayList<Needs> needList = new ArrayList<>();
-		//needList.add(new Needs("Water", thirst));
-		needList.add(new Needs("Meat", 0.8f));
-		needList.add(new Needs("Plant", hunger));
+		needList.add(new Needs("Water", thirst*Globals.getSetting("Thirst priority", "Sheep")));
+		needList.add(new Needs("Meat", Globals.getSetting("Herd priority", "Sheep")));
+		needList.add(new Needs("Plant", hunger*Globals.getSetting("Hunger priority", "Sheep")));
+		needList.add(new Needs("Predator", -20.0f));
 		int[] requestedPosition = super.calculatePositionValue(needList, super.xPos, super.yPos);
 		super.moveTo(requestedPosition[0], requestedPosition[1], 0);
 	}
@@ -183,9 +188,8 @@ public class Sheep extends Animal implements  Runnable{
 			food += nc.getNeed(new Needs("Plant", 0.6f), xPos, yPos);
 		}
 
-		hunger += food;
-
-		if(hunger > 0.4f){
+		if(food > 0.5f){
+			hunger -= food;
 			try {
 				Thread.sleep(2000);
 			} catch(InterruptedException ex) {

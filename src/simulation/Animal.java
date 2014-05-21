@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.concurrent.Semaphore;
 
 import utilities.Astar;
+import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.Needs;
 import utilities.NeedsController;
@@ -17,7 +18,7 @@ public class Animal{
 	private Random random;
 	private float rotation;
 	protected boolean gender; // true = female, false = male
-	protected float age; // 1.0f = adult;
+	protected float age; // 1.2f = adult;
 	protected float size;
 	protected boolean pregnant;
 	protected float hunger;
@@ -84,7 +85,7 @@ public class Animal{
 	
 	public float calculateLocalPositionValue(ArrayList<Needs> needList, int x, int y){
 		float value = 0.0f;
-		for(int[] neighbor : HexagonUtils.neighborTiles(x, y, true)){
+		for(int[] neighbor : HexagonUtils.neighborTiles(x, y, 2, true)){
 			for(Needs n : needList){
 				float need = 0.0f;
 				for(NeedsControlled nc : NeedsController.getNeed(n.getNeed())){
@@ -123,16 +124,17 @@ public class Animal{
 		float water = 0.0f;
 		
 		for(NeedsControlled nc : NeedsController.getNeed("Water")){
-			   water += nc.getNeed(new Needs("Water", 0.6f), xPos, yPos);
+			   water += nc.getNeed(new Needs("Water", 0.8f), xPos, yPos);
 		}
-		thirst += water;
 		
-		if(thirst > 0.4f){
+		if(water >= 0.7f){
+			this.thirst -= water;
+			
 			try {
 				Thread.sleep(2000);
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
-			}	
+			}
 		}
 	}
 	
@@ -177,7 +179,7 @@ public class Animal{
 		path.removeFirst(); // removes the current location
 		for(int [] nextCord : path){
 			try {
-			    Thread.sleep(500);
+			    Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
 			} catch(InterruptedException ex) {
 				System.out.println("Thread interrupt");
 			    Thread.currentThread().interrupt();
