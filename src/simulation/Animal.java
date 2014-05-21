@@ -47,22 +47,8 @@ public class Animal{
 		}
 	}
 	
-	public Animal(boolean gender){
-		random = new Random();
-		rotation = random.nextInt(360);
-		age = 0.4f;
-		this.pregnant = false;
-		this.gender = gender;
-		if(gender){
-			size = 0.7f;
-			readyToBreed = true;
-		}else{
-			size = 1.5f;
-			readyToBreed = false;
-		}
-	}
-	
-	/** Returns an animal which is ready to breed within the radius of 7 from position (xPos, yPos). Else 
+	/** 
+	 * Returns an animal which is ready to breed within the radius of 7 from position (xPos, yPos). Else 
 	 * it returns null. 
 	 * 
 	 * @return An animal which is ready to breed.
@@ -83,7 +69,17 @@ public class Animal{
 		
 	}
 	
-	public float calculateLocalPositionValue(ArrayList<Needs> needList, int x, int y){
+	/**
+	 * Calculates the value of a tile depending on how much resources its neighbors within a radius
+	 * of 2 contains.  
+	 * 
+	 * @param needList The needs which will be considered.
+	 * @param x The coordinate for the position.
+	 * @param y The coordinate for the position.
+	 * @return The value of the tile at position (x,y).
+	 */
+	
+	private float calculateLocalPositionValue(ArrayList<Needs> needList, int x, int y){
 		float value = 0.0f;
 		for(int[] neighbor : HexagonUtils.neighborTiles(x, y, 2, true)){
 			for(Needs n : needList){
@@ -96,6 +92,16 @@ public class Animal{
 		}
 		return value;
 	}
+	
+	/**
+	 * Returns a position which the current animal will walk too, depending on its needs. int[0] == x-coordinate,
+	 * int[1] == y-coordinate.
+	 * 
+	 * @param needList The needs which will be considered.
+	 * @param x Current position coordinate.
+	 * @param y Current position coordinate.
+	 * @return The new position.
+	 */
 	
 	public int[] calculatePositionValue(ArrayList<Needs> needList, int x, int y){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(x, y, 6, false);
@@ -116,8 +122,9 @@ public class Animal{
 		return neighbor.get((int)(index));
 	}
 	
-	/** Locates and collects water which is close by, if any is found it sleeps for 2000ms and
-	 *  adds the amount found to this.thirst.
+	/** 
+	 * Locates and collects water which is close by, if any is found it sleeps for 2000ms and
+	 * adds the amount found to this.thirst.
 	 */
 	
 	protected void drink(){
@@ -138,7 +145,8 @@ public class Animal{
 		}
 	}
 	
-	/** Moves to a random neighbor tile if possible.
+	/** 
+	 * Moves to a random neighbor tile if possible.
 	 */
 	
 	protected void moveRandom(){
@@ -147,7 +155,8 @@ public class Animal{
 		moveTo(randomNeighbor[0], randomNeighbor[1], 0);
 	}
 	
-	/** Finds a female sheep which is ready to breed, and tells her to walk to a random tile
+	/** 
+	 * Finds a female sheep which is ready to breed, and tells her to walk to a random tile
 	 *  next to this sheep.
 	 */
 	
@@ -167,7 +176,8 @@ public class Animal{
 				}
 	}
 	
-	/** The animal moves to position x, y. And when destination is reached, return true.
+	/** 
+	 * The animal moves to position x, y. And when destination is reached, return true.
 	 * 
 	 * @param x coordinate to move to.
 	 * @param y coordinate to move to.
@@ -204,7 +214,8 @@ public class Animal{
 		return null;
 	}
 	
-	/** Calculates the correct rotation for a sheep when moved.
+	/** 
+	 * Calculates the correct rotation for a sheep when moved.
 	 * 
 	 * @param newPos The position which the sheep will be moved to.
 	 */
