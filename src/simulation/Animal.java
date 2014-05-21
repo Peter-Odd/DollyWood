@@ -162,7 +162,7 @@ public class Animal{
 		return true;
 	}
 	
-	public int[] calcPositionToMove(ArrayList<String> needs){
+	public int[] calcPositionToMove(){
 		
 		
 		return null;
