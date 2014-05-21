@@ -42,10 +42,10 @@ public class Sheep extends Animal implements  Runnable{
 		this.race = sheep;
 		race.numberOfInstances.incrementAndGet();
 	}	
-
-	private float getNumberOfSheep() {
-		return (float)race.numberOfInstances.get();
-	}
+	
+	/**
+	 * Makes it available for the sheep to eat, drink, propagate, age, die, get pregnant, get hungry, get thirsty.
+	 */
 
 	public void run(){
 		super.hunger = Globals.getSetting("Sheep hunger", "Sheep");
@@ -64,37 +64,44 @@ public class Sheep extends Animal implements  Runnable{
 				Thread.currentThread().interrupt();
 			}
 			
+			//locks sheep
 			try {
 				super.busy.acquire();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
+			/*
+			 * Makes the sheep hungry, thirst and makes it grow older. The sheep is getting more hungry if she is
+			 * pregnant and then also decreases the timeUntilBirth.
+			 */
+			
 			if(pregnant){
-				if(age <= 1.2f){
-					age += 0.02;
-				}
-				hunger -= 0.03f;
-				thirst -= 0.03f;
+				age += 0.02;
+				hunger += 0.03f;
+				thirst += 0.03f;
 				timeUntilBirth -= 0.02;
 			} else {
-				if(age <= 1.2f){
-					age += 0.02;
-				}
-				hunger -= 0.02f;
-				thirst -= 0.02f;
+				age += 0.02;
+				hunger += 0.02f;
+				thirst += 0.02f;
 			}
+			
+			/*
+			 * Checks if the Sheep needs to give birth, drink, eat, propagate or are ready to breed. This
+			 * is done in a order of importance.
+			 */
 
 			if(timeUntilBirth <= 0.0f){
 				giveBirth();
-			}else if(thirst < 0.4f){
+			}else if(thirst > 0.6f){
 				drink();
-			}else if(hunger < 0.4f){
+			}else if(hunger > 0.6f){
 				eat();
-			}else if(hunger > 0.5f && thirst > 0.5f && !this.getGender() && age > 0.4f){
+			}else if(hunger < 0.5f && thirst < 0.5f && !this.getGender() && age > 0.4f){
 				propagate();
-				hunger = 0.3f;
-				thirst = 0.3f;
+				hunger = 0.7f;
+				thirst = 0.7f;
 			}else if(this.getGender()){
 				if(age > 0.4f && !pregnant){
 					setReadyToBreed(true);
@@ -102,24 +109,52 @@ public class Sheep extends Animal implements  Runnable{
 					setReadyToBreed(false);
 				}
 			}
-			if(hunger < 0.0f){
+			
+			/*
+			 * Checks if the sheep will die because of thirst, hunger or age. 
+			 */
+			
+			if(hunger > 1.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}
-			else if (thirst < 0.0f){
+			}else if (thirst > 1.0f){
+				race.numberOfInstances.decrementAndGet();
+				this.alive = false;
+				race.getAndRemoveSpeciesAt(xPos, yPos);
+			}else if(age > 2.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
 
-			moveRandom();
-			
+			// Makes the sheep to move to a new position.
+			move();
+			//unlocks sheep
 			super.busy.release();
 
 		}
 	}
+	
+	/**
+	 * Moves the sheep to a position within a radius of 6 form the current xPos and yPos. What position which is selected
+	 * is dependent on what the sheep currently needs.
+	 */
 
+	private void move(){
+		ArrayList<Needs> needList = new ArrayList<>();
+		//needList.add(new Needs("Water", thirst));
+		needList.add(new Needs("Meat", 0.8f));
+		needList.add(new Needs("Plant", hunger));
+		int[] requestedPosition = super.calculatePositionValue(needList, super.xPos, super.yPos);
+		super.moveTo(requestedPosition[0], requestedPosition[1], 0);
+	}
+	
+	/** 
+	 * Spawns a new sheep at an empty position around the current xPos and yPos, if no empty tile is available
+	 * nothing happens. Also sets pregnant to false and time until birth to 1.0f;
+	 */
+	
 	private void giveBirth(){
 		ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(xPos, yPos, false);
 
@@ -136,6 +171,11 @@ public class Sheep extends Animal implements  Runnable{
 		}
 	}
 
+	/**
+	 * Looks for the need "Plant" at the current xPos and yPos, if any is found it's added to hunger and the 
+	 * thread is put to sleep for 2000ms.
+	 */
+	
 	public void eat(){
 		float food = 0.0f;
 
@@ -153,8 +193,42 @@ public class Sheep extends Animal implements  Runnable{
 			}	
 		}
 	}
+	
+	/**
+	 * Returns the age if age is less or equal to 1.2, else it returns 1.2.
+	 */
 
 	public float getSize(){
-		return age;
+		if(age >1.2f)
+			return 1.2f;
+		else
+			return age;
+	}
+	
+	/**
+	 * Stops the current thread and returns 1.0f.
+	 */
+	
+	public float getNeed(Needs need){
+		race.numberOfInstances.decrementAndGet();
+		this.alive = false;
+		race.getAndRemoveSpeciesAt(xPos, yPos);
+		return 1.0f;
+	}
+	
+	/**
+	 * Returns what the current sheep have to offer as need.
+	 */
+	
+	public float peekNeed(Needs need){
+		return 1.0f;
+	}
+	
+	/**
+	 * @return The current number of sheep in the world.
+	 */
+	
+	private float getNumberOfSheep() {
+		return (float)race.numberOfInstances.get();
 	}
 }

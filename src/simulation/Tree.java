@@ -61,9 +61,9 @@ public class Tree extends Animal implements Runnable {
 
 			float treeProximity = 0.0f;
 			for(NeedsControlled nc : NeedsController.getNeed("Tree"))
-				treeProximity += nc.getNeed(new Needs("Tree", 1.0f), treeXPos, treeYPos);
-
-			if (race.getSpeciesAt(treeXPos, treeYPos) == null && treeProximity < 1) {
+				for(int[] neighbor : HexagonUtils.neighborTiles(treeXPos, treeYPos, 2, true))
+					treeProximity += nc.getNeed(new Needs("Tree", 1.0f), neighbor[0], neighbor[1]);
+			if (race.getSpeciesAt(treeXPos, treeYPos) == null && treeProximity < 2) {
 				Tree tree = new Tree(treeXPos, treeYPos, this.race);
 				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
 				Thread treeThread = new Thread(tree);
@@ -116,7 +116,7 @@ public class Tree extends Animal implements Runnable {
 				return getNumberofTrees();
 			}
 		}, 3000);	
-		
+
 		while( ( (long)(System.currentTimeMillis()/1000) - birthTime) < (long)Globals.getSetting("Tree time of life (sec)", "Tree") ) {
 			step();
 			try {

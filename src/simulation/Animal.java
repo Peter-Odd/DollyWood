@@ -25,6 +25,7 @@ public class Animal{
 	protected Race race;
 	protected boolean readyToBreed;
 	protected Semaphore busy = new Semaphore(1);
+	protected Animal hunter = null;
 
 
 		
@@ -81,6 +82,39 @@ public class Animal{
 		
 	}
 	
+	public float calculateLocalPositionValue(ArrayList<Needs> needList, int x, int y){
+		float value = 0.0f;
+		for(int[] neighbor : HexagonUtils.neighborTiles(x, y, true)){
+			for(Needs n : needList){
+				float need = 0.0f;
+				for(NeedsControlled nc : NeedsController.getNeed(n.getNeed())){
+					need += nc.peekNeed(new Needs(n.getNeed(), 1.0f), neighbor[0], neighbor[1]);
+				}
+				value += need*n.getAmmount();
+			}
+		}
+		return value;
+	}
+	
+	public int[] calculatePositionValue(ArrayList<Needs> needList, int x, int y){
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(x, y, 6, false);
+		float[][] randomTiles = new float[12][2];
+		for(int i = 0; i < randomTiles.length; i++){
+			randomTiles[i][0] = random.nextInt(neighbor.size());
+			int[] tile = neighbor.get((int)(randomTiles[i][0]));
+			randomTiles[i][1] = calculateLocalPositionValue(needList, tile[0], tile[1]);
+		}
+		float max = 0.0f;
+		int index = 0;
+		for(float[] positionValue : randomTiles){
+			if(positionValue[1] > max){
+				max = positionValue[1];
+				index = (int)(positionValue[0]);
+			}
+		}
+		return neighbor.get((int)(index));
+	}
+	
 	/** Locates and collects water which is close by, if any is found it sleeps for 2000ms and
 	 *  adds the amount found to this.thirst.
 	 */
@@ -102,15 +136,13 @@ public class Animal{
 		}
 	}
 	
-	/** Moves to a random neighbor tile.
+	/** Moves to a random neighbor tile if possible.
 	 */
 	
 	protected void moveRandom(){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
-		if(!moveTo(randomNeighbor[0], randomNeighbor[1], 0)){
-			this.moveRandom();
-		}
+		moveTo(randomNeighbor[0], randomNeighbor[1], 0);
 	}
 	
 	/** Finds a female sheep which is ready to breed, and tells her to walk to a random tile
@@ -164,6 +196,12 @@ public class Animal{
 		return true;
 	}
 	
+	public int[] calcPositionToMove(){
+		
+		
+		return null;
+	}
+	
 	/** Calculates the correct rotation for a sheep when moved.
 	 * 
 	 * @param newPos The position which the sheep will be moved to.
@@ -207,6 +245,15 @@ public class Animal{
 				}
 			}
 		}
+	}
+	
+
+	public float peekNeed(Needs need){
+		return 1.0f;
+	}
+	
+	public float getNeed(Needs need){
+		return 1.0f;
 	}
 	
 	public boolean getGender(){
@@ -280,5 +327,9 @@ public class Animal{
 	
 	public void unlock(){
 		busy.release();
+	}
+	
+	public void setHunter(Animal animal){
+		this.hunter = animal;
 	}
 }

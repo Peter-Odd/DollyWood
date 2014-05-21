@@ -141,4 +141,8 @@ public class Cloud implements Runnable, NeedsControlled{
 		}
 		return 0;
 	}
+	
+	public float peekNeed(Needs need, int x, int y){
+		return getNeed(need, x, y);
+	}
 }

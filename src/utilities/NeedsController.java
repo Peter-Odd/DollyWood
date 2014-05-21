@@ -41,5 +41,6 @@ public class NeedsController {
 	public interface NeedsControlled{
 		//This will kill a sheep and return 1.0f if the sheep is an adult. if called on grass, it will return however much grass there is on that tile and remove that tile of grass
 		public float getNeed(Needs need, int x, int y);
+		public float peekNeed(Needs need, int x, int y);
 	}
 }
