@@ -19,6 +19,12 @@ public class Sheep extends Animal implements  Runnable{
 	private boolean alive = true;
 	private Race race;
 
+	/**
+	 * Constructor
+	 * @param xPos The sheep's x-coordinate
+	 * @param yPos The sheep's y-coordinate
+	 * @param sheep The sheep race
+	 */
 	public Sheep(int xPos, int yPos, Race sheep){
 		super();
 		super.xPos = xPos;
