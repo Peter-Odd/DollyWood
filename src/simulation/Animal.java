@@ -127,7 +127,7 @@ public class Animal{
 			   water += nc.getNeed(new Needs("Water", 0.8f), xPos, yPos);
 		}
 		
-		if(water >= 0.7f){
+		if(water >= 0.5f){
 			this.thirst -= water;
 			
 			try {
