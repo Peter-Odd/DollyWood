@@ -18,7 +18,7 @@ public class Race implements NeedsControlled{
 		species = new Animal[Globals.height][Globals.width];
 		lockArray = new AtomicInteger[Globals.height][Globals.width];
 		
-		//initates the lockArray.
+		//initiates the lockArray.
 		for(int x = 0; x<Globals.width;x++){
 			for(int y = 0; y<Globals.height;y++){
 				lockArray[x][y] = new AtomicInteger(1);
@@ -161,12 +161,29 @@ public class Race implements NeedsControlled{
 		return specName;
 	}
 	
+	/**
+	 * Locks the position (x,y) in the lockArray. 
+	 * 
+	 * @param x Coordinate to lock.
+	 * @param y Coordinate to lock.
+	 * @return True if the position was unlocked, else false.
+	 */
+	
 	public boolean compareAndSet(int x, int y){
 		return lockArray[x][y].compareAndSet(1, 0);
 	}
 	
+	/**
+	 * Unlocks the position (x,y) in the lockArray.
+	 * 
+	 * @param x Coordinate to unlock.
+	 * @param y Coordinate to unlock.
+	 */
+	
 	public void unlock(int x, int y){
-		lockArray[x][y].incrementAndGet();
+		if(lockArray[x][y].get() == 0){
+			lockArray[x][y].incrementAndGet();
+		}
 	}
 
 }
