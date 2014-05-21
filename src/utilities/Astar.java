@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import simulation.Race;
+import utilities.NeedsController.NeedsControlled;
 
 
 
@@ -17,8 +18,7 @@ import simulation.Race;
 
 public class Astar {
 	final static int VERYHIGHVALUE = 999999;
-
-
+	private static Race blocking;
 	/**
 	 * Calculate distance from (startX, startY) to (goalX, goalY)
 	 * @param startX X-coordinate of start node
@@ -41,10 +41,12 @@ public class Astar {
 		Node returnMe = null;
 
 		for (Node l : list) {
-			int tmpTotalCost = l.getTotalCost();
-			if (tmpTotalCost < heuristicPrev && !closedList.contains(l)) {
-				heuristicPrev = tmpTotalCost;
-				returnMe = l;
+			if(noSpecies(l.getX(), l.getY())){
+				int tmpTotalCost = l.getTotalCost();
+				if (tmpTotalCost < heuristicPrev && !closedList.contains(l)) {
+					heuristicPrev = tmpTotalCost;
+					returnMe = l;
+				}
 			}
 		}
 		return returnMe;
@@ -58,14 +60,14 @@ public class Astar {
 	private static Deque<int[]> tracePath(int position, ArrayList<Node> closedList) {
 		//Stack<Node> resultStack = new Stack<>();
 		Deque<int[]> resultStack = new ArrayDeque<>();
-
-		Node cursor = closedList.get(position);
-
-		while (cursor != null) {
-			resultStack.addFirst(new int[]{cursor.getX(), cursor.getY()});
-			cursor = cursor.getParent();
+		if(closedList.size() > position-1 && position > 0){
+			Node cursor = closedList.get(position);
+	
+			while (cursor != null) {
+				resultStack.addFirst(new int[]{cursor.getX(), cursor.getY()});
+				cursor = cursor.getParent();
+			}
 		}
-		
 		
 		return resultStack;
 	}	
@@ -76,14 +78,16 @@ public class Astar {
 	 * @param y y-coordinate
 	 * @return false if species on (x,y)-coordinate, true otherwise
 	 */
-	private static boolean noSpecies(int x, int y) {
-
-		for (Race r : Globals.races) {
-			if (r.getSpeciesAt(x, y) != null) {
-				return false;
-			}
+	public static boolean noSpecies(int x, int y) {
+		if(blocking == null){
+			ArrayList<NeedsControlled> tmp = NeedsController.getNeed("Tree");
+			if(tmp != null && tmp.size() > 0)
+				blocking = (Race)tmp.get(0);
 		}
+		if(blocking.containsAnimal(x, y))
+			return false;
 		return true;
+		
 	}
 
 	/**
@@ -115,12 +119,17 @@ public class Astar {
 
 
 		//		USE BELOW TO TIME THE PATHFINDER
-		//		long time = System.currentTimeMillis();
+		//		long timeStart = System.currentTimeMillis();
 
 		do {
 			Node currentNode = findLowestTotalCost(openList, closedList);
 			openList.remove(currentNode);
-
+			
+			if(currentNode == null){
+				goalFound = true;
+				break;
+			}
+			
 			if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
 				//goal found
 				closedList.add(currentNode);
@@ -130,34 +139,30 @@ public class Astar {
 
 			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
 			for (int[] neighbor : neighbors) {
+				Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0],  neighbor[1]) + 1, currentNode);
 
-				if (noSpecies(neighbor[0], neighbor[1])) { //if no species next to neighbor continue, else skip code below
+				boolean existsInOpenList = false;
 
-					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0],  neighbor[1]) + 1, currentNode);
+				for (Node nodeInOpenList : openList) {
+					if (nodeInOpenList.getX() == newNode.getX() && nodeInOpenList.getY() == newNode.getY()) { //check X&Y-value for n and newNode
+						if (nodeInOpenList.getMovementCost() < newNode.getMovementCost()) {
+							//node exists in openList, do not add it to the openList.
+							//nothing to do, exit foreach-loop
+							existsInOpenList = true;
+							break;
+						} else {
+							//node exists in openList, do not add it to the openList.
+							//update movementCost and its parent
+							nodeInOpenList.setParent(newNode.getParent());
+							nodeInOpenList.setMovementCost(1 + newNode.getMovementCost());
+							existsInOpenList = true;
+							break;
+						}
+					}	
+				}
 
-					boolean existsInOpenList = false;
-
-					for (Node nodeInOpenList : openList) {
-						if (nodeInOpenList.getX() == newNode.getX() && nodeInOpenList.getY() == newNode.getY()) { //check X&Y-value for n and newNode
-							if (nodeInOpenList.getMovementCost() < newNode.getMovementCost()) {
-								//node exists in openList, do not add it to the openList.
-								//nothing to do, exit foreach-loop
-								existsInOpenList = true;
-								break;
-							} else {
-								//node exists in openList, do not add it to the openList.
-								//update movementCost and its parent
-								nodeInOpenList.setParent(newNode.getParent());
-								nodeInOpenList.setMovementCost(1 + newNode.getMovementCost());
-								existsInOpenList = true;
-								break;
-							}
-						}	
-					}
-
-					if (!existsInOpenList) {
-						openList.add(newNode);
-					}
+				if (!existsInOpenList) {
+					openList.add(newNode);
 				}
 			}
 			closedList.add(currentNode);
@@ -167,10 +172,9 @@ public class Astar {
 		if (!goalFound && openList.isEmpty()) {
 			return null; 
 		}
-
 		//		USE BELOW TO TIME THE PATHFINDER
-		//		System.out.println("TIME TAKEN: " + (System.currentTimeMillis() - time));
-		//		System.out.println("OPEN LIST SIZE: " + openList.size() + ", ClosedList size: " + closedList.size());
+		//		System.out.println("TIME TAKEN: " + (System.nanoTime() - time));
+		//		System.out.println("OPEN LIST SIZE: " + openList.size() + ", ClosedList size: " + closedList.size() + ", TIME TAKEN: " + (int)(System.currentTimeMillis() - timeStart));
 
 		return tracePath(closedList.size() - 1, closedList);
 	}
