@@ -28,8 +28,10 @@ public class Main {
 
 		
 		/* Register settings below */
-		Globals.registerSetting("Number of trees", "Tree", 0, 50, 20);
-		Globals.registerSetting("Tree sleep", "Tree", 0, 1500, 400);
+		Globals.registerSetting("Number of trees", "Tree", 0, 1000, 40);
+		Globals.registerSetting("Tree sleep (ms)", "Tree", 0, 1500, 400);
+		Globals.registerSetting("Tree seed amount", "Tree", 0.0f, 1.0f, 0.3f);
+		Globals.registerSetting("Tree time of life (sec)", "Tree", 0, 500, 200);
 		
 		Globals.registerSetting("Number of sheep", "Sheep", 2, 40, 5);
 		Globals.registerSetting("Sheep sleep", "Sheep", 0, 1500, 500);
@@ -42,7 +44,7 @@ public class Main {
 		Globals.registerSetting("Wolves hunger", "Wolf", 0.1f, 1, 1.0f);
 
 		
-		
+
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
 		threadsToStart.add(waterThread);

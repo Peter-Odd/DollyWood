@@ -42,8 +42,8 @@ public class Globals {
 	/*
 	 * width and height = 2^n + 1
 	 */
-	public static int width = 257;
-	public static int height = 257;
+	public static int width = 65;
+	public static int height = 65;
 	public static int screenWidth = 1920; 
 	public static int screenHeight = 1080;
 	
