@@ -40,6 +40,7 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 		grassLevel = new float[Globals.width][Globals.height];
 		NeedsController.registerNeed("Plant", this);
 		Globals.registerSetting("Sleep", "Grass", 1, 1000, 100);
+		Globals.registerSetting("Grass growth rate", "Grass", 0, 0.2f, 0.01f);
 	}
 
 	public float getGrassAt(int x, int y){
@@ -77,7 +78,7 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 					}
 					grassGrowth *= sunIntensity;
 				}
-				grassLevel[x][y] += grassGrowth*0.01f;
+				grassLevel[x][y] += grassGrowth*Globals.getSetting("Grass growth rate", "Grass");
 				
 				if(grassLevel[x][y] > 1.0f)
 					grassLevel[x][y] = 1.0f;

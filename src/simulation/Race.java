@@ -3,7 +3,6 @@ package simulation;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import utilities.Globals;
-import utilities.HexagonUtils;
 import utilities.Needs;
 import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
