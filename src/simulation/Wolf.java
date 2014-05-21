@@ -203,4 +203,14 @@ public class Wolf extends Animal implements Runnable{
 	private float getNumberOfWolves() {
 		return (float)race.numberOfInstances.get();
 	}
+	
+	/**
+	 *Returns the age if age is less or equal to 1.2, else it returns 1.2.
+	 */
+	public float getSize(){
+		if(age >1.2f)
+			return 1.2f;
+		else
+			return age;
+	}
 }
