@@ -53,7 +53,23 @@ public class Tree extends Animal implements Runnable {
 	 * Spawns a new tree if treeSeed is greater than spawnProbability. This value is increased once in a while
 	 */
 	private void spawnTree() {
-		if (treeSeed > 0.90f && treeHealth >= 1.0f) {	//lets spawn a tree
+		Race sheep = null;
+		Race wolf = null;
+
+		if (treeSeed > 0.90f && treeHealth >= 1.0f) {	//lets spawn a tree			
+			// Find the Sheep race
+			for(Race race : Globals.races){
+				if(race.getSpecName().equals("Sheep")){
+					sheep = race;
+				}
+			}
+			// Find the Wolf race
+			for(Race race : Globals.races){
+				if(race.getSpecName().equals("Wolf")){
+					wolf = race;
+				}
+			}
+
 			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(this.xPos, this.yPos, 2, false);
 			int randomSpawnedTree = new Random().nextInt(neighbors.size());
 			int treeXPos = neighbors.get(randomSpawnedTree)[0];
@@ -63,7 +79,8 @@ public class Tree extends Animal implements Runnable {
 			for(NeedsControlled nc : NeedsController.getNeed("Tree"))
 				for(int[] neighbor : HexagonUtils.neighborTiles(treeXPos, treeYPos, 2, true))
 					treeProximity += nc.getNeed(new Needs("Tree", 1.0f), neighbor[0], neighbor[1]);
-			if (race.getSpeciesAt(treeXPos, treeYPos) == null && treeProximity < 2) {
+			
+			if (race.getSpeciesAt(treeXPos, treeYPos) == null && wolf.compareAndSet(treeXPos, treeYPos) && sheep.compareAndSet(treeXPos, treeYPos) && treeProximity < 2) {
 				Tree tree = new Tree(treeXPos, treeYPos, this.race);
 				this.race.setSpeciesAt(treeXPos, treeYPos, tree);
 				Thread treeThread = new Thread(tree);
@@ -71,6 +88,8 @@ public class Tree extends Animal implements Runnable {
 				race.numberOfInstances.incrementAndGet();
 				this.treeSeed = 0.1f; //reset treeSeed when a tree has spawned a new tree
 			}
+			wolf.unlock(treeXPos, treeYPos);
+			sheep.unlock(treeXPos, treeYPos);
 		} else {
 			treeSeed += 0.01; //increase the treeSeed
 		}
@@ -97,6 +116,7 @@ public class Tree extends Animal implements Runnable {
 			treeHealth = 1.5f;
 		else if (treeHealth < 0.0f)  {
 			treeHealth = 0.0f;
+			birthTime = -20000000;		//set birthTime to negative so the thread will be terminated in while-loop below.
 		}
 
 		treeHealth -= 0.01; 	//decrease treeHealth
@@ -117,7 +137,7 @@ public class Tree extends Animal implements Runnable {
 			}
 		}, 3000);	
 
-		while( ( (long)(System.currentTimeMillis()/1000) - birthTime) < (long)Globals.getSetting("Tree time of life (sec)", "Tree") ) {
+		while( ( (long)(System.currentTimeMillis()/1000) - (birthTime) ) < (long)Globals.getSetting("Tree time of life (sec)", "Tree") ) {
 			step();
 			try {
 				Thread.sleep((int)Globals.getSetting("Tree sleep (ms)", "Tree"));
