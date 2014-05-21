@@ -78,13 +78,13 @@ public class Sheep extends Animal implements  Runnable{
 			
 			if(pregnant){
 				age += 0.02;
-				hunger -= 0.03f;
-				thirst -= 0.03f;
+				hunger += 0.03f;
+				thirst += 0.03f;
 				timeUntilBirth -= 0.02;
 			} else {
 				age += 0.02;
-				hunger -= 0.02f;
-				thirst -= 0.02f;
+				hunger += 0.02f;
+				thirst += 0.02f;
 			}
 			
 			/*
@@ -94,14 +94,14 @@ public class Sheep extends Animal implements  Runnable{
 
 			if(timeUntilBirth <= 0.0f){
 				giveBirth();
-			}else if(thirst < 0.4f){
+			}else if(thirst > 0.6f){
 				drink();
-			}else if(hunger < 0.4f){
+			}else if(hunger > 0.6f){
 				eat();
-			}else if(hunger > 0.5f && thirst > 0.5f && !this.getGender() && age > 0.4f){
+			}else if(hunger < 0.5f && thirst < 0.5f && !this.getGender() && age > 0.4f){
 				propagate();
-				hunger = 0.3f;
-				thirst = 0.3f;
+				hunger = 0.7f;
+				thirst = 0.7f;
 			}else if(this.getGender()){
 				if(age > 0.4f && !pregnant){
 					setReadyToBreed(true);
@@ -114,11 +114,11 @@ public class Sheep extends Animal implements  Runnable{
 			 * Checks if the sheep will die because of thirst, hunger or age. 
 			 */
 			
-			if(hunger < 0.0f){
+			if(hunger > 1.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}else if (thirst < 0.0f){
+			}else if (thirst > 1.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
@@ -143,8 +143,9 @@ public class Sheep extends Animal implements  Runnable{
 
 	private void move(){
 		ArrayList<Needs> needList = new ArrayList<>();
-		needList.add(new Needs("Water", 0.0f));
-		needList.add(new Needs("Meat", 1.0f));
+		//needList.add(new Needs("Water", thirst));
+		needList.add(new Needs("Meat", 0.8f));
+		needList.add(new Needs("Plant", hunger));
 		int[] requestedPosition = super.calculatePositionValue(needList, super.xPos, super.yPos);
 		super.moveTo(requestedPosition[0], requestedPosition[1], 0);
 	}
