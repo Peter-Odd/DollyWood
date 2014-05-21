@@ -200,7 +200,7 @@ public class Globals {
 	public static synchronized void registerGraph(String name, String category, Callable<Float> callFunction, long collectTime){
 		boolean isRegistered = false;
 		for(Graph g : graphList){
-			if(g.getName().equals(name) && g.getCategory().equals(category)){
+			if(g.getCategory().equals(category) && g.getName().equals(name)){
 				isRegistered = true;
 				break;
 			}
@@ -225,7 +225,7 @@ public class Globals {
 	
 	public static synchronized float getSetting(String name, String category){
 		for(Setting s : settings){
-			if(s.name.equals(name) && s.category.equals(category))
+			if(s.category.equals(category) && s.name.equals(name))
 				return s.slider.getValue()/1000.0f;
 		}
 		return 0.0f;

@@ -27,6 +27,7 @@ public class Animal{
 	protected boolean readyToBreed;
 	protected Semaphore busy = new Semaphore(1);
 	protected Animal hunter = null;
+	protected boolean alive = true;
 
 
 		
@@ -175,7 +176,15 @@ public class Animal{
 	 */
 	
 	protected boolean moveTo(int x, int y, int blocked){
+		if(!Astar.noSpecies(xPos, yPos)){
+			//System.out.println("Double position");
+			alive = false;
+			return false;
+		}
+		
 		Deque<int[]> path = Astar.calculatePath(xPos, yPos, x, y);
+		if(path.size() == 0)
+			return false;
 		path.removeFirst(); // removes the current location
 		for(int [] nextCord : path){
 			try {

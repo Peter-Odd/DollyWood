@@ -96,8 +96,11 @@ public class Main {
 		
 		Globals.heightmap = new float[Globals.width][Globals.height];
 		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.getSetting("Fractal max", "World gen"), Globals.getSetting("Fractal min", "World gen"), Globals.getSetting("Fractal range", "World gen"), Globals.getSetting("Fractal divisor", "World gen"));
-		for(Thread t : threadsToStart)
+		for(Thread t : threadsToStart){
+			t.setPriority(Thread.MIN_PRIORITY);
 			t.start();
+		}
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		new Graphics3D();
 	}
 

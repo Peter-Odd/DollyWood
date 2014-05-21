@@ -16,7 +16,6 @@ import utilities.Needs;
 public class Sheep extends Animal implements  Runnable{
 
 	private float timeUntilBirth;
-	private boolean alive = true;
 	private Race race;
 
 	public Sheep(int xPos, int yPos, Race sheep){
