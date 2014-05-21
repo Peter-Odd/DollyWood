@@ -2,7 +2,6 @@ package utilities;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -11,16 +10,13 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
@@ -29,7 +25,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -49,21 +44,11 @@ public class Globals {
 	
 	public static float[][] heightmap;
 	
-	public static int startingSheep = 5;
-	public static int startingWolves = 5;
-	public static int startingTrees = 20;
-	
 	public static ArrayList<Race> races = new ArrayList<>();
 	
 	public static DayNightCycle dayNightCycle;
 	
 	public static Water water;
-	public static float startingWaterAmmount = 0.5f;
-	
-	public static int waterSleepLength = 100;
-	public static int grassSleepLength = 100;
-	public static int treeSleepLength = 400;
-	public static int dayNightSleepLength = 1000;
 	
 	public static boolean visibleSettingsFrame(){
 		return settingsFrame.isVisible();
