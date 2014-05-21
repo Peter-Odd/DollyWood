@@ -77,6 +77,7 @@ public class Astar {
 	 * @return false if species on (x,y)-coordinate, true otherwise
 	 */
 	private static boolean noSpecies(int x, int y) {
+
 		for (Race r : Globals.races) {
 			if (r.getSpeciesAt(x, y) != null) {
 				return false;
