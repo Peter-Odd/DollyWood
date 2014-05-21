@@ -138,7 +138,14 @@ public class Tree extends Animal implements Runnable {
 		}, 3000);	
 
 		while( ( (long)(System.currentTimeMillis()/1000) - (birthTime) ) < (long)Globals.getSetting("Tree time of life (sec)", "Tree") ) {
+			try {
+				race.allowedWorker.acquire();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			step();
+			race.allowedWorker.release();
 			try {
 				Thread.sleep((int)Globals.getSetting("Tree sleep (ms)", "Tree"));
 			} catch (InterruptedException e) {

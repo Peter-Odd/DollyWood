@@ -76,6 +76,7 @@ public class Sheep extends Animal implements  Runnable{
 			//locks sheep
 			try {
 				super.busy.acquire();
+				race.allowedWorker.acquire();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -144,6 +145,7 @@ public class Sheep extends Animal implements  Runnable{
 			move();
 			//unlocks sheep
 			super.busy.release();
+			race.allowedWorker.release();
 
 		}
 	}

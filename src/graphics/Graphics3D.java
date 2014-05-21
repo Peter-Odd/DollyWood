@@ -330,14 +330,19 @@ public class Graphics3D {
 		glPopMatrix();
 	}
 
+	HashMap<Integer, FloatBuffer> lightScale = new HashMap<>();
 	private void scaleLights(int[] lights, float scale) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
-		ByteBuffer temp = ByteBuffer.allocateDirect(16);
-		temp.order(ByteOrder.nativeOrder());
-		FloatBuffer fBuffer = temp.asFloatBuffer();
 		for(int l = 0; l < lights.length; l++){
-			glGetLight(lights[l], GL_DIFFUSE, fBuffer);
+			if(!lightScale.containsKey(l)){
+				ByteBuffer temp = ByteBuffer.allocateDirect(16);
+				temp.order(ByteOrder.nativeOrder());
+				FloatBuffer fBuffer = temp.asFloatBuffer();
+				lightScale.put(l, fBuffer);
+				glGetLight(lights[l], GL_DIFFUSE, fBuffer);
+			}
+			FloatBuffer fBuffer = lightScale.get(l);
 			for(int i = 0; i < fBuffer.capacity(); i++){
 				float f = fBuffer.get(i);
 				f *= scale;

@@ -1,10 +1,10 @@
 package simulation;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import utilities.Globals;
 import utilities.Needs;
-import utilities.NeedsController;
 import utilities.NeedsController.NeedsControlled;
 
 public class Race implements NeedsControlled{
@@ -12,8 +12,11 @@ public class Race implements NeedsControlled{
 	private AtomicInteger[][] lockArray;
 	private String specName;
 	protected AtomicInteger numberOfInstances = new AtomicInteger();
+	protected Semaphore allowedWorker;
 
 	public Race(String specName) {
+		allowedWorker = new Semaphore(20, true);
+		
 		this.specName = specName;
 		species = new Animal[Globals.height][Globals.width];
 		lockArray = new AtomicInteger[Globals.height][Globals.width];

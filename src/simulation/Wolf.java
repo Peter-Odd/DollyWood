@@ -59,6 +59,7 @@ public class Wolf extends Animal implements Runnable{
 			//Locks wolf
 			try {
 				super.busy.acquire();
+				race.allowedWorker.acquire();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -108,6 +109,7 @@ public class Wolf extends Animal implements Runnable{
 
 			//Unlocks wolf
 			super.busy.release();
+			race.allowedWorker.release();
 		}
 	}
 
