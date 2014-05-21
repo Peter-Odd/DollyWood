@@ -79,7 +79,7 @@ public class Wolf extends Animal implements Runnable{
 			}
 			if(timeUntilBirth <= 0.0f){
 				giveBirth();
-			}else if(thirst > 0.5f){
+			}else if(thirst > 0.6f){
 				drink();
 			}else if(hunger > 0.5f){
 				eat();
@@ -98,8 +98,7 @@ public class Wolf extends Animal implements Runnable{
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}
-			if(thirst > 1.0f){
+			}else if(thirst > 1.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
