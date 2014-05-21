@@ -162,7 +162,7 @@ public class Race implements NeedsControlled{
 	}
 	
 	/**
-	 * Lock the position (x,y) in the lockArray. 
+	 * Locks the position (x,y) in the lockArray. 
 	 * 
 	 * @param x Coordinate to lock.
 	 * @param y Coordinate to lock.
@@ -173,8 +173,17 @@ public class Race implements NeedsControlled{
 		return lockArray[x][y].compareAndSet(1, 0);
 	}
 	
+	/**
+	 * Unlocks the position (x,y) in the lockArray.
+	 * 
+	 * @param x Coordinate to unlock.
+	 * @param y Coordinate to unlock.
+	 */
+	
 	public void unlock(int x, int y){
-		lockArray[x][y].incrementAndGet();
+		if(lockArray[x][y].get() == 0){
+			lockArray[x][y].incrementAndGet();
+		}
 	}
 
 }
