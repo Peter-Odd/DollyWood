@@ -157,7 +157,7 @@ public class Race implements NeedsControlled{
 		return 0.0f;
 	}
 	
-	//@Override
+	@Override
 	public float peekNeed(Needs need, int x, int y){
 		if(containsAnimal(x, y)){
 			return species[x][y].peekNeed(need);
