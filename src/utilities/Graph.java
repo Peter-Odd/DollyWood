@@ -56,7 +56,7 @@ public class Graph extends JPanel implements Runnable{
 		
 		g.setColor(Color.CYAN);
 		int xSpace = super.getWidth()/(history.size()-1);
-		int ySpace = (int)(centerLine/maxVal);
+		float ySpace = (float)(centerLine/maxVal);
 		int count = 0;
 		try {
 			historyLock.acquire();
@@ -75,7 +75,7 @@ public class Graph extends JPanel implements Runnable{
 			}
 		}
 		historyLock.release();
-		String topString = name + ": " + (char)(177) + String.format("%.2g%n", maxVal) + "  Currently: " + String.format("%.2g%n", history.getFirst());
+		String topString = name + ": " + (char)(177) + String.format("%.4g%n", maxVal) + "  Currently: " + String.format("%.4g%n", history.getFirst());
 
         FontMetrics fm = g.getFontMetrics();
         Rectangle2D rect = fm.getStringBounds(topString, g);

@@ -106,9 +106,9 @@ public class Sheep extends Animal implements  Runnable{
 				giveBirth();
 			}else if(hunger > 0.8f){
 				eat();
-			}else if(thirst > 0.5f){
+			}else if(thirst > 0.3f){
 				drink();
-			}else if(hunger < 0.6f && thirst < 0.6f && !this.getGender() && age > 0.4f){
+			}else if(hunger < 0.6f && thirst < 0.4f && !this.getGender() && age > 0.4f){
 				propagate();
 				hunger = 0.7f;
 				thirst = 0.7f;
@@ -125,14 +125,17 @@ public class Sheep extends Animal implements  Runnable{
 			 */
 			
 			if(hunger > 1.0f){
+				System.out.println("Hunger");
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}else if (thirst > 1.0f){
+				System.out.println("Thirst");
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}else if(age > 3.0f){
+			}else if(age > 5.0f){
+				System.out.println("Age");
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
 				race.getAndRemoveSpeciesAt(xPos, yPos);
@@ -194,7 +197,7 @@ public class Sheep extends Animal implements  Runnable{
 			food += nc.getNeed(new Needs("Plant", 0.6f), xPos, yPos);
 		}
 
-		if(food > 0.5f){
+		if(food > 0.3f){
 			hunger -= food;
 			try {
 				Thread.sleep(2000);
