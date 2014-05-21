@@ -28,17 +28,6 @@ public class Wolf extends Animal implements Runnable{
 		race.numberOfInstances.incrementAndGet();
 	}
 
-	public Wolf(int xPos, int yPos, Race wolf, boolean gender){
-		super(gender);
-		super.xPos = xPos;
-		super.yPos = yPos;
-		super.race = wolf;
-		this.timeUntilBirth = 0.5f;
-
-		this.race = wolf;
-		race.numberOfInstances.incrementAndGet();
-	}
-
 	private float getNumberOfWolves() {
 		return (float)race.numberOfInstances.get();
 	}
