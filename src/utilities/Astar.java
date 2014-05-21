@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 
+import simulation.Race;
+
 
 
 /**
@@ -75,14 +77,12 @@ public class Astar {
 	 * @return false if species on (x,y)-coordinate, true otherwise
 	 */
 	private static boolean noSpecies(int x, int y) {
-		boolean walkable = true;
-		/*for (Race r : Globals.races) {
+		for (Race r : Globals.races) {
 			if (r.getSpeciesAt(x, y) != null) {
-				walkable = false;
-				break;
+				return false;
 			}
-		}*/
-		return walkable;
+		}
+		return true;
 	}
 
 	/**
