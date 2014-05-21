@@ -16,13 +16,6 @@ public class Main {
 	public Main() {
 
 		Globals.heightmap = new float[Globals.width][Globals.height];
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.worldFractalMax, Globals.worldFractalMin, Globals.worldFractalRange, Globals.worldFractalDiv);
-
-
-
-
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, 200.0f, 0.0f, 20.0f, 2.0f);
-
 
 		ArrayList<Thread> threadsToStart = new ArrayList<>();
 
@@ -58,6 +51,11 @@ public class Main {
 
 		Globals.registerSetting("Field of view", "Graphics", 10, 90, 70);
 		Globals.registerSetting("Render distance", "Graphics", 1, 50, 25);
+
+		Globals.registerSetting("Fractal max", "World gen", 100, 200, 200);
+		Globals.registerSetting("Fractal min", "World gen", 0, 100, 0);
+		Globals.registerSetting("Fractal range", "World gen", 0, 200, 70);
+		Globals.registerSetting("Fractal divisor", "World gen", 0.1f, 10, 2);
 		Globals.createSettingsFrame(true, true, false);
 
 		Random rng = new Random();
@@ -71,26 +69,6 @@ public class Main {
 			threadsToStart.add(sheepThread);
 		}
 		
-		/*Sheep sheep = new Sheep(15, 18, sheepRace, true);
-		sheepRace.setSpeciesAt(15, 18, sheep);
-		Thread sheepThread = new Thread(sheep);
-		threadsToStart.add(sheepThread);
-		
-		Sheep sheep2 = new Sheep(20, 20, sheepRace, false);
-		sheepRace.setSpeciesAt(20, 20, sheep2);
-		Thread sheepThread2 = new Thread(sheep2);
-		threadsToStart.add(sheepThread2);
-		*/
-		
-		/*Race wolfRace = new Race("Wolf");
-		Globals.races.add(wolfRace);
-		for(int i = 0; i < (int)Globals.getSetting("Number of wolves", "Wolf"); i++){
-			Wolf wolf = new Wolf(rng.nextInt(Globals.width), rng.nextInt(Globals.height), wolfRace);
-			wolfRace.setSpeciesAt(wolf.xPos, wolf.yPos, wolf);
-			Thread wolfThread = new Thread(wolf);
-			threadsToStart.add(wolfThread);
-		}
-		*/
 		Race treeRace = new Race("Tree");
 		Globals.races.add(treeRace);
 		for(int i = 0; i < Globals.getSetting("Number of trees", "Tree"); i++){
@@ -105,7 +83,7 @@ public class Main {
 
 		
 		Globals.heightmap = new float[Globals.width][Globals.height];
-		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.worldFractalMax, Globals.worldFractalMin, Globals.worldFractalRange, Globals.worldFractalDiv);
+		Globals.heightmap = Fractal.generateFractal(Globals.heightmap, Globals.getSetting("Fractal max", "World gen"), Globals.getSetting("Fractal min", "World gen"), Globals.getSetting("Fractal range", "World gen"), Globals.getSetting("Fractal divisor", "World gen"));
 		for(Thread t : threadsToStart)
 			t.start();
 		new Graphics3D();

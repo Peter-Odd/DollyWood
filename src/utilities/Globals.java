@@ -48,10 +48,6 @@ public class Globals {
 	public static int screenHeight = 1080;
 	
 	public static float[][] heightmap;
-	public static float worldFractalMax = 200.0f;
-	public static float worldFractalMin = 0.0f;
-	public static float  worldFractalRange = 70.0f;
-	public static float  worldFractalDiv = 2.0f;
 	
 	public static int startingSheep = 5;
 	public static int startingWolves = 5;

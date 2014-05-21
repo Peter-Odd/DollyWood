@@ -330,6 +330,24 @@ public class Graphics3D {
 		glPopMatrix();
 	}
 
+	private void scaleLights(int[] lights, float scale) {
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		ByteBuffer temp = ByteBuffer.allocateDirect(16);
+		temp.order(ByteOrder.nativeOrder());
+		FloatBuffer fBuffer = temp.asFloatBuffer();
+		for(int l = 0; l < lights.length; l++){
+			glGetLight(lights[l], GL_DIFFUSE, fBuffer);
+			for(int i = 0; i < fBuffer.capacity(); i++){
+				float f = fBuffer.get(i);
+				f *= scale;
+				fBuffer.put(i, f);
+			}
+			glLight(lights[l], GL_DIFFUSE, fBuffer);
+		}
+		glPopMatrix();
+	}
+	
 	/**
 	 * Renders a model that has the key modelName.
 	 * If such a model does not exist, it will try to load one.
@@ -344,9 +362,12 @@ public class Graphics3D {
 			glRotatef(rotation.x, 1.0f, 0.0f, 0.0f);
 			glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
+			float lightScale = Math.min(size.x, Math.min(size.y, size.z));
+			scaleLights(new int[]{GL_LIGHT0, GL_LIGHT1}, lightScale);
 			glScalef(size.x, size.y, size.z);
 			glCallList(models.get(modelName));
 			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
+			scaleLights(new int[]{GL_LIGHT0, GL_LIGHT1}, 1.0f/lightScale);
 			glRotatef(-rotation.z, 0.0f, 0.0f, 1.0f);
 			glRotatef(-rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(-rotation.x, 1.0f, 0.0f, 0.0f);
