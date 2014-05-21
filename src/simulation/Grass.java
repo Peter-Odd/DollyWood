@@ -42,7 +42,7 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 		Globals.registerSetting("Sleep", "Grass", 1, 1000, 100);
 		Globals.registerSetting("Grass growth rate", "Grass", 0, 0.2f, 0.01f);
 	}
-
+	
 	public float getGrassAt(int x, int y){
 		return grassLevel[x][y];
 	}
@@ -54,7 +54,12 @@ public class Grass extends Race implements Runnable, NeedsControlled{
 				f += getGrassAt(x, y);
 		return f/(Globals.width*Globals.height);
 	}
-	
+	/**
+	 * Decrements the grass level at a specific position
+	 * @param x x-coordinate
+	 * @param y y-coordinate
+	 * @param value Value to decrement the grass level with
+	 */
 	public void decrementGrassLevel(int x, int y, float value){
 		grassLevel[x][y] -= value;
 	}
