@@ -17,7 +17,7 @@ public class Node {
 	 * 
 	 * @param X Node's X-coordinate
 	 * @param Y Node's Y-coordinate
-	 * @param heuristic Distance from node to goal, Manhattan method
+	 * @param heuristic Distance from node to goal, Manhattan method(dX+dY)
 	 * @param movementCost Shortest path from start node to this node
 	 * @param parent Parent of current node
 	 */

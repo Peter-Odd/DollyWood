@@ -20,7 +20,7 @@ public class Astar {
 	final static int VERYHIGHVALUE = 999999;
 	private static Race blocking;
 	/**
-	 * Calculate distance from (startX, startY) to (goalX, goalY)
+	 * Calculate distance from (startX, startY) to (goalX, goalY) using Manhattan version.
 	 * @param startX X-coordinate of start node
 	 * @param startY Y-coordinate of start node
 	 * @param goalX X-coordinate of goal node
@@ -54,11 +54,11 @@ public class Astar {
 
 	/**
 	 * Go through list to find path from start to goal
-	 * @param list
+	 * @param position start position
+	 * @param closedList the list that contains the start Node
 	 * @return Stack with elements from head in list to just before null
 	 */
 	private static Deque<int[]> tracePath(int position, ArrayList<Node> closedList) {
-		//Stack<Node> resultStack = new Stack<>();
 		Deque<int[]> resultStack = new ArrayDeque<>();
 		if(closedList.size() > position-1 && position > 0){
 			Node cursor = closedList.get(position);
