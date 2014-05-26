@@ -15,7 +15,7 @@ import utilities.NeedsController.NeedsControlled;
 public class Animal{
 	protected int xPos;
 	protected int yPos;
-	private Random random;
+	protected Random random;
 	private float rotation;
 	protected boolean gender; // true = female, false = male
 	protected float age; // 1.2f = adult;
@@ -26,7 +26,7 @@ public class Animal{
 	protected Race race;
 	protected boolean readyToBreed;
 	protected Semaphore busy = new Semaphore(1);
-	protected Animal hunter = null;
+	protected Animal predator = null;
 	protected boolean alive = true;
 
 
@@ -95,17 +95,14 @@ public class Animal{
 	}
 	
 	/**
-	 * Returns a position which the current animal will walk too, depending on its needs. int[0] == x-coordinate,
-	 * int[1] == y-coordinate.
+	 * Returns a position which the current animal will walk too, depending on its needs.
 	 * 
 	 * @param needList The needs which will be considered.
-	 * @param x Current position coordinate.
-	 * @param y Current position coordinate.
 	 * @return The new position.
 	 */
 	
-	public int[] calculatePositionValue(ArrayList<Needs> needList, int x, int y){
-		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(x, y, 6, false);
+	public int[] calculatePositionValue(ArrayList<Needs> needList){
+		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 6, false);
 		float[][] randomTiles = new float[12][2];
 		for(int i = 0; i < randomTiles.length; i++){
 			randomTiles[i][0] = random.nextInt(neighbor.size());
@@ -135,13 +132,20 @@ public class Animal{
 			   water += nc.getNeed(new Needs("Water", 0.8f), xPos, yPos);
 		}
 		
-		if(water >= 0.5f){
+		if(water >= 0.4f){
+			
 			this.thirst -= water;
 			
+			race.allowedWorker.release();
 			try {
 				Thread.sleep(2000);
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
+			}
+			try {
+				race.allowedWorker.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -153,7 +157,7 @@ public class Animal{
 	protected void moveRandom(){
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, false);
 		int[] randomNeighbor = neighbor.get(random.nextInt(neighbor.size()));
-		moveTo(randomNeighbor[0], randomNeighbor[1], 0);
+		moveTo(randomNeighbor[0], randomNeighbor[1], 0, false);
 	}
 	
 	/** 
@@ -169,7 +173,13 @@ public class Animal{
 		Animal animal = findReadyToBreedAnimal();
 				if(animal != null){
 					animal.lock();
-					boolean goalReached = animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0); // waiting for the female
+					race.allowedWorker.release();
+					boolean goalReached =  animal.moveTo(randomNeighbor[0], randomNeighbor[1], 0, false); // waiting for the female
+					try {
+						race.allowedWorker.acquire();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					if(goalReached == true){
 						animal.setPregnant(true);
 					}
@@ -185,9 +195,8 @@ public class Animal{
 	 * @return true is destination is reached, else false.
 	 */
 	
-	protected boolean moveTo(int x, int y, int blocked){
+	protected boolean moveTo(int x, int y, int blocked, boolean oneStep){
 		if(!Astar.noSpecies(xPos, yPos)){
-			//System.out.println("Double position");
 			alive = false;
 			return false;
 		}
@@ -197,30 +206,39 @@ public class Animal{
 			return false;
 		path.removeFirst(); // removes the current location
 		for(int [] nextCord : path){
+			race.allowedWorker.release();
+			if(this.race.getSpecName().equals("Sheep")){
+				try {
+				    Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				}
+			}else if(this.race.getSpecName().equals("Wolf")){
+				try {
+				    Thread.sleep((int)Globals.getSetting("Wolf sleep", "Wolf"));
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				}
+			}
+			
 			try {
-			    Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
-			} catch(InterruptedException ex) {
-				System.out.println("Thread interrupt");
-			    Thread.currentThread().interrupt();
+				race.allowedWorker.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 			
 			boolean moved = race.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
+			
 			if(!moved && blocked < 4){
 				blocked++;
-				this.moveTo(x, y, blocked);
+				this.moveTo(x, y, blocked, oneStep);
 			}else if(!moved && blocked > 3){
 				return false;
-			}else{
+			}else if(oneStep){
 				return true;
 			}
 		}
 		return true;
-	}
-	
-	public int[] calcPositionToMove(){
-		
-		
-		return null;
 	}
 	
 	/** 
@@ -314,6 +332,14 @@ public class Animal{
 		return pregnant;
 	}
 	
+	public int getX(){
+		return xPos;
+	}
+	
+	public int getY(){
+		return yPos;
+	}
+	
 	public void setRotation(float rotation){
 		this.rotation = rotation;
 	}
@@ -352,6 +378,6 @@ public class Animal{
 	}
 	
 	public void setHunter(Animal animal){
-		this.hunter = animal;
+		this.predator = animal;
 	}
 }
