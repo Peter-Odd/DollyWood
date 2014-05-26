@@ -368,11 +368,13 @@ public class Graphics3D {
 			glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
 			float lightScale = Math.min(size.x, Math.min(size.y, size.z));
-			scaleLights(new int[]{GL_LIGHT0, GL_LIGHT1}, lightScale);
+			if(lightScale != 1.0f)
+				scaleLights(new int[]{GL_LIGHT0, GL_LIGHT1}, lightScale);
 			glScalef(size.x, size.y, size.z);
 			glCallList(models.get(modelName));
 			glScalef(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
-			scaleLights(new int[]{GL_LIGHT0, GL_LIGHT1}, 1.0f/lightScale);
+			if(lightScale != 1.0f)
+				scaleLights(new int[]{GL_LIGHT0, GL_LIGHT1}, 1.0f/lightScale);
 			glRotatef(-rotation.z, 0.0f, 0.0f, 1.0f);
 			glRotatef(-rotation.y, 0.0f, 1.0f, 0.0f);
 			glRotatef(-rotation.x, 1.0f, 0.0f, 0.0f);
