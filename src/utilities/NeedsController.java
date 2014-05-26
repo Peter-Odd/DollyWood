@@ -29,6 +29,11 @@ public class NeedsController {
 		}
 	}
 	
+	/**
+	 * Returns a list of NeedsControlled objects capable of fulfilling the need, empty list if none found
+	 * @param need The need that is searched for
+	 * @return A list of NeedsControlled objects.
+	 */
 	@SuppressWarnings("unchecked")
 	public static ArrayList<NeedsControlled> getNeed(String need){
 		if(needs.containsKey(need))
@@ -37,7 +42,6 @@ public class NeedsController {
 			return new ArrayList<NeedsControlled>();
 	}
 	
-	//TODO implement this class!
 	public interface NeedsControlled{
 		//This will kill a sheep and return 1.0f if the sheep is an adult. if called on grass, it will return however much grass there is on that tile and remove that tile of grass
 		public float getNeed(Needs need, int x, int y);

@@ -1,7 +1,7 @@
 package utilities;
 
 /**
- * Don't know exact reason for this class yet. However it does make some things abit easier
+ * A need that holds the string name of the need, and a value of said need.
  * @author OSM Group 5 - DollyWood project
  * @version 1.0
  */

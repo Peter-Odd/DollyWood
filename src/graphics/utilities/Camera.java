@@ -104,6 +104,12 @@ public class Camera {
         }
 	}    
 	
+	/**
+	 * Changes camera position based of two angles and a speedModifier
+	 * @param speed The speedModifier
+	 * @param angleXOffset an x-angle
+	 * @param angleYOffset an y-angle
+	 */
 	private void relativeMovement(float speed, float angleXOffset, float angleYOffset){
         position.y -= speed * (float) cos(toRadians(roll-angleXOffset));
         position.x -= speed * (float) sin(toRadians(roll-angleXOffset));
@@ -111,7 +117,7 @@ public class Camera {
 	}
 	
 	/**
-	 * Gets the hexagon grid position based on the size of the hexagons
+	 * Gets the hexagon grid position of the camera based on the size of the hexagons
 	 * @param size size of each hexagon
 	 * @return new int[]{x-position, y-position}
 	 */

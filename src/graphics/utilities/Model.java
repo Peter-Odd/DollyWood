@@ -45,6 +45,9 @@ public class Model {
 		modelParts.get(modelParts.size()-1).getFaces().add(face);
 	}
 	
+	/**
+	 * Creates a new modelPart with default colors 1.5f,0.5f,0.5f
+	 */
 	private void newModelPart() {
 		modelParts.add(new ModelPart(new Vector3f(1.5f, 0.5f, 0.5f)));
 	}
