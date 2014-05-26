@@ -62,6 +62,9 @@ public class Graphics3D {
 	 * This is all that is needed.<br />
 	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.<br />
 	 * Press F to toggle fullscreen <br />
+	 * Press tab to view settings and statistics<br />
+	 * Press 1 to spawn a sheep at camera position<br />
+	 * Press 2 to spawn a wolf at camera position<br />
 	 * Press escape to exit the application.<br />
 	 * Note: Only use escape to exit!
 	 */
@@ -101,6 +104,10 @@ public class Graphics3D {
 		}
 	}
 
+	/**
+	 * Displays a window for delay ms while the world loads.
+	 * @param delay
+	 */
 	private void splashScreen(int delay) {
 		JFrame frame = new JFrame();
 		frame.setLayout(new BorderLayout());
@@ -142,6 +149,8 @@ public class Graphics3D {
 	/**
 	 * Handles keyboard input related to the main graphic part.
 	 * so, key 'f' to toggle fullscreen, and escape to exit the program
+	 * tab for settings and statistics
+	 * '1' and '2' for spawning sheep and wolves
 	 */
 	private void processInput() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
@@ -214,11 +223,6 @@ public class Graphics3D {
 				animationEventController.setRandomAnimationSpeed("Butterfly"+i, 0.02f, 0.06f);
 				animationEventController.setRandomModelSpeed("Butterfly"+i, 0.2f, 0.4f);
 			}
-
-			//animationEventController.loadEvent("res/ButterflyAnimation.ani", "ButterflyTest", new Vector3f(Globals.width/2*size, Globals.height/2*size+5.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
-			//Vector3f position = new Vector3f(Globals.width/2*size+(random.nextFloat()*6.0f-3.0f), Globals.height/2*size-2.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f+(random.nextFloat()*6.0f-3.0f));
-			//animationEventController.addAnimationState(new AnimationState(position, rotation, new Vector3f(1.0f, 1.0f, 1.0f), 0.03f), "ButterflyTest");
-
 			animationEventController.loadEvent("res/startupAnimation.ani", "StartupAnimation", new Vector3f(Globals.width/2*size, Globals.height/2*size+20.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -240,15 +244,9 @@ public class Graphics3D {
 		Vector3f.add(sunPosition, (Vector3f)camera.getPosition().negate(), sunPosition);
 		updateLight(GL_LIGHT0, sunPosition, new Vector3f(0.15f+worldSunIntensity, worldSunIntensity, worldSunIntensity-0.2f));
 
-		//A* Testing ground
-		//        for(Node n : Astar.calculatePath(3, 3, 24, 12)){
-		//        	renderModel("Sheep", new Vector3f(n.getX()*size, n.getY()*size, -90.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
-		//        }
-
 		for(AnimationEvent animEvent : animationEventController.getEvents()){
 			AnimationState currentState = animEvent.getStateSum();
 			if(currentState != null){
-				//System.out.println(currentState.model);
 				renderModel(currentState.model, currentState.position, currentState.rotation, currentState.scale);
 			}
 		}
@@ -258,12 +256,8 @@ public class Graphics3D {
 
 		//Render SkyDome
 		float skyDomeScale = Globals.getSetting("Render distance", "Graphics")*8.0f;
-		//renderModel("sphereInvNorm", new Vector3f(Globals.width/2*size, Globals.height/2*size, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-200.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(sphereScale, sphereScale, sphereScale));
 		glTranslatef(-center.x, -center.y, -center.z);
 		Vector3f skyDomePosition = (Vector3f) camera.getPosition().negate();
-		//skyDomePosition.x += skyDomeScale;
-		//skyDomePosition.y += skyDomeScale;
-		//skyDomePosition.z -= skyDomeScale;
 		renderModel("SphereInvNorm", new Vector3f(skyDomePosition), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(skyDomeScale, skyDomeScale, skyDomeScale));
 
 	}
@@ -302,14 +296,10 @@ public class Graphics3D {
 				int y = cameraPos[1] + yY;
 				xOffset = (int) (x/Globals.width*(size*Globals.width));
 				yOffset = (int) (y/Globals.height*(size*Globals.height));
-				//TODO fix negative world scrolling
-				//System.out.println(xOffset + ":" + yOffset + "\t" + x + ":" + y);
 				if(x < 0){
-					//xOffset = (int) ((-(x+Globals.width))/Globals.width*(size*Globals.width)); 
 					x = Globals.width - x-2;
 				}
 				if(y < 0){
-					//yOffset = (int) ((-(y+Globals.height))/Globals.height*(size*Globals.height));
 					y = Globals.height - y-2;
 				}
 				x %= Globals.width;
@@ -348,7 +338,6 @@ public class Graphics3D {
 	private void updateLight(int light, Vector3f position, Vector3f color) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
-		//glTranslatef(-position.x+20, -position.y+20, -position.z+50);
 		ByteBuffer temp = ByteBuffer.allocateDirect(16);
 		temp.order(ByteOrder.nativeOrder());
 		glLight(light, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{position.x, position.y, position.z, 1.0f}).flip());
@@ -356,7 +345,12 @@ public class Graphics3D {
 		glPopMatrix();
 	}
 
-	HashMap<Integer, FloatBuffer> lightScale = new HashMap<>();
+	private HashMap<Integer, FloatBuffer> lightScale = new HashMap<>();
+	/**
+	 * Scales the light intensity
+	 * @param lights all lights to be scaled each of these integers should be GL_LIGHTx where x = 0-9
+	 * @param scale the amount to scale
+	 */
 	private void scaleLights(int[] lights, float scale) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -471,13 +465,9 @@ public class Graphics3D {
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{Globals.width/2*4.0f, Globals.height/2*4.0f, Globals.heightmap[Globals.width/2][Globals.height/2]/1.0f-180.0f, 1.0f}).flip());
 		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(new float[]{1.0f, 1.0f, 1.0f, 1.0f}).flip());
-		//glLight(GL_LIGHT0, GL_SPOT_CUTOFF, (FloatBuffer)temp.asFloatBuffer().put(new float[]{75.0f, 75.0f, 75.0f, 1.0f}).flip());
 		glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
-		//glLight(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.000001f, 0.000001f, 0.000001f, 1.0f}).flip());
 		glLight(GL_LIGHT0, GL_SPOT_EXPONENT, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0f, 0.0f, 0.0f, 1.0f}).flip());
 		glLight(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(new float[]{0.0001f, 0.0001f, 0.0001f, 1.0f}).flip());
-		//glEnable(GL_CULL_FACE);
-		//glCullFace(GL_FRONT);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
@@ -512,7 +502,7 @@ public class Graphics3D {
 				if(modes[i].getWidth() == Globals.screenWidth && modes[i].getHeight() == Globals.screenHeight && modes[i].isFullscreenCapable())
 					Display.setDisplayMode(modes[i]);
 			}
-			//Display.setDisplayMode(new DisplayMode(Globals.screenWidth, Globals.screenHeight));
+
 			Display.setTitle("DOLLYWOOD");
 
 			ByteBuffer[] iconList = new ByteBuffer[2];
@@ -531,7 +521,7 @@ public class Graphics3D {
 	}
 
 	/**
-	 * loads an icon to be used for the display.
+	 * loads a taskbar/window icon to be used for the display.
 	 * @param filename The location of the file to load
 	 * @return ByteBuffer of the image
 	 * @throws IOException

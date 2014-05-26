@@ -28,21 +28,21 @@ public class OBJLoader {
 		Model model = new Model();
 		try {
 			while((line = in.readLine()) != null){
-				if(line.startsWith("v ")){
+				if(line.startsWith("v ")){ //Line is a 3-part vertex
 					String[] components = line.split(" ");
 					float x = Float.parseFloat(components[1]);
 					float y = Float.parseFloat(components[2]);
 					float z = Float.parseFloat(components[3]);
 					model.addVertex(new Vector3f(x,y,z));
 				}
-				else if(line.startsWith("vn ")){
+				else if(line.startsWith("vn ")){ //Line is a 3-part vertex-normal
 					String[] components = line.split(" ");
 					float x = Float.parseFloat(components[1]);
 					float y = Float.parseFloat(components[2]);
 					float z = Float.parseFloat(components[3]);
 					model.addNormal(new Vector3f(x,y,z));
 				}
-				else if(line.startsWith("f ")) {
+				else if(line.startsWith("f ")) { //Line is a face, pointing to 3 verticies and 3 vertex-normals
 					String[] components = line.split(" ");
 					String[][] faceString = new String[][] {
 							components[1].split("/"), 
@@ -53,8 +53,7 @@ public class OBJLoader {
 					Face face = new Face(verticies, normals);
 					model.addFace(face);
 				}
-				else if(line.startsWith("o ")) {
-					//o 4_250_250_250
+				else if(line.startsWith("o ")) { //Line is a new object header
 					String[] colorComponents = line.split(" ")[1].split("_");
 					Vector3f color = new Vector3f(Float.parseFloat(colorComponents[1])/255.0f, Float.parseFloat(colorComponents[2])/255.0f, Float.parseFloat(colorComponents[3])/255.0f);
 					model.newModelPart(color);
