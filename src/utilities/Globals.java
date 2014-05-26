@@ -12,9 +12,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.concurrent.Callable;
@@ -25,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -50,12 +52,22 @@ public class Globals {
 	
 	public static Water water;
 	
+	/**
+	 * 
+	 * @return true if settingsframe is visible
+	 */
 	public static boolean visibleSettingsFrame(){
 		return settingsFrame.isVisible();
 	}
 	
 	private static boolean blocking;
 	private static JFrame settingsFrame;
+	/**
+	 * Creates a window that holds all settings and statistics.
+	 * @param blocking true if this window should be blocking. false if it should run in parallel with other code
+	 * @param startup true if it is should not show statistics and show about text, false otherwise
+	 * @param alwaysOnTop true if it should be locked above all other windows
+	 */
 	public static void createSettingsFrame(boolean blocking, boolean startup, boolean alwaysOnTop){
 		Globals.blocking = blocking;
 		settingsFrame = new JFrame("Settings");
@@ -85,11 +97,14 @@ public class Globals {
 			panel.setLayout(new GridLayout(2,2));
 			panel.add(new JLabel());
 			JTextArea aboutText = new JTextArea();
+			JScrollPane sp = new JScrollPane(aboutText);
+
 			try {
-				BufferedReader inStream = new BufferedReader(new FileReader(new File("res/about.txt")));
+				BufferedReader inStream = new BufferedReader(new InputStreamReader(new FileInputStream("res/about.txt"), "UTF-8"));
 				String line;
 				while((line = inStream.readLine()) != null){
 					aboutText.append(line);
+					aboutText.append("\n");
 				}
 				inStream.close();
 			} catch (FileNotFoundException e1) {
@@ -100,9 +115,11 @@ public class Globals {
 				e1.printStackTrace();
 			}
 			aboutText.setLineWrap(true);
-			aboutText.setEditable(false);
-			panel.add(aboutText);
+			aboutText.setWrapStyleWord(true);
+			aboutText.setEditable(false);			
+			panel.add(sp);
 			panel.setPreferredSize(new Dimension(512, 512));
+
 			
 			tabbPane.add("home", panel);
 		}
@@ -196,7 +213,13 @@ public class Globals {
 
 	private static ArrayList<Setting> settings = new ArrayList<>();
 	private static ArrayList<Graph> graphList = new ArrayList<>();
-	
+	/**
+	 * Registers a graph to be showed in the statistics panel of the settings frame
+	 * @param name name of the graph
+	 * @param category category for the graph
+	 * @param callFunction the function that the graph will call to collect data
+	 * @param collectTime the sleep time(ms) in between collecting data.
+	 */
 	public static synchronized void registerGraph(String name, String category, Callable<Float> callFunction, long collectTime){
 		boolean isRegistered = false;
 		for(Graph g : graphList){
@@ -211,6 +234,14 @@ public class Globals {
 		}
 	}
 	
+	/**
+	 * Registers a setting to be shown in the Settings window
+	 * @param name name of the setting
+	 * @param category category of the setting
+	 * @param min the minimum value that the setting can possibly have
+	 * @param max the maximum value that the setting can possibly have
+	 * @param current the default value of the setting
+	 */
 	public static synchronized void registerSetting(String name, String category, float min, float max, float current){
 		boolean isRegistered = false;
 		for(Setting s : settings){
@@ -223,6 +254,12 @@ public class Globals {
 			settings.add(new Setting(name, category, new JSlider((int)(min*1000), (int)(max*1000), (int)(current*1000))));
 	}
 	
+	/**
+	 * Gets the value of the setting
+	 * @param name The name of the setting to search for 
+	 * @param category the category to search in
+	 * @return The value of the searched setting or 0.0f, f none found.
+	 */
 	public static synchronized float getSetting(String name, String category){
 		for(Setting s : settings){
 			if(s.category.equals(category) && s.name.equals(name))
@@ -231,6 +268,11 @@ public class Globals {
 		return 0.0f;
 	}
 	
+	/**
+	 * Setting will hold a slider a name and a category.
+	 * @author OSM Group 5 - DollyWood project
+	 * @version 1.0
+	 */
 	private static class Setting{
 		public String name;
 		public String category;

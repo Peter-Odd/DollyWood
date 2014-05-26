@@ -10,6 +10,12 @@ import java.util.Iterator;
  */
 public class HexagonUtils {
 	
+	/**
+	 * 
+	 * @param list List to search
+	 * @param elem position to search for (elem[0], elem[1])
+	 * @return true if the position exists in the list, false otherwise
+	 */
 	private static boolean contains(ArrayList<int[]> list, int[] elem){
 		for(int[] e : list){
 			if(e[0] == elem[0] && e[1] == elem[1])
@@ -18,6 +24,11 @@ public class HexagonUtils {
 		return false;
 	}
 	
+	/**
+	 * Removes the element with the position (elem[0], elem[1]) from list.
+	 * @param list
+	 * @param elem
+	 */
 	private static void remove(ArrayList<int[]> list, int[] elem){
 		Iterator<int[]> it = list.iterator();
 		while(it.hasNext()){

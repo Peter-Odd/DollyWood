@@ -11,7 +11,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Semaphore;
 
 import javax.swing.JPanel;
-
+/**
+ * Graph will paint a super advanced sheep graph that shows some form of statistical data.
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
 public class Graph extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
 	
@@ -23,6 +27,15 @@ public class Graph extends JPanel implements Runnable{
 	private String name;
 	private String category;
 	
+	/**
+	 * 
+	 * @param preferredSize The size that the graph will prefer to take as a minimum bound
+	 * @param historyLength How many points back that the graph will save
+	 * @param collectTime the sleep time(ms) between each data collect
+	 * @param collectFunction the function to collect data from
+	 * @param name name of the graph
+	 * @param category category of the graph
+	 */
 	public Graph(Dimension preferredSize, int historyLength, long collectTime, Callable<Float> collectFunction, String name, String category){
 		history = new LinkedList<>();
 		this.historyLock = new Semaphore(1);
@@ -45,6 +58,9 @@ public class Graph extends JPanel implements Runnable{
 		return category;
 	}
 	
+	/**
+	 * Overrides JPanel.paintComponent() to draw a graph
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		this.setBackground(Color.BLACK);
@@ -90,6 +106,10 @@ public class Graph extends JPanel implements Runnable{
 		g.drawChars(topString.toCharArray(), 0, topString.length(), textXPos, textYPos);
 	}
 
+	/**
+	 * start point for graph thread.
+	 * this will collect the data when needed
+	 */
 	public void run() {
 		while(true){
 			try {
