@@ -23,7 +23,6 @@ import utilities.Globals;
  */
 public class Camera {
 	private Vector3f position;
-	private float fov;
 	private float aspectRatio;
 	private Vector2f clippingPlane;
 	public float pitch;
@@ -31,9 +30,8 @@ public class Camera {
 	private float roll;
 	
 
-	private Camera(Vector3f position, Vector3f rotation, float fov, float aspectRatio, Vector2f clippingPlane){
+	private Camera(Vector3f position, Vector3f rotation, float aspectRatio, Vector2f clippingPlane){
 		this.position = position;
-		this.fov = fov;
 		this.aspectRatio = aspectRatio;
 		this.clippingPlane = clippingPlane;
 		this.pitch = rotation.x;
@@ -45,13 +43,12 @@ public class Camera {
 	/**
 	 * @param position Camera position
 	 * @param rotation Camera rotation
-	 * @param fov Field of View angle from center point to upper edge point. Horizontal fov specified by Globals screen size; {@link Globals#screenHeight} and {@link Globals#screenWidth}. 
 	 * @param zNear Objects closer to the camera than zNear not visible, zNear >= 0.
 	 * @param zFar Objects further away from camera than zFar not visible, zNear >= 0.
 	 * <br><br><img src="http://www.incgamers.com/wp-content/uploads/2013/05/6a0120a85dcdae970b0120a86d9495970b.png" style="width:30%">
 	 */
-	public Camera(Vector3f position, Vector3f rotation, float fov, float zNear, float zFar){
-		this(rotation, rotation, fov, ((float)Globals.screenWidth / (float)Globals.screenHeight), new Vector2f(zNear,zFar));
+	public Camera(Vector3f position, Vector3f rotation, float zNear, float zFar){
+		this(rotation, rotation,((float)Globals.screenWidth / (float)Globals.screenHeight), new Vector2f(zNear,zFar));
 	}
 	
 	/**

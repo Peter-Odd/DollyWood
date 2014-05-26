@@ -39,6 +39,8 @@ import simulation.Animal;
 import simulation.Cloud;
 import simulation.Grass;
 import simulation.Race;
+import simulation.Sheep;
+import simulation.Wolf;
 import utilities.Globals;
 import utilities.SoundController;
 
@@ -160,6 +162,30 @@ public class Graphics3D {
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && !Globals.visibleSettingsFrame()){
 			Globals.createSettingsFrame(false, false, true);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_1)){ //Sheep
+			for(Race r : Globals.races){
+				if(r.getSpecies().equals("Sheep")){
+					int[] cameraPos = camera.getArrayPosition(size);
+					cameraPos[0] %= Globals.width;
+					cameraPos[1] %= Globals.height;
+					if(r.getSpeciesAt(cameraPos[0], cameraPos[1]) == null){
+						r.setSpeciesAt(cameraPos[0], cameraPos[1], new Sheep(cameraPos[0], cameraPos[1], r));
+					}
+				}
+			}
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_2)){ //Wolf
+			for(Race r : Globals.races){
+				if(r.getSpecies().equals("Wolf")){
+					int[] cameraPos = camera.getArrayPosition(size);
+					cameraPos[0] %= Globals.width;
+					cameraPos[1] %= Globals.height;
+					if(r.getSpeciesAt(cameraPos[0], cameraPos[1]) == null){
+						r.setSpeciesAt(cameraPos[0], cameraPos[1], new Wolf(cameraPos[0], cameraPos[1], r));
+					}
+				}
+			}
 		}
 	}
 
@@ -472,7 +498,7 @@ public class Graphics3D {
 	 * Sets up a camera with perspective.
 	 */
 	private void setupCamera() {
-		camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 70.0f, 0.01f, 1000.0f);
+		camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 0.01f, 1000.0f);
 		camera.applyPerspective();
 	}
 
