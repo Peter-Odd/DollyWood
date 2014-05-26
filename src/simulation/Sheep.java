@@ -129,19 +129,16 @@ public class Sheep extends Animal implements  Runnable{
 				 */
 				
 				if(hunger > 1.0f){
-					System.out.println("Hunger");
 					race.numberOfInstances.decrementAndGet();
 					this.alive = false;
 					race.getAndRemoveSpeciesAt(xPos, yPos);
 					race.allowedWorker.release();
 				}else if (thirst > 1.0f){
-					System.out.println("Thirst");
 					race.numberOfInstances.decrementAndGet();
 					this.alive = false;
 					race.getAndRemoveSpeciesAt(xPos, yPos);
 					race.allowedWorker.release();
 				}else if(age > 5.0f){
-					System.out.println("Age");
 					race.numberOfInstances.decrementAndGet();
 					this.alive = false;
 					race.getAndRemoveSpeciesAt(xPos, yPos);
@@ -276,7 +273,6 @@ public class Sheep extends Animal implements  Runnable{
 		race.numberOfInstances.decrementAndGet();
 		this.alive = false;
 		race.getAndRemoveSpeciesAt(xPos, yPos);
-		System.out.println("Killed by wolf");
 		race.allowedWorker.release();
 		return 1.0f;
 	}
