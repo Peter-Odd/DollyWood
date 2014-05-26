@@ -67,38 +67,54 @@ public class Race implements NeedsControlled{
 	public boolean moveSpecies(int currentX, int currentY, int newX, int newY){
 		
 		Race tree = null;
+		Race sheep = null;
+		Race wolf = null;
 		
 		if(newX == currentX && newY == currentY){
 			return true;
 		}
-		// Find the Tree race.
-		for(Race race: Globals.races){
-			if(race.getSpecName().equals("Tree")){
+		// Find the races.
+		for(Race race : Globals.races){
+			if(race.getSpecName().equals("Wolf")){
+				wolf = race;
+			}else if(race.getSpecName().equals("Tree")){
 				tree = race;
+			}else if(race.getSpecName().equals("Sheep")){
+				sheep = race;
 			}
 		}
 		
-		if(!tree.containsAnimal(newX, newY)){
-			if(compareAndSet(newX, newY)){
-				if(species[newX][newY] == null){
+		if(!tree.containsAnimal(newX, newY) && tree.compareAndSet(newX, newY)){
+			if(!wolf.containsAnimal(newX, newY) && wolf.compareAndSet(newX, newY)){
+				if(!sheep.containsAnimal(newX, newY) && sheep.compareAndSet(newX, newY)){
+					
 					Animal animal = getAndRemoveSpeciesAt(currentX, currentY);
 					if(animal == null){
+						tree.unlock(newX, newY);
+						wolf.unlock(newX, newY);
+						sheep.unlock(newX, newY);
 						return false;
-					}else{
+					}else{										
 						species[newX][newY] = animal;
 						animal.calcRotation(newX, newY);
 						animal.setXandYPos(newX, newY);
-						lockArray[newX][newY].incrementAndGet();
-						return true;
+						tree.unlock(newX, newY);
+						wolf.unlock(newX, newY);
+						sheep.unlock(newX, newY);
+
+						return true;			
 					}
-				} else {
-					unlock(newX, newY);
-					return false;
 				}
 			}
 		}
+			
+		tree.unlock(newX, newY);
+		wolf.unlock(newX, newY);
+		sheep.unlock(newX, newY);
 		return false;
+			
 	}
+	
 
 	/** Sets animal at coordinates (x, y) if the cell is unlocked and is not occupied, else it does nothing.
 	 * 
@@ -142,7 +158,6 @@ public class Race implements NeedsControlled{
 		}
 		return false;
 	}
-
 
 	@Override
 	public float getNeed(Needs need, int x, int y) {
