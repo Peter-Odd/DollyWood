@@ -1,8 +1,10 @@
 package simulation;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.concurrent.Callable;
 
+import utilities.Astar;
 import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.NeedsController;
@@ -56,7 +58,7 @@ public class Wolf extends Animal implements Runnable{
 				Thread.currentThread().interrupt();
 			}
 
-			//Locks wolf
+			//Locks wolf and takes on slot of the race semaphore
 			try {
 				super.busy.acquire();
 				race.allowedWorker.acquire();
@@ -94,14 +96,17 @@ public class Wolf extends Animal implements Runnable{
 			if(hunger > 1.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
+				race.allowedWorker.release();
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}else if(thirst > 1.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
+				race.allowedWorker.release();
 				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}else if(age > 2.0f){
+			}else if(age > 3.0f){
 				race.numberOfInstances.decrementAndGet();
 				this.alive = false;
+				race.allowedWorker.release();
 				race.getAndRemoveSpeciesAt(xPos, yPos);
 			}
 			
@@ -121,8 +126,8 @@ public class Wolf extends Animal implements Runnable{
 		ArrayList<Needs> needList = new ArrayList<>();
 		needList.add(new Needs("Water", thirst*Globals.getSetting("Thirst priority", "Wolf")));
 		needList.add(new Needs("Plant", 0.3f));
-		int[] requestedPosition = super.calculatePositionValue(needList, super.xPos, super.yPos);
-		super.moveTo(requestedPosition[0], requestedPosition[1], 0);
+		int[] requestedPosition = super.calculatePositionValue(needList);
+		super.moveTo(requestedPosition[0], requestedPosition[1], 0, false);
 	}
 
 	/** 
@@ -151,24 +156,53 @@ public class Wolf extends Animal implements Runnable{
 	 */
 	public void eat(){
 		float food = 0.0f;
+		
+		Race sheepRace = null;
+		for(Race race: Globals.races){
+			if  (race.getSpecName().equals("Sheep")) {
+				sheepRace = race;
+			}
+		}
 
-		Animal sheep = findSheep();
-
+		Animal sheep = findSheep(sheepRace);
+		//Just to let the sheep have a chance to react.
+		if(sheep != null){
+			sheep.lock();
+			sheep.unlock();
+		}
+		
 		while(sheep != null && food == 0.0f){
-			this.moveTo(sheep.xPos, sheep.yPos, 0);
+			
+			ArrayList<int[]> sheepNeighbor = HexagonUtils.neighborTiles(sheep.xPos, sheep.yPos, false);
+			int[] randomSheepNeighbor = sheepNeighbor.get(random.nextInt(sheepNeighbor.size()));
+			
+			this.moveTo(randomSheepNeighbor[0], randomSheepNeighbor[1], 0, true);
 
-			for (NeedsControlled nc : NeedsController.getNeed("Meat")){
-				food += nc.getNeed(new Needs("Meat", 0.6f), xPos, yPos);
-			}	
-			hunger -= food;
+			
+			ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(this.xPos, this.yPos, false);
+		
+			for(int[] coords : neighbor){
+				if(coords[0] == sheep.xPos && coords[1] == sheep.yPos){
+					for (NeedsControlled nc : NeedsController.getNeed("Meat")){
+						food += nc.getNeed(new Needs("Meat", 0.6f), sheep.xPos, sheep.yPos);
+					}	
+					hunger -= food;
+				}
+			}
 		}
 
 		if(hunger < 0.5f){
+			race.allowedWorker.release();
 			try {
 				Thread.sleep(2000);
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}	
+			try {
+				race.allowedWorker.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -176,27 +210,66 @@ public class Wolf extends Animal implements Runnable{
 	 * Searches for a sheep in the radius of 5 that is available to eat
 	 * @return available sheep to hunt
 	 */
-	private Animal findSheep() {
+	private Animal findSheep(Race sheepRace) {
 		ArrayList<int[]> neighbor = HexagonUtils.neighborTiles(xPos, yPos, 5, false);
-		Race sheep = null;
 		Animal tempSheep = null;
 
-		for(Race race: Globals.races){
-			if  (race.getSpecName().equals("Sheep")) {
-				sheep = race;
-			}
-		}
-
 		for (int[] food : neighbor) {
-			if(sheep.containsAnimal(food[0], food[1])){
-				Animal targetSheep = sheep.getSpeciesAt(food[0], food[1]);
-				if(targetSheep.hunter == null){
+			if(sheepRace.containsAnimal(food[0], food[1])){
+				Animal targetSheep = sheepRace.getSpeciesAt(food[0], food[1]);
+				if(targetSheep.predator == null){
 					targetSheep.setHunter(this);
 					return targetSheep;
 				}
 			}
 		}
 		return tempSheep;
+	}
+	
+	/** 
+	 * The animal moves to position x, y. And when destination is reached, return true.
+	 * 
+	 * @param x coordinate to move to.
+	 * @param y coordinate to move to.
+	 * @return true is destination is reached, else false.
+	 */
+	
+	protected boolean moveTo(int x, int y, int blocked, boolean oneStep){
+		if(!Astar.noSpecies(xPos, yPos)){
+			alive = false;
+			return false;
+		}
+		
+		Deque<int[]> path = Astar.calculatePath(xPos, yPos, x, y);
+		if(path.size() == 0)
+			return false;
+		path.removeFirst(); // removes the current location
+		for(int [] nextCord : path){
+			race.allowedWorker.release();
+			try {
+			    Thread.sleep((int)Globals.getSetting("Sheep sleep", "Sheep"));
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
+			
+			try {
+				race.allowedWorker.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			boolean moved = race.moveSpecies(xPos, yPos, nextCord[0], nextCord[1]);
+			
+			if(!moved && blocked < 4){
+				blocked++;
+				this.moveTo(x, y, blocked, oneStep);
+			}else if(!moved && blocked > 3){
+				return false;
+			}else if(oneStep){
+				return true;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -210,9 +283,9 @@ public class Wolf extends Animal implements Runnable{
 	 *Returns the age if age is less or equal to 1.2, else it returns 1.2.
 	 */
 	public float getSize(){
-		if(age >1.2f)
-			return 1.2f;
+		if(age >1.3f)
+			return 1.6f;
 		else
-			return age;
+			return age+0.3f;
 	}
 }
