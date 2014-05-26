@@ -1,1 +1,14 @@
-Simulation of real life behaviour is often sought for as computer programs keep getting closer and closer to reality. The plan for this project is to do a small simulation of an ecosystem in a sheep pasture. The simulation will consist of several actors that are dependent of each other; sheep that eat grass, wolves that eat sheep, grass that grows and more. Many features that are not necessary but could be implemented exists, this makes the project easy to adapt to the situation and therefore open ended. The goal is to make the simulation as close to real life behaviour as possible, the content in the simulation is therefore limited to this.
+-== DOLLYWOOD ==-
+
+Viktor Andersson - Jimmy Helmersson - Marcus Münger
+Elin Parsjö - Samuel Svensäter
+Operating systems and multicore programming, Uppsala University, 2014
+
+Welcome to DollyWood!
+
+DollyWood is a sheep pasture simulation with interaction between sheep and wolves. What happens over time?, will the sheep succeed to escape the wolves or will the sheep race become extinct?
+
+Sheep and wolves can be pregnant, and give birth to lambs respectivly wolf cubs. The animals both need food and water; sheep eat grass and wolves eat sheep.
+In addition the simulation consists of grass, trees, water and sunlight. The grass and trees can grow and moulder. The clouds controls the water distribution in the world and the grass grows more when daylight and when the clouds doesn’t blocks the sun.
+
+Edit the settings above and click "Let's go to DollyWood!" to enter the world of DollyWood! Enjoy!

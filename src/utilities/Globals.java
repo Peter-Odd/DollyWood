@@ -12,9 +12,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.concurrent.Callable;
@@ -25,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -95,11 +97,14 @@ public class Globals {
 			panel.setLayout(new GridLayout(2,2));
 			panel.add(new JLabel());
 			JTextArea aboutText = new JTextArea();
+			JScrollPane sp = new JScrollPane(aboutText);
+
 			try {
-				BufferedReader inStream = new BufferedReader(new FileReader(new File("res/about.txt")));
+				BufferedReader inStream = new BufferedReader(new InputStreamReader(new FileInputStream("res/about.txt"), "UTF-8"));
 				String line;
 				while((line = inStream.readLine()) != null){
 					aboutText.append(line);
+					aboutText.append("\n");
 				}
 				inStream.close();
 			} catch (FileNotFoundException e1) {
@@ -110,9 +115,11 @@ public class Globals {
 				e1.printStackTrace();
 			}
 			aboutText.setLineWrap(true);
-			aboutText.setEditable(false);
-			panel.add(aboutText);
+			aboutText.setWrapStyleWord(true);
+			aboutText.setEditable(false);			
+			panel.add(sp);
 			panel.setPreferredSize(new Dimension(512, 512));
+
 			
 			tabbPane.add("home", panel);
 		}
