@@ -26,14 +26,8 @@ public class Main {
 		Globals.registerSetting("Tree seed amount", "Tree", 0.0f, 1.0f, 0.3f);
 		Globals.registerSetting("Tree time of life (sec)", "Tree", 0, 500, 200);
 		
-		Globals.registerSetting("Number of sheep", "Sheep", 2, 250, 25);
-		
-		Globals.registerSetting("Number of wolves", "Wolf", 2, 250, 15);
-		Globals.registerSetting("Wolves sleep", "Wolf", 0, 1500, 500);
-		Globals.registerSetting("Wolves thirst", "Wolf", 0.1f, 1, 0.5f);
-		Globals.registerSetting("Wolves hunger", "Wolf", 0.1f, 1, 0.5f);
-
-		
+		Globals.registerSetting("Number of sheep", "Sheep", 2, 250, 25);	
+		Globals.registerSetting("Number of wolves", "Wolf", 2, 250, 15);	
 
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);
