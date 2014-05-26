@@ -1,11 +1,7 @@
 package simulation;
 
 import java.util.ArrayList;
-
-
-
 import java.util.concurrent.Callable;
-
 import utilities.Globals;
 import utilities.HexagonUtils;
 import utilities.NeedsController;
@@ -73,80 +69,123 @@ public class Sheep extends Animal implements  Runnable{
 				Thread.currentThread().interrupt();
 			}
 			
-			//locks sheep
+			//locks sheep and takes on spot in the race semaphore.
 			try {
-				super.busy.acquire();
 				race.allowedWorker.acquire();
+				super.busy.acquire();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
-			/*
-			 * Makes the sheep hungry, thirst and makes it grow older. The sheep is getting more hungry if she is
-			 * pregnant and then also decreases the timeUntilBirth.
-			 */
-			
-			if(pregnant){
-				age += 0.02;
-				hunger += 0.03f;
-				thirst += 0.03f;
-				timeUntilBirth -= 0.02;
-			} else {
-				age += 0.02;
-				hunger += 0.02f;
-				thirst += 0.02f;
-			}
-			
-			/*
-			 * Checks if the Sheep needs to give birth, drink, eat, propagate or are ready to breed. This
-			 * is done in a order of importance.
-			 */
-
-			if(timeUntilBirth <= 0.0f){
-				giveBirth();
-			}else if(hunger > 0.8f){
-				eat();
-			}else if(thirst > 0.3f){
-				drink();
-			}else if(hunger < 0.6f && thirst < 0.4f && !this.getGender() && age > 0.4f){
-				propagate();
-				hunger = 0.7f;
-				thirst = 0.7f;
-			}else if(this.getGender()){
-				if(age > 0.4f && !pregnant){
-					setReadyToBreed(true);
+			if(predator != null){
+				if(hunger > 0.9f || thirst > 0.9f){
+					predator = null;
 				}else{
-					setReadyToBreed(false);
+					flee();
 				}
+			}else{
+				
+				/*
+				 * Makes the sheep hungry, thirsty and makes it grow older. The sheep is getting more hungry if she is
+				 * pregnant and then also decreases the timeUntilBirth.
+				 */
+				
+				if(pregnant){
+					age += 0.02;
+					hunger += 0.03f;
+					thirst += 0.03f;
+					timeUntilBirth -= 0.02;
+				} else {
+					age += 0.02;
+					hunger += 0.02f;
+					thirst += 0.02f;
+				}
+				
+				/*
+				 * Checks if the Sheep needs to give birth, drink, eat, propagate or are ready to breed. This
+				 * is done in a order of importance.
+				 */
+	
+				if(timeUntilBirth <= 0.0f){
+					giveBirth();
+				}else if(hunger > 0.8f){
+					eat();
+				}else if(thirst > 0.5f){
+					drink();
+				}else if(hunger < 0.8f && thirst < 0.5f && !this.getGender() && age > 0.4f){
+					propagate();
+					hunger = 0.7f;
+					thirst = 0.7f;
+				}else if(this.getGender()){
+					if(age > 0.4f && !pregnant){
+						setReadyToBreed(true);
+					}else{
+						setReadyToBreed(false);
+					}
+				}
+				
+				/*
+				 * Checks if the sheep will die because of thirst, hunger or age. 
+				 */
+				
+				if(hunger > 1.0f){
+					System.out.println("Hunger");
+					race.numberOfInstances.decrementAndGet();
+					this.alive = false;
+					race.getAndRemoveSpeciesAt(xPos, yPos);
+					race.allowedWorker.release();
+				}else if (thirst > 1.0f){
+					System.out.println("Thirst");
+					race.numberOfInstances.decrementAndGet();
+					this.alive = false;
+					race.getAndRemoveSpeciesAt(xPos, yPos);
+					race.allowedWorker.release();
+				}else if(age > 5.0f){
+					System.out.println("Age");
+					race.numberOfInstances.decrementAndGet();
+					this.alive = false;
+					race.getAndRemoveSpeciesAt(xPos, yPos);
+					race.allowedWorker.release();
+				}
+	
+				// Makes the sheep to move to a new position.
+				move();
 			}
+				//unlocks sheep
+				super.busy.release();
+				race.allowedWorker.release();
+	
 			
-			/*
-			 * Checks if the sheep will die because of thirst, hunger or age. 
-			 */
-			
-			if(hunger > 1.0f){
-				System.out.println("Hunger");
-				race.numberOfInstances.decrementAndGet();
-				this.alive = false;
-				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}else if (thirst > 1.0f){
-				System.out.println("Thirst");
-				race.numberOfInstances.decrementAndGet();
-				this.alive = false;
-				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}else if(age > 5.0f){
-				System.out.println("Age");
-				race.numberOfInstances.decrementAndGet();
-				this.alive = false;
-				race.getAndRemoveSpeciesAt(xPos, yPos);
-			}
-
-			// Makes the sheep to move to a new position.
-			move();
-			//unlocks sheep
-			super.busy.release();
-			race.allowedWorker.release();
-
+		}
+	}
+	
+	/**
+	 * Makes the current sheep to run away from the predator.
+	 */
+	
+	public void flee(){
+		int xHunter = predator.getX();
+		int yHunter = predator.getY();
+		
+		int diffX = xPos - xHunter;
+		int diffY = yPos - yHunter;
+		
+		int operatorX = 1;
+		int operatorY = 1;
+		
+		if(diffX != 0){
+			operatorX = diffX/Math.abs(diffX);
+		}
+		if(diffY != 0){
+			operatorY = diffY/Math.abs(diffY);
+		}
+		
+		if((xPos+diffX+(operatorX*3))>Globals.height || (xPos+diffX+(operatorX*3))<1){
+			this.moveTo(xPos, yPos+diffY+(operatorY*3), 0, false);
+		}else if(yPos+diffY+(operatorY*3)>Globals.height || yPos+diffY+(operatorY*3)<1){
+			this.moveTo(xPos+diffX+(operatorX*3), yPos, 0, false);
+		}else{
+			this.moveTo(xPos+diffX+(operatorX*3), yPos+diffY+(operatorY*3), 0, false);
 		}
 	}
 	
@@ -161,8 +200,8 @@ public class Sheep extends Animal implements  Runnable{
 		needList.add(new Needs("Meat", Globals.getSetting("Herd priority", "Sheep")));
 		needList.add(new Needs("Plant", hunger*Globals.getSetting("Hunger priority", "Sheep")));
 		needList.add(new Needs("Predator", -20.0f));
-		int[] requestedPosition = super.calculatePositionValue(needList, super.xPos, super.yPos);
-		super.moveTo(requestedPosition[0], requestedPosition[1], 0);
+		int[] requestedPosition = super.calculatePositionValue(needList);
+		super.moveTo(requestedPosition[0], requestedPosition[1], 0, false);
 	}
 	
 	/** 
@@ -175,6 +214,7 @@ public class Sheep extends Animal implements  Runnable{
 
 		for(int[] neighbor : neighbors){
 			if(!race.containsAnimal(neighbor[0], neighbor[1])){
+				System.out.println("LAMB");
 				Sheep lamb = new Sheep(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], lamb);
 				Thread sheepThread = new Thread(lamb);
@@ -198,23 +238,32 @@ public class Sheep extends Animal implements  Runnable{
 			food += nc.getNeed(new Needs("Plant", 0.6f), xPos, yPos);
 		}
 
+		
 		if(food > 0.3f){
+			race.allowedWorker.release();
 			hunger -= food;
 			try {
 				Thread.sleep(2000);
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}	
+			try {
+				race.allowedWorker.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
+	
+	
 	
 	/**
 	 * Returns the age if age is less or equal to 1.2, else it returns 1.2.
 	 */
 
 	public float getSize(){
-		if(age >1.2f)
-			return 1.2f;
+		if(age >1.0f)
+			return 1.0f;
 		else
 			return age;
 	}
@@ -227,6 +276,8 @@ public class Sheep extends Animal implements  Runnable{
 		race.numberOfInstances.decrementAndGet();
 		this.alive = false;
 		race.getAndRemoveSpeciesAt(xPos, yPos);
+		System.out.println("Killed by wolf");
+		race.allowedWorker.release();
 		return 1.0f;
 	}
 	
