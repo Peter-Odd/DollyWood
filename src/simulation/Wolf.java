@@ -115,7 +115,7 @@ public class Wolf extends Animal implements Runnable{
 
 	/**
 	 * Moves the wolf to a position within a radius of 6 form the current xPos and yPos. What position which is selected
-	 * is dependent on what the sheep currently needs.
+	 * is dependent on what the wolf currently needs.
 	 */	
 	private void move(){
 		ArrayList<Needs> needList = new ArrayList<>();
