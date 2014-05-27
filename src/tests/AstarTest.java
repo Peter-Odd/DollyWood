@@ -40,7 +40,6 @@ public class AstarTest {
 				if(Globals.heightmap[x][y] == TREE){
 					Globals.heightmap[x][y] = 0.0f;
 					tree.setSpeciesAt(x, y, new Animal());
-					System.out.println(x + ":" + y);
 				}
 		
 		Deque<int[]> result = new ArrayDeque<>();
@@ -68,7 +67,7 @@ public class AstarTest {
 	@Test
 	public void testBlockedPath() {
 	 	float[][] world ={ {WALL,	WALL,	WALL,	WALL, 	WALL, 	WALL},
-			  	   {WALL,	0.0f,  	0.0f,	1.0f,	0.0f, 	WALL}, 
+			  	   {WALL,	0.0f,  	0.0f,	WALL,	0.0f, 	WALL}, 
 			  	   {WALL,	0.0f,  	WALL,	WALL,	0.0f, 	WALL},
 				   {WALL,	0.0f,  	0.0f,  	TREE, 	0.0f, 	WALL},
 				   {WALL,	0.0f,  	0.0f,  	WALL, 	0.0f, 	WALL},
