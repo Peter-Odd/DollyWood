@@ -214,7 +214,6 @@ public class Animal{
 				    Thread.currentThread().interrupt();
 				}
 			}else if(this.race.getSpecName().equals("Wolf")){
-				System.out.println("Wolf sleep");
 				try {
 				    Thread.sleep((int)Globals.getSetting("Wolf sleep", "Wolf"));
 				} catch(InterruptedException ex) {
