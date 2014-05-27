@@ -84,8 +84,10 @@ public class Astar {
 			if(tmp != null && tmp.size() > 0)
 				blocking = (Race)tmp.get(0);
 		}
-		if(blocking.containsAnimal(x, y))
+		if(blocking.containsAnimal(x, y)){
+			System.out.println("Found blocking");
 			return false;
+		}
 		return true;
 		
 	}
