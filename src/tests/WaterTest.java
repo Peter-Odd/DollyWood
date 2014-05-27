@@ -6,6 +6,9 @@ import org.junit.Test;
 
 import simulation.Water;
 import utilities.Globals;
+import utilities.Needs;
+import utilities.NeedsController;
+import utilities.NeedsController.NeedsControlled;
 
 public class WaterTest {
 
@@ -30,7 +33,7 @@ public class WaterTest {
 		
 		assertFalse(water.getGroundWaterLevel(0, 0) < water.getGroundWaterLevel(1, 1));
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void dissipation() {
@@ -58,6 +61,46 @@ public class WaterTest {
 		waterThread.stop();
 		
 		assertFalse(water.getGroundWaterLevel(1, 1) == water.getAverageGroundWater());
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void evaporation() {
+		Globals.heightmap = new float[Globals.width][Globals.height];
+		Globals.registerSetting("Cloud count", "Cloud", 1, 1, 1);
+		Globals.registerSetting("Sleep", "Water", 0, 0, 0);
+		Globals.registerSetting("Starting water", "Water", 0.5f, 0.5f, 0.5f);
+		Globals.registerSetting("Sleep", "Cloud", 100, 100, 100);
+		
+		NeedsController.registerNeed("SunLight", new NeedsControlled() {
+			public float peekNeed(Needs need, int x, int y) {
+				return 1.0f;
+			}
+			public float getNeed(Needs need, int x, int y) {
+				return 1.0f;
+			}
+		});
+		
+		Water water = new Water();
+		Globals.water = water;
+		Thread waterThread = new Thread(water);
+		waterThread.start();
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			fail("Cannot delay testThread");
+		}
+		float startWaterAverage = water.getAverageGroundWater();
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			fail("Cannot delay testThread");
+		}
+		waterThread.stop();
+		
+		assertFalse(water.getAverageGroundWater() > startWaterAverage);
 	}
 
 }
