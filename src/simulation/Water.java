@@ -135,7 +135,7 @@ public class Water implements Runnable, NeedsControlled{
 		dissipate();
 	}
 
-	private float getAverageGroundWater(){
+	public float getAverageGroundWater(){
 		float f = 0.0f;
 		for(int x = 0; x < Globals.width; x++)
 			for(int y = 0; y < Globals.height; y++)
