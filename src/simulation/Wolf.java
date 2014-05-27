@@ -53,7 +53,7 @@ public class Wolf extends Animal implements Runnable{
 
 		while(alive){
 			try {
-				Thread.sleep((int)Globals.getSetting("Wolves sleep", "Wolf"));
+				Thread.sleep((int)Globals.getSetting("Wolf sleep", "Wolf"));
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
@@ -184,7 +184,7 @@ public class Wolf extends Animal implements Runnable{
 			for(int[] coords : neighbor){
 				if(coords[0] == sheep.xPos && coords[1] == sheep.yPos){
 					for (NeedsControlled nc : NeedsController.getNeed("Meat")){
-						food += nc.getNeed(new Needs("Meat", 0.6f), sheep.xPos, sheep.yPos);
+						food += nc.getNeed(new Needs("Meat", 1.0f), sheep.xPos, sheep.yPos);
 					}	
 					hunger -= food;
 				}
@@ -194,7 +194,7 @@ public class Wolf extends Animal implements Runnable{
 		if(hunger < 0.5f){
 			race.allowedWorker.release();
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(5000);
 			} catch(InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}	
