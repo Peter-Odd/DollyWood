@@ -10,6 +10,7 @@ import java.util.Random;
  */
 
 public class Fractal {
+	
 	static Random r = new Random();
 	
 	/** Generates a random value between max and min.
@@ -51,7 +52,7 @@ public class Fractal {
 	 * @return map with the corner spots filled with values.
 	 */
 	
-	public static float[][] intitateCorners(float[][] map, float max, float min, float randomRange){
+	private static float[][] intitateCorners(float[][] map, float max, float min, float randomRange){
 		int largestX = map.length - 1;
 		int largestY = map[0].length - 1;
 		float random = getRandom((max-min)/2, (max-min)/2);
@@ -75,7 +76,7 @@ public class Fractal {
 	 * @return The array filled with floats, generated with Diamond-Square algorithm.
 	 */
 	
-	public static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv){
+	private static float[][] diamondSquare(float[][] map, int xSide, int ySide, float randomRange, float randomDiv){
 
 		map = diamondStep(map, xSide, ySide, randomRange);
 		map = squareStep(map, xSide, ySide, randomRange);
@@ -98,7 +99,7 @@ public class Fractal {
 	 * @return map with diamonds calculated.
 	 */
 	
-	public static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange){
+	private static float[][] diamondStep(float[][] map, int xSide, int ySide, float randomRange){
 		
 		float center = 0.0f;
 		int xHalfSide = xSide/2;
@@ -138,7 +139,7 @@ public class Fractal {
 	 * @return map with squares calculated.
 	 */
 	
-	public static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange){
+	private static float[][] squareStep(float[][] map, int xSide, int ySide, float randomRange){
 		
 		float value = 0;
 		float elements = 0.0f;
