@@ -129,20 +129,11 @@ public class Sheep extends Animal implements  Runnable{
 				 */
 				
 				if(hunger > 1.0f){
-					race.numberOfInstances.decrementAndGet();
-					this.alive = false;
-					race.getAndRemoveSpeciesAt(xPos, yPos);
-					race.allowedWorker.release();
+					this.kill();
 				}else if (thirst > 1.0f){
-					race.numberOfInstances.decrementAndGet();
-					this.alive = false;
-					race.getAndRemoveSpeciesAt(xPos, yPos);
-					race.allowedWorker.release();
+					this.kill();
 				}else if(age > 5.0f){
-					race.numberOfInstances.decrementAndGet();
-					this.alive = false;
-					race.getAndRemoveSpeciesAt(xPos, yPos);
-					race.allowedWorker.release();
+					this.kill();
 				}
 	
 				// Makes the sheep to move to a new position.
@@ -154,6 +145,17 @@ public class Sheep extends Animal implements  Runnable{
 	
 			
 		}
+	}
+	
+	/**
+	 * Removes the current sheep from the world, and releases all locks.
+	 */
+	
+	public void kill(){
+		race.numberOfInstances.decrementAndGet();
+		this.alive = false;
+		race.getAndRemoveSpeciesAt(xPos, yPos);
+		race.allowedWorker.release();
 	}
 	
 	/**

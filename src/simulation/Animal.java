@@ -192,6 +192,8 @@ public class Animal{
 	 * 
 	 * @param x coordinate to move to.
 	 * @param y coordinate to move to.
+	 * @param blocked if this reaches 3 it returns false.
+	 * @param oneStep true if the object only should move one step, else false.
 	 * @return true is destination is reached, else false.
 	 */
 	

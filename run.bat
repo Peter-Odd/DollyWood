@@ -1,1 +1,1 @@
-java -Djava.library.path=lib\native -jar dollywood.jar
+java -Djava.library.path=lib\native -jar DollyWood.jar
