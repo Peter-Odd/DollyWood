@@ -3,6 +3,7 @@ package utilities;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import simulation.Race;
@@ -19,6 +20,15 @@ import utilities.NeedsController.NeedsControlled;
 public class Astar {
 	final static int VERYHIGHVALUE = 999999;
 	private static Race blocking;
+	
+	/**
+	 * Resets the blocking race to null.
+	 * Note that while you could call this alot it will affect the performance of the system.
+	 * The function was made for test cases that needed resetting between tests.
+	 */
+	public static void reset(){
+		blocking = null;
+	}
 	/**
 	 * Calculate distance from (startX, startY) to (goalX, goalY) using Manhattan version.
 	 * @param startX X-coordinate of start node
@@ -41,12 +51,10 @@ public class Astar {
 		Node returnMe = null;
 
 		for (Node l : list) {
-			if(noSpecies(l.getX(), l.getY())){
-				int tmpTotalCost = l.getTotalCost();
-				if (tmpTotalCost < heuristicPrev && !closedList.contains(l)) {
-					heuristicPrev = tmpTotalCost;
-					returnMe = l;
-				}
+			int tmpTotalCost = l.getTotalCost();
+			if (tmpTotalCost < heuristicPrev && !closedList.contains(l)) {
+				heuristicPrev = tmpTotalCost;
+				returnMe = l;
 			}
 		}
 		return returnMe;
@@ -140,30 +148,32 @@ public class Astar {
 
 			ArrayList<int[]> neighbors = HexagonUtils.neighborTiles(currentNode.getX(), currentNode.getY(), false);
 			for (int[] neighbor : neighbors) {
-				Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0],  neighbor[1]) + 1, currentNode);
-
-				boolean existsInOpenList = false;
-
-				for (Node nodeInOpenList : openList) {
-					if (nodeInOpenList.getX() == newNode.getX() && nodeInOpenList.getY() == newNode.getY()) { //check X&Y-value for n and newNode
-						if (nodeInOpenList.getMovementCost() < newNode.getMovementCost()) {
-							//node exists in openList, do not add it to the openList.
-							//nothing to do, exit foreach-loop
-							existsInOpenList = true;
-							break;
-						} else {
-							//node exists in openList, do not add it to the openList.
-							//update movementCost and its parent
-							nodeInOpenList.setParent(newNode.getParent());
-							nodeInOpenList.setMovementCost(1 + newNode.getMovementCost());
-							existsInOpenList = true;
-							break;
-						}
-					}	
-				}
-
-				if (!existsInOpenList) {
-					openList.add(newNode);
+				if(noSpecies(neighbor[0], neighbor[1])){
+					Node newNode = new Node(neighbor[0], neighbor[1], calculateDistanceToGoal(neighbor[0], neighbor[1], goalX, goalY), currentNode.getMovementCost() + calculateMovementCost(neighbor[0],  neighbor[1]) + 1, currentNode);
+	
+					boolean existsInOpenList = false;
+	
+					for (Node nodeInOpenList : openList) {
+						if (nodeInOpenList.getX() == newNode.getX() && nodeInOpenList.getY() == newNode.getY()) { //check X&Y-value for n and newNode
+							if (nodeInOpenList.getMovementCost() < newNode.getMovementCost()) {
+								//node exists in openList, do not add it to the openList.
+								//nothing to do, exit foreach-loop
+								existsInOpenList = true;
+								break;
+							} else {
+								//node exists in openList, do not add it to the openList.
+								//update movementCost and its parent
+								nodeInOpenList.setParent(newNode.getParent());
+								nodeInOpenList.setMovementCost(1 + newNode.getMovementCost());
+								existsInOpenList = true;
+								break;
+							}
+						}	
+					}
+	
+					if (!existsInOpenList) {
+						openList.add(newNode);
+					}
 				}
 			}
 			closedList.add(currentNode);

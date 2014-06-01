@@ -14,6 +14,15 @@ public class NeedsController {
 	private static HashMap<String, ArrayList<NeedsControlled>> needs = new HashMap<String, ArrayList<NeedsControlled>>();
 	
 	/**
+	 * Clears the list of needs.
+	 * Be careful using this function as some other classes might depend on a full needs list.
+	 * The function was made for test cases that needed resetting between tests.
+	 */
+	public static void reset(){
+		needs = new HashMap<>();
+	}
+	
+	/**
 	 * Registers a controller as a provider of a specific need
 	 * @param need The need that is provided
 	 * @param ref The controller that provides

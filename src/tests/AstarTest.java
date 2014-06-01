@@ -23,6 +23,8 @@ public class AstarTest {
 
 	@Test
 	public void testCalculatePath() {
+		NeedsController.reset();
+		Astar.reset();
 	 	float[][] world ={ {WALL,	WALL,	WALL,	WALL, 	WALL, 	WALL},
 			  	   {WALL,	0.0f,  	0.0f,	TREE,	0.0f, 	WALL}, 
 			  	   {WALL,	0.0f,  	WALL,	WALL,	0.0f, 	WALL},
@@ -45,6 +47,7 @@ public class AstarTest {
 		Deque<int[]> result = new ArrayDeque<>();
 		result = Astar.calculatePath(1, 1, 1, 4);
 		int desiredSize = 9;
+		//System.out.println(result.size());
 		assertTrue(result.size() == desiredSize);
 		Deque<int[]> desired = new ArrayDeque<>();
 		desired.add(new int[]{1,1});
@@ -66,6 +69,8 @@ public class AstarTest {
 	
 	@Test
 	public void testBlockedPath() {
+		NeedsController.reset();
+		Astar.reset();
 	 	float[][] world ={ {WALL,	WALL,	WALL,	WALL, 	WALL, 	WALL},
 			  	   {WALL,	0.0f,  	0.0f,	WALL,	0.0f, 	WALL}, 
 			  	   {WALL,	0.0f,  	WALL,	WALL,	0.0f, 	WALL},
