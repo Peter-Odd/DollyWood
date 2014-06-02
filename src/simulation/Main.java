@@ -27,7 +27,7 @@ public class Main {
 		Globals.registerSetting("Tree time of life (sec)", "Tree", 0, 500, 200);
 		
 		Globals.registerSetting("Number of sheep", "Sheep", 2, 250, 25);	
-		Globals.registerSetting("Number of wolves", "Wolf", 2, 250, 15);	
+		Globals.registerSetting("Number of wolves", "Wolf", 2, 50, 5);	
 
 		Globals.water = new Water();
 		Thread waterThread = new Thread(Globals.water);

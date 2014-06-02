@@ -213,7 +213,6 @@ public class Sheep extends Animal implements  Runnable{
 
 		for(int[] neighbor : neighbors){
 			if(!race.containsAnimal(neighbor[0], neighbor[1])){
-				System.out.println("LAMB");
 				Sheep lamb = new Sheep(neighbor[0], neighbor[1], race);
 				race.setSpeciesAt(neighbor[0], neighbor[1], lamb);
 				Thread sheepThread = new Thread(lamb);
@@ -261,10 +260,16 @@ public class Sheep extends Animal implements  Runnable{
 	 */
 
 	public float getSize(){
-		if(age >1.0f)
-			return 1.0f;
-		else
-			return age;
+		if(age >1.0f && super.gender)
+			return 1.1f;
+		else if(age >1.0f && !super.gender)
+			return 1.4f;
+		else{	
+			if(super.gender)
+				return age + 0.1f;
+			else
+				return age + 0.4f;
+		}
 	}
 	
 	/**
