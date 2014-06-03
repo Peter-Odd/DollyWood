@@ -87,8 +87,8 @@ public class Camera {
             position.z -= speedModifier;
         }
 
-		int dX = Mouse.getDX();
-		int dY = Mouse.getDY();
+		int dX = (int) (Mouse.getDX() * speedModifier);
+		int dY = (int) (Mouse.getDY() * speedModifier);
 		if(Math.abs(dX) > 10)
 			dX = 0;
 		if(Math.abs(dY) > 10)
