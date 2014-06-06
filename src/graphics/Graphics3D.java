@@ -179,7 +179,10 @@ public class Graphics3D {
 					cameraPos[0] %= Globals.width;
 					cameraPos[1] %= Globals.height;
 					if(r.getSpeciesAt(cameraPos[0], cameraPos[1]) == null){
-						r.setSpeciesAt(cameraPos[0], cameraPos[1], new Sheep(cameraPos[0], cameraPos[1], r));
+						Sheep sheep = new Sheep(cameraPos[0], cameraPos[1], r);
+						Thread t = new Thread(sheep);
+						r.setSpeciesAt(cameraPos[0], cameraPos[1], sheep);
+						t.start();
 					}
 				}
 			}
@@ -191,7 +194,10 @@ public class Graphics3D {
 					cameraPos[0] %= Globals.width;
 					cameraPos[1] %= Globals.height;
 					if(r.getSpeciesAt(cameraPos[0], cameraPos[1]) == null){
-						r.setSpeciesAt(cameraPos[0], cameraPos[1], new Wolf(cameraPos[0], cameraPos[1], r));
+						Wolf wolf = new Wolf(cameraPos[0], cameraPos[1], r);
+						Thread t = new Thread(wolf);
+						r.setSpeciesAt(cameraPos[0], cameraPos[1], wolf);
+						t.start();
 					}
 				}
 			}
