@@ -39,7 +39,6 @@ However, you might want to get the most up to date version of this
 directory. 
 
 Usage: git clone https://github.com/Peter-Odd/DollyWood.git
-(private repository, email sam@samuel.nu for access).
 
 
 ==== JAVA VERSION ====
@@ -55,7 +54,7 @@ and then use Eclipse to compile and run.
 <br>Compile and run ==> Eclipse menu: Run -> Run.
 <br>Clean project   ==> Project -> Clean.
 <br>JDoc		     ==> Project -> Generate Javadoc
-<br>Tests		     ==> TBI
+<br>Tests		     ==> Select test to run under src/tests and go to Run - Run As - JUnit Test
 
 
 ==== TO COMPILE ==== 
@@ -65,14 +64,16 @@ See note above.
 
 ==== TO RUN AND TEST THE SYSTEM ==== 
 
-TBI.
+Run tests in Eclipse (see above)
+OR
+run the following command in the terminal (you should be in folder DollyWood/):java -Djava.library.path=lib\native -jar DollyWood.jar 
+
+Windows users can run the file run.bat do the above stated.
 
 
 ==== MORE INFORMATION ==== 
 
  * How to get more information about your project?
-<br>Send an email to main contact person below.
- * Who is the main contact person?
-<br>Marcus MÃ¼nger, marcus.munger.6193@student.uu.se
+<br>Send an email to Marcus Münger, marcus.munger.6193@student.uu.se
  * Do you have a project home page?
-<br>TBI
+<br>no
