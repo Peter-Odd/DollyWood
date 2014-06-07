@@ -26,7 +26,6 @@ public class Water implements Runnable, NeedsControlled{
 
 	/**
 	 * Constructor
-	 * @param tickLength sets the sleep duration of the Thread
 	 */
 	public Water(){
 		Globals.registerSetting("Sleep", "Water", 1, 1000, 100);

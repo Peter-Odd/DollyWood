@@ -3,7 +3,7 @@ package utilities;
 /**
  * Node representation
  * @author OSM Group 5 - DollyWood project
- * @versin 1.0
+ * @version 1.0
  */
 public class Node {
 	private int Heuristic; 		//Distance from node to goal, Manhattan method (H)

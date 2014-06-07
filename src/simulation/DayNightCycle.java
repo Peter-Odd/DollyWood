@@ -19,7 +19,6 @@ public class DayNightCycle implements Runnable, NeedsControlled{
 	/**
 	 * Constructor
 	 * @param stepSize Indicates how far the simulation should "jump" at each tick.
-	 * @param tickLength Sleep duration for the Thread
 	 */
 	public DayNightCycle(float stepSize) {
 		this.stepSize = stepSize;

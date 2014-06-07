@@ -11,6 +11,11 @@ import org.lwjgl.util.vector.Vector3f;
 import simulation.Race;
 import utilities.Globals;
 
+/**
+ * Early implementation for 2D-graphics, not in use.
+ * @author OSM Group 5 - DollyWood project
+ * @version 1.0
+ */
 public class Graphics2D extends JPanel{
 	/**
 	 * 

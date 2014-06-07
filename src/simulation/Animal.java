@@ -244,9 +244,10 @@ public class Animal{
 	}
 	
 	/** 
-	 * Calculates the correct rotation for a sheep when moved.
+	 * Calculates the correct rotation for a animal when moved.
 	 * 
-	 * @param newPos The position which the sheep will be moved to.
+	 * @param x The x-position which the animal will be moved to.
+	 * @param y The y-position which the animal will be moves to.
 	 */
 	
 	public void calcRotation(int x, int y){
