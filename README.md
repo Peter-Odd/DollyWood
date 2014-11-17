@@ -70,11 +70,3 @@ run the following command in the terminal (you should be in folder DollyWood/):
 java -Djava.library.path=lib\native -jar DollyWood.jar 
 
 Windows users can run the file run.bat do the above stated.
-
-
-==== MORE INFORMATION ==== 
-
- * How to get more information about your project?
-<br>Send an email to Marcus Münger, marcus.munger.6193@student.uu.se
- * Do you have a project home page?
-<br>no
