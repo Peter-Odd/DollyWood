@@ -23,11 +23,11 @@ Sheep pasture simulation using actors as main concurrency model. Implemented in 
 
 ==== GROUP MEMBERS ==== 
 
-831130-2957 samuel.svensater.7105@student.uu.se
-<br>900409-4471 viktor.andersson.7837@student.uu.se
-<br>910915-5128 elin.parsjo.5585@student.uu.se
-<br>920425-1970 jimmy.helmersson.6800@student.uu.se
-<br>931007-5198 marcus.munger.6193@student.uu.se
+831130 samuel.svensater.7105@student.uu.se
+<br>900409 viktor.andersson.7837@student.uu.se
+<br>910915 elin.parsjo.5585@student.uu.se
+<br>920425 jimmy.helmersson.6800@student.uu.se
+<br>931007 marcus.munger.6193@student.uu.se
 
 
 ==== MAY THE SOURCE BE WITH YOU ==== 
@@ -66,7 +66,8 @@ See note above.
 
 Run tests in Eclipse (see above)
 OR
-run the following command in the terminal (you should be in folder DollyWood/):java -Djava.library.path=lib\native -jar DollyWood.jar 
+run the following command in the terminal (you should be in folder DollyWood/):
+java -Djava.library.path=lib\native -jar DollyWood.jar 
 
 Windows users can run the file run.bat do the above stated.
 
@@ -74,6 +75,6 @@ Windows users can run the file run.bat do the above stated.
 ==== MORE INFORMATION ==== 
 
  * How to get more information about your project?
-<br>Send an email to Marcus Münger, marcus.munger.6193@student.uu.se
+<br>Send an email to Marcus MÃ¼nger, marcus.munger.6193@student.uu.se
  * Do you have a project home page?
 <br>no
